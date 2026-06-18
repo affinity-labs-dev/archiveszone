@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+  <title>Choose your plan — Archives</title>
+  <meta name="description" content="Unlock your personal journey through Islamic history. Start with a 7-day free trial." />
+  <meta name="robots" content="noindex,follow" />
+  <link rel="icon" href="/lovable-uploads/413e869f-48d1-41d8-9ee0-e1c8ba1ac2bf.png" type="image/png" />
+  <meta name="apple-itunes-app" content="app-id=6751173663" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X3WFXSL1DG"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-X3WFXSL1DG');</script>
+  <!-- Meta Pixel -->
+  <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','2673422029698646');fbq('track','PageView');</script>
+  <!-- TikTok Pixel -->
+  <script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('D8PGMORC77U8IPSBIE6G');ttq.page();}(window,document,'ttq');</script>
+
+  <style>
+    :root{
+      --snow:#FAFAFA;--onyx:#1A1A1A;--white:#FFFFFF;
+      --blue:#1E3C88;--blue-2:#A2C5FF;--acai-1:#5E2368;--acai:#8C60CD;--acai-3:#E5D4FF;
+      --gold:#FFD965;--pink:#6B1A3D;--grey:#C3C3C3;--green:#5B860C;--green-1:#284200;--red:#8B0808;
+      --r-btn:26.5px;--r-card:20px;--ui:'Onest',system-ui,-apple-system,sans-serif;
+      --display:'Bounded','Onest',sans-serif;--page-px:20px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{font-family:var(--ui);color:var(--onyx);background:var(--snow);-webkit-font-smoothing:antialiased;line-height:1.5}
+    .wrap{max-width:480px;margin:0 auto;padding:18px var(--page-px) calc(28px + env(safe-area-inset-bottom));min-height:100dvh}
+    .t-hero{font-family:var(--display);font-weight:900;font-size:clamp(26px,7vw,34px);line-height:1.08;letter-spacing:-.5px}
+    .t-hxl{font-weight:900;font-size:24px;line-height:1.12}
+    .t-hm{font-weight:700;font-size:20px}.t-bm{font-weight:600;font-size:16px}.t-bs{font-weight:500;font-size:14px;color:#4a4a4a}
+    .accent{color:var(--blue)}.muted{color:#5b5b5b}.center{text-align:center}
+    .topbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+    .back{width:36px;height:36px;border:2px solid var(--onyx);border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--onyx);font-size:18px;font-weight:800;flex:0 0 auto}
+    .head{margin:6px 0 18px}
+    .trust-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--onyx);border-radius:var(--r-btn);background:#fff;padding:7px 12px;font-weight:700;font-size:12px;box-shadow:0 3px 0 var(--blue-2)}
+    /* plans */
+    .plans{display:flex;flex-direction:column;gap:12px;margin:18px 0}
+    .plan{position:relative;display:flex;align-items:center;gap:14px;border:2px solid var(--onyx);border-radius:18px;background:#fff;
+      box-shadow:0 4px 0 var(--onyx);padding:16px 16px;cursor:pointer;transition:transform .08s,box-shadow .08s,background .15s}
+    .plan:active{transform:translateY(4px);box-shadow:0 0 0 var(--onyx)}
+    .plan.selected{background:var(--blue-2)}
+    .plan .radio{width:24px;height:24px;border-radius:50%;border:2px solid var(--onyx);background:#fff;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+    .plan.selected .radio{background:var(--blue)}
+    .plan.selected .radio::after{content:'';width:9px;height:9px;border-radius:50%;background:#fff}
+    .plan-main{flex:1}
+    .plan-name{font-weight:800;font-size:17px}
+    .plan-sub{font-size:13px;color:#555;margin-top:2px}
+    .plan.selected .plan-sub{color:#1a1a1a}
+    .plan-price{text-align:right;flex:0 0 auto}
+    .plan-price .amt{font-weight:800;font-size:17px;display:block}
+    .plan-price .per{font-size:12px;color:#555}
+    .plan .badge{position:absolute;top:-11px;left:16px;background:var(--gold);border:2px solid var(--onyx);border-radius:12px;padding:2px 10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+    /* included */
+    .included{border:2px solid var(--onyx);border-radius:var(--r-card);background:#fff;box-shadow:0 4px 0 var(--gold);padding:16px 18px;margin:8px 0 18px}
+    .included li{list-style:none;display:flex;align-items:flex-start;gap:11px;padding:7px 0;font-weight:600;font-size:15px}
+    .included .ic{width:24px;height:24px;flex:0 0 auto;border-radius:50%;background:var(--green-1);display:flex;align-items:center;justify-content:center;margin-top:1px}
+    .included .ic svg{width:14px;height:14px;color:#fff}
+    /* cta */
+    .btn{display:block;width:100%;font-family:var(--ui);font-weight:800;font-size:18px;line-height:1;padding:16px 22px;border:2px solid var(--onyx);
+      border-radius:var(--r-btn);cursor:pointer;background:var(--gold);color:var(--onyx);box-shadow:0 4px 0 #c9a93a;transition:transform .08s,box-shadow .08s}
+    .btn:active{transform:translateY(4px);box-shadow:0 0 0 #c9a93a}
+    .btn[disabled]{opacity:.6;pointer-events:none}
+    .renew{font-size:12px;color:#6a6a6a;text-align:center;margin-top:12px}
+    .err{display:none;color:var(--red);font-weight:600;font-size:13px;text-align:center;margin-top:12px}
+    .err.show{display:block}
+    .err a{color:var(--blue)}
+    .reassure{display:flex;gap:8px;align-items:center;justify-content:center;font-size:12px;color:#6a6a6a;margin-top:14px}
+    .reassure svg{width:15px;height:15px;stroke:var(--onyx);stroke-width:2;fill:none}
+    .restore{display:block;text-align:center;margin-top:18px;font-weight:700;color:#7a7a7a;text-decoration:underline;background:none;border:0;width:100%;cursor:pointer}
+    /* faq */
+    .faq{margin-top:26px}
+    .faq h2{font-weight:800;font-size:18px;margin-bottom:10px}
+    .faq details{border:2px solid var(--onyx);border-radius:14px;background:#fff;padding:12px 14px;margin-bottom:10px}
+    .faq summary{font-weight:700;font-size:15px;cursor:pointer;list-style:none}
+    .faq summary::-webkit-details-marker{display:none}
+    .faq p{font-size:14px;color:#444;margin-top:8px}
+    /* exit modal */
+    .modal-bg{position:fixed;inset:0;background:#000a;z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
+    .modal-bg.open{display:flex}
+    .modal{background:var(--snow);border:2px solid var(--onyx);border-radius:var(--r-card);box-shadow:0 6px 0 var(--pink);padding:24px;max-width:380px;width:100%;text-align:center}
+    .field{display:block;width:100%;padding:15px 16px;border:2px solid var(--onyx);border-radius:14px;font-family:var(--ui);font-size:16px;font-weight:600;margin:14px 0}
+    .field:focus{outline:none;box-shadow:0 0 0 4px var(--blue-2)}
+    .skip{display:block;text-align:center;margin-top:12px;font-weight:700;color:#7a7a7a;text-decoration:underline;background:none;border:0;width:100%;cursor:pointer}
+    .ok{display:none;color:var(--green);font-weight:700;margin-top:10px}.ok.show{display:block}
+    .footer{margin-top:30px;text-align:center;font-size:12px;color:#8a8a8a}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar"><a href="/start.html" class="back" aria-label="Back">‹</a></div>
+
+    <div class="head">
+      <div class="t-hero" id="pwTitle">Your journey is ready to begin.</div>
+      <p class="t-bm muted" style="margin-top:10px" id="pwSub">Unlock every era, the daily story, and Ibu, your AI guide.</p>
+      <div class="trust-row">
+        <span class="pill">★ 4.9 rating</span><span class="pill">50,000+ learners</span><span class="pill">Cancel anytime</span>
+      </div>
+    </div>
+
+    <div class="plans" id="plans" role="radiogroup" aria-label="Choose a plan"></div>
+
+    <ul class="included" id="included">
+      <li><span class="ic" data-check></span><span>Every era, from the Prophets to the Ottomans</span></li>
+      <li><span class="ic" data-check></span><span>A new 5-minute story every day, with streaks</span></li>
+      <li><span class="ic" data-check></span><span>Ibu, your AI guide — ask anything, anytime</span></li>
+      <li><span class="ic" data-check></span><span>Quizzes, XP and achievements as you learn</span></li>
+      <li><span class="ic" data-check></span><span>Sourced and scholar-reviewed. No myths.</span></li>
+    </ul>
+
+    <button class="btn" id="checkoutBtn">Start my 7-day free trial</button>
+    <p class="renew" id="renewNote"></p>
+    <p class="err" id="checkoutErr"></p>
+    <div class="reassure"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-7 9-7 9s-7-4-7-9V6z"/></svg><span>Secure checkout. Cancel anytime in two taps.</span></div>
+    <button class="restore" id="restoreBtn">Already subscribed? Open the app</button>
+
+    <div class="faq">
+      <h2>Common questions</h2>
+      <details><summary>How does the free trial work?</summary><p id="faqRenew"></p></details>
+      <details><summary>Where do I use my subscription?</summary><p>You pay here on the web, then one tap opens Archives on your phone with everything unlocked. It is the same account, so your progress and streak stay with you.</p></details>
+      <details><summary>Can I cancel?</summary><p>Yes, anytime. Cancel before the trial ends and you are charged nothing.</p></details>
+    </div>
+
+    <div class="footer">Archives by Affinity Labs Ltd</div>
+  </div>
+
+  <div class="modal-bg" id="exitModal" aria-hidden="true">
+    <div class="modal">
+      <div class="t-hm">Not ready yet?</div>
+      <p class="t-bs" style="margin-top:8px">Pop in your email and we will send your plan so you can pick up where you left off, no pressure.</p>
+      <input class="field" id="exitEmail" type="email" inputmode="email" placeholder="you@email.com" />
+      <button class="btn" id="exitSend" style="background:var(--blue);color:#fff;box-shadow:0 4px 0 var(--blue-2)">Email me my plan</button>
+      <div class="ok" id="exitMsg">Sent. Check your inbox.</div>
+      <button class="skip" data-exitclose>No thanks, keep looking</button>
+    </div>
+  </div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* === RevenueCat Web Billing (embedded Web SDK) ============================
+     Web purchases go through RevenueCat Web Billing (Stripe under the hood):
+     one subscriber + entitlements, handed off into the app via a redemption
+     link. The redemption link is only returned for ANONYMOUS web purchases, so
+     we configure with an anonymous app-user-id and pass the quiz session id as
+     metadata for attribution. The app handles the universal link (redeemWebPurchase). */
+  var RC_WEB_API_KEY = 'rcb_sb_cgUyvSQTikiZyEYbMfKWPxmLx';   // sandbox Web Billing key
+  var _rc=null,_RC=null;
+  function rcConfigured(){ return !!RC_WEB_API_KEY; }
+  async function rcInstance(){
+    if(_rc) return _rc;
+    var mod = await import('https://cdn.jsdelivr.net/npm/@revenuecat/purchases-js@1/+esm');
+    _RC = mod.Purchases;
+    _rc = _RC.configure({ apiKey: RC_WEB_API_KEY, appUserId: _RC.generateRevenueCatAnonymousAppUserId() });
+    return _rc;
+  }
+
+  var SUPABASE_URL='https://kcgiugdfudbwtjjsvwia.supabase.co';
+  var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjZ2l1Z2RmdWRid3RqanN2d2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxOTYxNjgsImV4cCI6MjA2NDc3MjE2OH0.i4q-ZtYzdP6OuotC7Rk1EGC09oW9xj0iA5NQTCXOKTc';
+  var EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  document.querySelectorAll('[data-check]').forEach(function(e){e.innerHTML=CHECK;});
+
+  /* plan catalogue. `pkg` = RevenueCat package identifier (lookup key); `kw` =
+     keyword fallback so a naming mismatch self-heals. Prices fill in from the
+     live offering once it loads. */
+  var PLANS=[
+    {id:'annual', pkg:'$rc_annual', kw:'annual', name:'Yearly', sub:'Best value, 7-day free trial', trial:'free', badge:'Most popular'},
+    {id:'monthly',pkg:'$rc_monthly',kw:'month',  name:'Monthly', sub:'Full access, billed monthly', trial:'none', badge:''}
+  ];
+  var selected='annual';
+  var onb=readOnb();
+
+  /* personalize headline */
+  (function(){
+    var eras=onb.eras||[];
+    if(eras.length){ document.getElementById('pwSub').textContent='Unlock '+(eras.length>1?eras.length+' eras you picked':'the era you picked')+', the daily story, and Ibu, your AI guide.'; }
+  })();
+
+  var plansEl=document.getElementById('plans');
+  function renderPlans(){
+    plansEl.innerHTML=PLANS.map(function(p){
+      return '<div class="plan'+(p.id===selected?' selected':'')+'" data-plan="'+p.id+'" role="radio" aria-checked="'+(p.id===selected)+'" tabindex="0">'+
+        (p.badge?'<span class="badge">'+p.badge+'</span>':'')+
+        '<span class="radio" aria-hidden="true"></span>'+
+        '<div class="plan-main"><div class="plan-name">'+p.name+'</div><div class="plan-sub">'+p.sub+'</div></div>'+
+        '<div class="plan-price"><span class="amt">'+(p.amt||'…')+'</span><span class="per">'+(p.per||'')+'</span></div>'+
+      '</div>';
+    }).join('');
+    plansEl.querySelectorAll('.plan').forEach(function(el){
+      el.addEventListener('click',function(){selectPlan(el.getAttribute('data-plan'));});
+      el.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();selectPlan(el.getAttribute('data-plan'));}});
+    });
+  }
+  function selectPlan(id){
+    selected=id;
+    plansEl.querySelectorAll('.plan').forEach(function(el){var on=el.getAttribute('data-plan')===id;el.classList.toggle('selected',on);el.setAttribute('aria-checked',on);});
+    var p=planById(id);
+    document.getElementById('checkoutBtn').textContent = p.trial==='free'?'Start my 7-day free trial':'Continue with '+p.name;
+    var amt=p.amt||'the listed price';
+    document.getElementById('renewNote').textContent = p.trial==='free'
+      ? '7 days free, then '+amt+'. Cancel anytime before the trial ends and you pay nothing.'
+      : amt+', billed today. Cancel anytime.';
+    document.getElementById('faqRenew').textContent = p.trial==='free'
+      ? 'You get 7 days free. After that your plan renews at '+amt+' until you cancel. Cancel anytime before the trial ends and you are charged nothing.'
+      : 'Your plan renews at '+amt+' until you cancel. You can cancel anytime from your account.';
+  }
+  renderPlans(); selectPlan('annual');
+  fire('view_paywall',{content_name:'paywall'},'ViewContent',{content_name:'paywall'});
+
+  /* preload the offering so prices are real and the package is matched before checkout */
+  loadOfferings();
+  async function loadOfferings(){
+    if(!rcConfigured() || location.protocol==='file:') return;
+    try{
+      var rc=await rcInstance();
+      var offerings=await rc.getOfferings();
+      var offs=allOfferings(offerings);
+      try{ console.log('[paywall] offerings:', offs.map(function(o){return {offering:o.identifier,packages:(o.availablePackages||[]).map(function(x){return {package:x.identifier,product:prodId(x),price:pkgPrice(x)};})};})); }catch(_){}
+      PLANS.forEach(function(p){
+        var pk=findPkg(offs,p.pkg,p.kw);
+        if(pk){ p.pkgObj=pk; var pr=pkgPrice(pk); if(pr) p.amt=pr; p.per=perLabel(p); }
+      });
+      renderPlans(); selectPlan(selected);
+    }catch(e){ console.warn('[paywall] offerings load failed', e); }
+  }
+
+  /* checkout */
+  document.getElementById('checkoutBtn').addEventListener('click', async function(){
+    var p=planById(selected);
+    var email=onb.email||'';
+    var sid=onb.sid||'';
+    fire('begin_checkout',{plan:selected},'InitiateCheckout',{content_name:'plan_'+selected});
+    var errEl=document.getElementById('checkoutErr'); if(errEl){errEl.classList.remove('show');errEl.textContent='';}
+
+    if(!rcConfigured()){ goStore(); return; }
+    if(location.protocol==='file:'){ errEl.innerHTML='Checkout runs on the live site, not a local file. <a href="#" id="storeLink">Get the app instead</a>.'; errEl.classList.add('show'); wireStore(); return; }
+
+    var btn=this,label=btn.textContent; btn.disabled=true; btn.textContent='Opening secure checkout…';
+    try{
+      var rc=await rcInstance();
+      var pkg=p.pkgObj;
+      if(!pkg){ var offs=allOfferings(await rc.getOfferings()); pkg=findPkg(offs,p.pkg,p.kw); }
+      if(!pkg) throw new Error('Package "'+p.pkg+'" not found in any offering');
+      var result=await rc.purchase({ rcPackage:pkg, customerEmail:email||undefined, metadata: sid?{quiz_sid:sid}:undefined });
+      var redeem=(result&&result.redemptionInfo&&(result.redemptionInfo.redeemUrl||result.redemptionInfo.url))||'';
+      fire('purchase',{plan:selected},'StartTrial',{}); fire('subscribe',{plan:selected},'Subscribe',{});
+      location.href='unlocked.html?status=success&plan='+encodeURIComponent(selected)+(redeem?'&redeem='+encodeURIComponent(redeem):'');
+    }catch(e){
+      console.error('[checkout]',e); btn.disabled=false; btn.textContent=label;
+      if(e&&/cancel|closed|dismiss/i.test(String(e.message||e))) return;
+      var notFound=/not found|offering|package/i.test(String(e.message||e));
+      errEl.innerHTML=(notFound?'This plan is not live yet in checkout. ':'Checkout could not start. ')+'<a href="#" id="storeLink">Get the app instead</a>.';
+      errEl.classList.add('show'); wireStore();
+    }
+  });
+
+  document.getElementById('restoreBtn').addEventListener('click', function(){ goStore(); });
+
+  /* === exit-intent: email me my plan === */
+  var modal=document.getElementById('exitModal'), exitShown=false;
+  function openExit(){ if(exitShown)return; exitShown=true; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); var i=document.getElementById('exitEmail'); if(onb.email)i.value=onb.email; setTimeout(function(){i.focus();},50); }
+  function closeExit(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+  modal.querySelectorAll('[data-exitclose]').forEach(function(b){b.addEventListener('click',closeExit);});
+  document.addEventListener('mouseout',function(e){ if(!e.relatedTarget&&e.clientY<=0) openExit(); });
+  modal.addEventListener('click',function(e){ if(e.target===modal) closeExit(); });
+  document.getElementById('exitSend').addEventListener('click',function(){
+    var input=document.getElementById('exitEmail'); var email=(input.value||'').trim();
+    if(!EMAIL_RE.test(email)){ input.style.borderColor='var(--red)'; input.focus(); return; }
+    var btn=this; btn.disabled=true; btn.textContent='Sending…';
+    fire('paywall_exit_lead',{method:'email'},'Lead',{content_name:'exit_plan'});
+    fetch(SUPABASE_URL+'/rest/v1/onboarding_responses',{method:'POST',keepalive:true,
+      headers:{apikey:SUPABASE_ANON,Authorization:'Bearer '+SUPABASE_ANON,'Content-Type':'application/json',Prefer:'return=minimal'},
+      body:JSON.stringify({email:email,session_id:onb.sid||null,eras:onb.eras||[],answers:onb.answers||{},source:'paywall_exit'})
+    }).catch(function(){}).finally(function(){ document.getElementById('exitMsg').classList.add('show'); btn.textContent='Sent ✓'; });
+  });
+
+  /* === helpers === */
+  function planById(id){for(var i=0;i<PLANS.length;i++)if(PLANS[i].id===id)return PLANS[i];return PLANS[0];}
+  function allOfferings(offerings){var offs=[];if(offerings.current)offs.push(offerings.current);if(offerings.all)Object.keys(offerings.all).forEach(function(k){if(offerings.all[k]!==offerings.current)offs.push(offerings.all[k]);});return offs;}
+  function prodId(pk){var pr=pk.webBillingProduct||pk.rcBillingProduct||pk.product||{};return pr.identifier||'';}
+  function pkgPrice(pk){var pr=pk.webBillingProduct||pk.rcBillingProduct||pk.product||{};var cp=pr.currentPrice||pr.price||{};return cp.formattedPrice||cp.formatted||(cp.amountMicros?('$'+(cp.amountMicros/1e6).toFixed(2)):(typeof cp.amount==='number'?('$'+(cp.amount/100).toFixed(2)):''));}
+  function perLabel(p){ return p.id==='annual'?'per year':p.id==='monthly'?'per month':'per week'; }
+  function findPkg(offs,id,kw){
+    for(var i=0;i<offs.length;i++){var o=offs[i];if(o.packagesById&&o.packagesById[id])return o.packagesById[id];var ap=o.availablePackages||[];for(var j=0;j<ap.length;j++){var pk=ap[j];if(pk.identifier===id||prodId(pk)===id)return pk;}}
+    if(kw){var k=kw.toLowerCase();for(var a=0;a<offs.length;a++){var ap2=offs[a].availablePackages||[];for(var b=0;b<ap2.length;b++){var pk2=ap2[b];if((pk2.identifier||'').toLowerCase().indexOf(k)>-1||prodId(pk2).toLowerCase().indexOf(k)>-1)return pk2;}}}
+    return null;
+  }
+  function goStore(){ var ua=navigator.userAgent||''; var ios=/iPad|iPhone|iPod/.test(ua); location.href = ios?'https://apps.apple.com/us/app/archives-islamic-history/id6751173663':'https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo'; }
+  function wireStore(){ var l=document.getElementById('storeLink'); if(l)l.addEventListener('click',function(e){e.preventDefault();goStore();}); }
+  function readOnb(){
+    var pr=new URLSearchParams(location.search); var st=null; try{st=JSON.parse(localStorage.getItem('archives_onb')||'null');}catch(e){}
+    return { sid:pr.get('sid')||(st&&st.session_id)||'', email:pr.get('email')||(st&&st.email)||'', eras:(pr.get('eras')||'').split(',').filter(Boolean), cadence:pr.get('cadence')||(st&&st.cadence)||'', answers:st||{} };
+  }
+  function fire(ga,gp,fb,fp){
+    try{if(typeof gtag==='function')gtag('event',ga,gp||{});}catch(e){}
+    try{if(typeof fbq==='function'&&fb){var std={Lead:1,ViewContent:1,InitiateCheckout:1,CompleteRegistration:1,StartTrial:1,Subscribe:1};std[fb]?fbq('track',fb,fp||{}):fbq('trackCustom',fb,fp||{});}}catch(e){}
+    try{if(typeof ttq!=='undefined'&&fb)ttq.track(fb,fp||gp||{});}catch(e){}
+    try{if(typeof posthog!=='undefined'&&posthog.capture)posthog.capture(ga,gp||{});}catch(e){}
+  }
+})();
+</script>
+</body>
+</html>

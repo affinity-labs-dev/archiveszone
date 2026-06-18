@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+  <title>Archives: Build your journey</title>
+  <meta name="description" content="Answer a few questions and we'll build your personal journey through Islamic history." />
+  <link rel="icon" href="/lovable-uploads/413e869f-48d1-41d8-9ee0-e1c8ba1ac2bf.png" type="image/png" />
+
+  <!-- Fonts: Onest (UI/body). Bounded (display) falls back to Onest Black if the webfont isn't present. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- hls.js for the Noah reel. Deferred so it never blocks first paint. -->
+  <script defer src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X3WFXSL1DG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-X3WFXSL1DG');
+  </script>
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;
+    s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init','2673422029698646');fbq('track','PageView');
+  </script>
+  <!-- TikTok Pixel -->
+  <script>
+    !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('D8PGMORC77U8IPSBIE6G');ttq.page();}(window,document,'ttq');
+  </script>
+  <!-- TODO(PostHog): paste the project's current snippet here (phc_ key, host https://eu.i.posthog.com, with defaults). fire() already forwards to posthog.capture when present. -->
+
+  <style>
+    /* ===== Archives design system tokens (Figma: Archives_Raw_File / Design system) ===== */
+    :root{
+      --snow:#FAFAFA; --onyx:#1A1A1A; --white:#FFFFFF;
+      --blue:#1E3C88; --blue-2:#A2C5FF;
+      --acai-1:#5E2368; --acai:#8C60CD; --acai-3:#E5D4FF;
+      --gold:#FFD965; --pink:#6B1A3D; --pink-2:#C61E79; --grey:#C3C3C3;
+      --green:#5B860C; --green-1:#284200; --green-3:#BDFF6B;
+      --red:#8B0808; --red-3:#FF8888;
+      --r-btn:26.5px; --r-card:20px;
+      --display:'Bounded','Onest',system-ui,sans-serif;
+      --ui:'Onest',system-ui,-apple-system,sans-serif;
+      --page-px:20px; --shadow-y:4px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%}
+    body{
+      font-family:var(--ui); color:var(--onyx); background:var(--snow);
+      -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    }
+    /* ===== Type scale ===== */
+    .t-hero{font-family:var(--display);font-weight:900;font-size:clamp(30px,8.5vw,50px);line-height:1.06;letter-spacing:-.5px}
+    .t-display{font-family:var(--display);font-weight:900;font-size:clamp(22px,6vw,28px);line-height:1.2}
+    .t-hxl{font-weight:900;font-size:clamp(24px,6.5vw,30px);line-height:1.12;letter-spacing:-.5px}
+    .t-hm{font-weight:700;font-size:22px;line-height:1.15}
+    .t-bl{font-weight:600;font-size:18px;line-height:1.35}
+    .t-bm{font-weight:600;font-size:16px;line-height:1.4}
+    .t-bs{font-weight:500;font-size:14px;line-height:1.45;color:#4a4a4a}
+    .muted{color:#5b5b5b}
+
+    /* ===== App shell ===== */
+    #app{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+    .topbar{flex:0 0 auto;z-index:20;display:flex;align-items:center;gap:12px;
+      padding:14px var(--page-px) 10px;background:var(--snow)}
+    .topbar .back{width:34px;height:34px;border:2px solid var(--onyx);border-radius:50%;background:var(--white);
+      display:none;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto;font-size:18px;font-weight:700}
+    .topbar .back.show{display:flex}
+    .progress{flex:1;height:10px;background:#ececec;border:2px solid var(--onyx);border-radius:20px;overflow:hidden}
+    .progress > i{display:block;height:100%;width:0;background:var(--blue);transition:width .45s cubic-bezier(.22,1,.36,1)}
+    .restart{font-size:12px;font-weight:700;color:#7a7a7a;text-decoration:underline;cursor:pointer;background:none;border:0;flex:0 0 auto;padding:9px 4px;min-height:24px}
+
+    .stage{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;padding:8px var(--page-px) 24px;position:relative}
+    .skiplink{position:absolute;left:-9999px;top:0;z-index:60;background:var(--onyx);color:#fff;padding:10px 16px;border-radius:0 0 12px 0;font-weight:700}
+    .skiplink:focus{left:0}
+
+    /* ===== Screen machine ===== */
+    .screen{display:none;flex:1;flex-direction:column;animation:none}
+    .screen.active{display:flex;animation:slideUp .42s cubic-bezier(.22,1,.36,1) both}
+    @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+    .screen .head{margin:10px 0 22px}
+    .screen .head .kicker{display:inline-block;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+    .screen .body{flex:1}
+
+    /* ===== Buttons (hard-shadow pill) ===== */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+      font-family:var(--ui);font-weight:700;font-size:18px;line-height:1;
+      padding:15px 22px;border:2px solid var(--onyx);border-radius:var(--r-btn);
+      cursor:pointer;background:var(--white);color:var(--onyx);
+      box-shadow:0 var(--shadow-y) 0 var(--onyx);transition:transform .08s ease,box-shadow .08s ease;
+      -webkit-user-select:none;user-select:none}
+    .btn:active{transform:translateY(var(--shadow-y));box-shadow:0 0 0 var(--onyx)}
+    .btn[disabled]{opacity:.45;pointer-events:none}
+    .btn-primary{background:var(--onyx);color:#fff;box-shadow:0 var(--shadow-y) 0 #00000033}
+    .btn-tertiary{background:var(--blue);color:#fff;box-shadow:0 var(--shadow-y) 0 var(--blue-2)}
+    .btn-secondary{background:var(--acai-3);color:var(--onyx);box-shadow:0 var(--shadow-y) 0 var(--acai-1)}
+    .btn-gold{background:var(--gold);color:var(--onyx);box-shadow:0 var(--shadow-y) 0 #c9a93a}
+
+    /* sticky footer CTA */
+    .cta-dock{flex:0 0 auto;z-index:25;background:var(--snow);box-shadow:0 -1px 0 #0000001a;
+      padding:14px var(--page-px) calc(14px + env(safe-area-inset-bottom))}
+
+    /* ===== Option cards ===== */
+    .opts{display:flex;flex-direction:column;gap:12px}
+    .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+      padding:16px 18px;border:2px solid var(--onyx);border-radius:18px;background:var(--white);
+      box-shadow:0 var(--shadow-y) 0 var(--onyx);cursor:pointer;font-weight:600;font-size:16px;color:var(--onyx);
+      transition:transform .08s ease,box-shadow .08s ease,background .15s ease}
+    .opt:active{transform:translateY(var(--shadow-y));box-shadow:0 0 0 var(--onyx)}
+    .opt.selected{background:var(--blue-2)}
+    .opt .ico{width:34px;height:34px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+    .opt .ico svg{width:26px;height:26px;stroke:var(--onyx);stroke-width:2;fill:none}
+    .opt .check{margin-left:auto;width:24px;height:24px;border-radius:50%;border:2px solid var(--onyx);flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:#fff}
+    .opt.selected .check{background:var(--blue);color:#fff}
+    .opt.selected .check::after{content:'✓';font-size:13px;font-weight:800;color:#fff}
+
+    /* image option cards (grid) */
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .imgopt{position:relative;border:2px solid var(--onyx);border-radius:18px;overflow:hidden;cursor:pointer;
+      box-shadow:0 var(--shadow-y) 0 var(--onyx);aspect-ratio:3/4;transition:transform .08s ease,box-shadow .08s ease}
+    .imgopt:active{transform:translateY(var(--shadow-y));box-shadow:0 0 0 var(--onyx)}
+    .imgopt img{width:100%;height:100%;object-fit:cover;display:block}
+    .imgopt .lab{position:absolute;left:0;right:0;bottom:0;padding:12px 12px 13px;color:#fff;font-weight:700;font-size:15px;
+      background:linear-gradient(transparent,rgba(0,0,0,.78))}
+    .imgopt.selected{outline:4px solid var(--blue)}
+    .imgopt.selected .lab::before{content:'✓ ';color:var(--blue-2)}
+
+    /* chips */
+    .chips{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:11px 15px;border:2px solid var(--onyx);border-radius:var(--r-btn);
+      background:#fff;box-shadow:0 3px 0 var(--onyx);cursor:pointer;font-weight:600;font-size:15px;transition:transform .08s,box-shadow .08s,background .15s}
+    .chip:active{transform:translateY(3px);box-shadow:0 0 0 var(--onyx)}
+    .chip.selected{background:var(--blue-2)}
+    .chip svg{width:18px;height:18px;stroke:var(--onyx);stroke-width:2;fill:none}
+
+    /* slider */
+    .slider-wrap{margin:30px 0}
+    input[type=range]{-webkit-appearance:none;width:100%;height:12px;border:2px solid var(--onyx);border-radius:20px;background:#ececec}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;border-radius:50%;background:var(--blue);border:2px solid var(--onyx);cursor:pointer;box-shadow:0 3px 0 var(--blue-2)}
+    .slider-ticks{display:flex;justify-content:space-between;margin-top:12px;font-size:12px;font-weight:600;color:#6a6a6a}
+    .slider-val{text-align:center;margin-top:18px}
+
+    /* segmented */
+    .seg{display:flex;flex-direction:column;gap:10px}
+
+    /* likert */
+    .likert{display:flex;flex-direction:column;gap:18px}
+    .likert .q{font-weight:600;font-size:16px;margin-bottom:10px}
+    .lk-row{display:flex;gap:8px}
+    .lk-row button{flex:1;padding:10px 4px;border:2px solid var(--onyx);border-radius:12px;background:#fff;font-weight:700;font-size:12px;cursor:pointer;box-shadow:0 3px 0 var(--onyx)}
+    .lk-row button:active{transform:translateY(3px);box-shadow:0 0 0 var(--onyx)}
+    .lk-row button.on{background:var(--blue);color:#fff;box-shadow:0 3px 0 var(--blue-2)}
+
+    /* recap meter */
+    .meter{margin:24px auto;width:200px;height:200px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      background:conic-gradient(var(--blue) var(--p,30%),#e7e7e7 0);position:relative}
+    .meter::after{content:'';position:absolute;inset:16px;border-radius:50%;background:var(--snow);border:2px solid var(--onyx)}
+    .meter .num{position:relative;z-index:1;font-family:var(--display);font-weight:900;font-size:46px}
+    .profile-card{border:2px solid var(--onyx);border-radius:var(--r-card);background:var(--acai-3);box-shadow:0 4px 0 var(--acai-1);padding:18px;margin-top:6px;text-align:center}
+
+    /* diagnosis bars */
+    .bars{display:flex;flex-direction:column;gap:16px;margin-top:8px}
+    .bar .bar-top{display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:7px}
+    .bar .track{height:16px;border:2px solid var(--onyx);border-radius:20px;background:#fff;overflow:hidden}
+    .bar .track > i{display:block;height:100%;width:0;border-radius:20px;transition:width .9s cubic-bezier(.22,1,.36,1)}
+    .deepdive{margin-top:22px;border:2px solid var(--onyx);border-radius:var(--r-card);background:#fff;box-shadow:0 4px 0 var(--pink);padding:18px}
+    .deepdive .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#fff;background:var(--pink);border-radius:12px;padding:4px 10px;margin-bottom:10px}
+
+    /* review card + badges */
+    .review{border:2px solid var(--onyx);border-radius:var(--r-card);background:var(--blue-2);box-shadow:0 4px 0 var(--blue);padding:16px;margin:8px 0}
+    .review .who{display:flex;justify-content:space-between;align-items:center;font-weight:800;margin-bottom:6px}
+    .review .stars{color:var(--gold);-webkit-text-stroke:1px var(--onyx);letter-spacing:1px}
+    .badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+    .badge{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border:2px solid var(--onyx);border-radius:var(--r-btn);background:#fff;font-weight:700;font-size:13px;box-shadow:0 3px 0 var(--blue-2)}
+    .badge svg,.reassure svg{width:16px;height:16px;stroke:var(--onyx);stroke-width:2;fill:none;flex:0 0 auto}
+
+    /* stat counters */
+    .stats3{display:flex;gap:12px;text-align:center;margin:10px 0}
+    .stats3 > div{flex:1;border:2px solid var(--onyx);border-radius:16px;background:#fff;box-shadow:0 4px 0 var(--gold);padding:16px 8px}
+    .stats3 .n{font-family:var(--display);font-weight:900;font-size:26px;color:var(--blue)}
+    .stats3 .l{font-size:12px;font-weight:600;color:#555;margin-top:4px}
+
+    /* compare */
+    .compare{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+    .compare .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .compare .col{border:2px solid var(--onyx);border-radius:16px;padding:16px;font-weight:600;font-size:14px}
+    .compare .bad{background:#f3f0f0}
+    .compare .good{background:var(--green-3);box-shadow:0 4px 0 var(--green)}
+
+    /* email */
+    .field{display:block;width:100%;padding:16px 18px;border:2px solid var(--onyx);border-radius:16px;font-family:var(--ui);font-size:16px;font-weight:600;background:#fff;margin-bottom:12px}
+    .field:focus{outline:none;box-shadow:0 0 0 4px var(--blue-2)}
+    .skip{display:block;text-align:center;margin-top:16px;font-weight:700;color:#7a7a7a;text-decoration:underline;background:none;border:0;width:100%;cursor:pointer}
+    .reassure{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12px;color:#6a6a6a;margin-top:14px}
+
+    /* loader */
+    .load-row{margin:16px 0}
+    .load-row .lab{display:flex;justify-content:space-between;font-weight:600;font-size:14px;margin-bottom:6px}
+    .load-row .track{height:12px;border:2px solid var(--onyx);border-radius:20px;background:#fff;overflow:hidden}
+    .load-row .track > i{display:block;height:100%;width:0;background:var(--green);transition:width .8s linear}
+
+    /* ===== App-styled preview (rebuilds the real app cards) ===== */
+    .phone{border:3px solid var(--onyx);border-radius:30px;background:#fff;overflow:hidden;box-shadow:0 6px 0 var(--blue);margin:6px 0 4px}
+    .phone .ph-top{background:var(--blue);color:#fff;padding:14px 16px}
+    .phone .ph-top .ttl{font-weight:800;font-size:16px}
+    .streak{display:flex;justify-content:space-between;margin-top:12px}
+    .streak .d{width:30px;height:30px;border-radius:50%;background:#ffffff22;border:1.5px solid #ffffff55;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+    .streak .d.on{background:var(--gold);color:var(--onyx);border-color:var(--onyx)}
+    .ph-body{padding:14px}
+    .story-card{position:relative;border:2px solid var(--onyx);border-radius:16px;overflow:hidden;aspect-ratio:16/10;margin-bottom:12px}
+    .story-card img{width:100%;height:100%;object-fit:cover}
+    .story-card .ov{position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(0,0,0,.8));display:flex;flex-direction:column;justify-content:flex-end;padding:14px;color:#fff}
+    .story-card .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:#ffffffdd;border:2px solid var(--onyx);display:flex;align-items:center;justify-content:center;font-size:18px}
+    /* quiz */
+    .quiz-q{font-weight:700;font-size:17px;margin:6px 2px 14px;text-align:center}
+    .quiz-opt{display:flex;align-items:center;gap:12px;padding:13px 16px;border:2px solid var(--onyx);border-radius:14px;background:#fff;margin-bottom:10px;font-weight:600;cursor:pointer;box-shadow:0 3px 0 var(--onyx)}
+    .quiz-opt:active{transform:translateY(3px);box-shadow:0 0 0 var(--onyx)}
+    .quiz-opt .lt{width:26px;height:26px;border-radius:50%;border:2px solid var(--onyx);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:0 0 auto}
+    .quiz-opt.correct{background:var(--green-3);box-shadow:0 3px 0 var(--green)}
+    .quiz-opt.correct .lt{background:var(--green);color:#fff;border-color:var(--green-1)}
+    .quiz-opt.wrong{background:var(--red-3)}
+    .feedback{text-align:center;font-weight:800;margin:8px 0 2px;min-height:24px}
+
+    .plan-list{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+    .plan-item{display:flex;gap:12px;align-items:center;border:2px solid var(--onyx);border-radius:14px;background:#fff;padding:12px;box-shadow:0 3px 0 var(--blue-2)}
+    .plan-item .day{width:42px;height:42px;border-radius:12px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;text-align:center;line-height:1.05;flex:0 0 auto}
+
+    /* soft-exit modal */
+    .modal-bg{position:fixed;inset:0;background:#000a;z-index:40;display:none;align-items:center;justify-content:center;padding:20px}
+    .modal-bg.show{display:flex}
+    .modal{background:var(--snow);border:2px solid var(--onyx);border-radius:var(--r-card);box-shadow:0 6px 0 var(--pink);padding:24px;max-width:380px;width:100%;text-align:center}
+
+    .center{text-align:center}
+    .mt8{margin-top:8px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+    .hero-img{width:100%;border-radius:var(--r-card);border:2px solid var(--onyx);box-shadow:0 4px 0 var(--blue);margin:6px 0 18px;aspect-ratio:16/10;object-fit:cover}
+    .ibu{display:block;margin:0 auto;width:148px;height:148px;object-fit:contain;animation:bob 3.2s ease-in-out infinite}
+    .ibu.sm{width:104px;height:104px}
+    @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+    .avatar{width:110px;height:110px;object-fit:contain;margin:0 auto 6px;display:block}
+    .appshot{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:50% 64%;border-radius:18px;border:2px solid var(--onyx);box-shadow:0 4px 0 var(--blue);display:block;margin:4px 0 16px;background:#fdf6ea}
+    /* review laurels */
+    .laurels{display:flex;gap:12px;margin:4px 0 16px}
+    .laurel{flex:1;text-align:center;border:2px solid var(--onyx);border-radius:16px;background:#fff;box-shadow:0 4px 0 var(--gold);padding:14px 8px}
+    .laurel .ln{display:block;font-family:var(--display);font-weight:900;font-size:30px;color:var(--blue)}
+    .laurel .ll{display:block;font-size:12px;font-weight:600;color:#555;margin-top:3px}
+    /* compare (graphical) */
+    .vs{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    .vs-card{display:flex;align-items:center;gap:14px;border:2px solid var(--onyx);border-radius:18px;padding:16px}
+    .vs-card .vs-ico{width:54px;height:54px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#dcd7d7}
+    .vs-card img.vs-ibu{width:66px;height:66px;flex:0 0 auto;object-fit:contain}
+    .vs-bad{background:#efecec}
+    .vs-bad svg{width:28px;height:28px;stroke:#8a8a8a;stroke-width:2;fill:none}
+    .vs-good{background:var(--green-3);box-shadow:0 4px 0 var(--green)}
+    .vs-or{align-self:center;font-weight:800;font-size:13px;color:#6a6a6a;background:#fff;border:2px solid var(--onyx);border-radius:20px;padding:3px 14px}
+    /* watch card (matches app daily-story "Watch" design) */
+    .watch-card{position:relative;border:2px solid var(--onyx);border-radius:16px;overflow:hidden;aspect-ratio:16/11;margin-bottom:12px;cursor:pointer}
+    .watch-card.playing{aspect-ratio:9/16}
+    .watch-card img.watch-bg{width:100%;height:100%;object-fit:cover;display:block}
+    .watch-ov{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.12),rgba(0,0,0,.8));display:flex;flex-direction:column;justify-content:flex-end;padding:15px;color:#fff}
+    .watch-lab{font-weight:800;font-size:13px;opacity:.92}
+    .watch-title{font-weight:800;font-size:18px;line-height:1.1;margin:4px 0 11px}
+    .watch-cta{display:flex;align-items:center;justify-content:space-between}
+    .watch-cta>.mins{font-size:12px;font-weight:700;opacity:.9}
+    .watch-play{display:inline-flex;align-items:center;gap:7px;background:var(--green);color:#fff;border:2px solid var(--onyx);border-radius:20px;padding:8px 15px;font-weight:800;font-size:13px;box-shadow:0 3px 0 var(--green-1)}
+    .watch-card video{width:100%;height:100%;object-fit:cover;display:block;background:#000}
+    /* rive mascot */
+    .rivewrap{width:176px;height:176px;margin:0 auto 2px;position:relative}
+    .rivewrap.sm{width:112px;height:112px;margin-bottom:4px}
+    .rivewrap img,.rivewrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;transition:opacity .25s}
+  </style>
+</head>
+<body>
+  <a href="#stage" class="skiplink">Skip to content</a>
+  <div id="app">
+    <div class="topbar">
+      <button class="back" id="backBtn" aria-label="Back">‹</button>
+      <div class="progress"><i id="prog"></i></div>
+      <button class="restart" id="restartBtn">Start over</button>
+    </div>
+    <div class="stage" id="stage"></div>
+    <div class="cta-dock" id="dock"></div>
+  </div>
+
+  <div class="modal-bg" id="exitModal">
+    <div class="modal">
+      <div class="t-hm">No rush. Keep your spot</div>
+      <p class="t-bs mt8">Want us to email you a gentle, no-pressure way to start whenever you're ready?</p>
+      <input class="field mt16" id="exitEmail" type="email" inputmode="email" placeholder="Your email" />
+      <button class="btn btn-tertiary" id="exitSave">Email me my starting point</button>
+      <button class="skip" id="exitDismiss">No thanks, continue</button>
+    </div>
+  </div>
+
+<script>
+/* ============================================================
+   Archives onboarding funnel (start.html)
+   Data-driven step machine. Diagnosis is computed from answers.
+   ============================================================ */
+(function(){
+  'use strict';
+
+  var SUPABASE_URL='https://kcgiugdfudbwtjjsvwia.supabase.co';
+  var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjZ2l1Z2RmdWRid3RqanN2d2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxOTYxNjgsImV4cCI6MjA2NDc3MjE2OH0.i4q-ZtYzdP6OuotC7Rk1EGC09oW9xj0iA5NQTCXOKTc';
+
+  /* ---------- icons (inline SVG, themeable) ---------- */
+  var I={
+    roots:'<svg viewBox="0 0 24 24"><path d="M12 3v18M12 7c0-2 2-3 4-3M12 11c0-2 2-3 4-3M12 7c0-2-2-3-4-3M12 11c0-2-2-3-4-3"/></svg>',
+    curiosity:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
+    kids:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.2"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 1.5-3.5 4-3.5"/></svg>',
+    deepen:'<svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M19 19H6a2 2 0 010-4h13"/></svg>',
+    book:'<svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/></svg>',
+    clock:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>',
+    compass:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M16 8l-2.5 5.5L8 16l2.5-5.5z"/></svg>',
+    shield:'<svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-7 9-7 9s-7-4-7-9V6z"/></svg>',
+    star:'<svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6L21 9.3l-4.5 4.2L17.7 21 12 17.6 6.3 21l1.2-7.5L3 9.3l6.4-.7z"/></svg>',
+    mosque:'<svg viewBox="0 0 24 24"><path d="M12 3c3 2 5 4 5 7H7c0-3 2-5 5-7zM5 11h14v9H5zM9 20v-4a3 3 0 016 0v4"/></svg>',
+    crown:'<svg viewBox="0 0 24 24"><path d="M4 8l3 9h10l3-9-5 4-3-6-3 6z"/></svg>',
+    globe:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+    map:'<svg viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg>'
+  };
+
+  /* ---------- era catalogue (chips) ---------- */
+  var ERAS=[
+    ['prophets','The Prophets',I.book],
+    ['baghdad','Golden Age of Baghdad',I.star],
+    ['andalus','Al-Andalus (Spain)',I.compass],
+    ['ottomans','The Ottomans',I.crown],
+    ['saladin','Saladin & the Crusades',I.shield],
+    ['scholars','The great scholars',I.book],
+    ['mughals','Mughal India',I.crown],
+    ['westafrica','West African empires',I.globe]
+  ];
+
+  /* ---------- skins ---------- */
+  var SKINS={
+    roots:{img:'/images/onboarding/skin-roots.jpg',label:'Reconnect with my roots'},
+    curiosity:{img:'/images/onboarding/skin-curiosity.jpg',label:'Pure curiosity'},
+    kids:{img:'/images/onboarding/skin-kids.jpg',label:'Teach my kids'},
+    deepen:{img:'/images/onboarding/skin-deepen.jpg',label:'Deepen what I know'}
+  };
+
+  /* ---------- step config (CRO-revised order) ---------- */
+  var STEPS=[
+    {type:'intro_skin',key:'skin',phase:'hook'},
+    {type:'slider',key:'connection',phase:'discover',title:'How connected do you feel to Islamic history right now?',
+      min:0,max:100,labels:['Not at all','Deeply'],fmt:function(v){return v<25?'Honestly, pretty disconnected':v<55?'I know a little':v<80?'I know a fair amount':'Very connected'}},
+    {type:'chips',key:'eras',phase:'discover',multi:true,title:'Which stories pull you in?',sub:'Pick as many as you like, and we\'ll build your plan around them.',options:ERAS,min:1},
+    {type:'stat',phase:'proof'},
+    {type:'choice',key:'blocker',phase:'discover',title:'What\'s gotten in the way?',sub:'Be honest. This shapes your plan most.',options:[
+      ['school','School skipped it entirely',I.book],
+      ['dry','Sources feel dry or academic',I.deepen],
+      ['start','I don\'t know where to start',I.compass],
+      ['time','I never find the time',I.clock],
+      ['authentic','I can\'t tell authentic from myth',I.shield]
+    ]},
+    {type:'likert',key:'likert',phase:'discover',title:'How much do these sound like you?',items:[
+      ['tell','I wish I knew these stories well enough to tell them'],
+      ['identity','I feel a gap between my identity and my history'],
+      ['finish','I start videos or books but rarely finish them'],
+      ['kids','I want my kids to grow up knowing this'],
+      ['empty','Doom-scrolling leaves me feeling empty']
+    ]},
+    {type:'review',phase:'proof'},
+    {type:'recap',phase:'discover'},
+    {type:'diagnosis',phase:'discover'},
+    {type:'compare',phase:'proof'},
+    {type:'email',key:'email',phase:'gate'},
+    {type:'loader',key:'cadence',phase:'build'},
+    {type:'results',phase:'reveal'}
+  ];
+
+  /* ---------- diagnosis model ---------- */
+  // categories: knowledge, time, access, identity
+  function computeDiagnosis(s){
+    var c={knowledge:18,time:14,access:16,identity:16};
+    var b=s.blocker;
+    if(b==='school'){c.knowledge+=34;c.identity+=10}
+    else if(b==='start'){c.knowledge+=26;c.access+=12}
+    else if(b==='dry'){c.access+=32;c.knowledge+=8}
+    else if(b==='authentic'){c.access+=34;c.knowledge+=6}
+    else if(b==='time'){c.time+=36;c.identity+=6}
+    var lk=s.likert||{};
+    if(lk.tell>=3)c.knowledge+=10; if(lk.identity>=3)c.identity+=16;
+    if(lk.finish>=3)c.time+=16; if(lk.kids>=3)c.identity+=10;
+    if(lk.empty>=3)c.identity+=6;
+    var conn=(s.connection==null?40:s.connection);
+    if(conn<40){c.knowledge+=8;c.identity+=8}
+    // normalize each to 0-100 with a cap
+    var max=Math.max(c.knowledge,c.time,c.access,c.identity,1);
+    var scale=Math.min(92,Math.max(60,max))/max; // keep top bar in a believable 60-92 band
+    var out={};Object.keys(c).forEach(function(k){out[k]=Math.round(Math.min(95,c[k]*scale))});
+    return out;
+  }
+  var CAT_META={
+    knowledge:{label:'Knowledge gaps',color:'var(--blue)'},
+    time:{label:'Time & consistency',color:'var(--gold)'},
+    access:{label:'Access to authentic sources',color:'var(--pink-2)'},
+    identity:{label:'Identity connection',color:'var(--acai)'}
+  };
+  var DEEPDIVE={
+    knowledge:{t:'Your biggest gap: the stories themselves',b:'This isn\'t a discipline problem. No one ever handed you these stories. School skipped a thousand years of history. Archives gives them to you in 5-minute pieces, in the right order, so it finally connects.'},
+    time:{t:'Your biggest gap: a way to stay consistent',b:'You don\'t lack interest. You lack a format that survives a busy day. One 5-minute story a day, with a streak that gently pulls you back, does what a 400-page book never will.'},
+    access:{t:'Your biggest gap: sources you can actually trust',b:'You\'re right to be careful. Most of what\'s online is myth dressed as history. Every Archives story is sourced and scholar-reviewed, so you get what actually happened, not myth.'},
+    identity:{t:'Your biggest gap: a felt connection to your story',b:'That gap between who you are and where you come from is real, and it closes faster than you\'d think. When the people in these stories stop being names and start being yours, something shifts.'}
+  };
+
+  /* ---------- state ---------- */
+  var KEY='archives_onb';
+  var state=load()||{};
+  if(!state.session_id) state.session_id='s_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  var idx=typeof state._idx==='number'?state._idx:0;
+  if(location.search.indexOf('reset=1')>-1){state={session_id:state.session_id};idx=0}
+
+  function save(){state._idx=idx;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+
+  /* ---------- analytics ---------- */
+  function fire(ga,p,fb,fp){
+    p=p||{};
+    try{if(typeof gtag==='function')gtag('event',ga,p)}catch(e){}
+    try{if(typeof fbq==='function'&&fb){var std={Lead:1,ViewContent:1,InitiateCheckout:1,CompleteRegistration:1,StartTrial:1,Subscribe:1};std[fb]?fbq('track',fb,fp||{}):fbq('trackCustom',fb,fp||{})}}catch(e){}
+    try{if(typeof ttq!=='undefined'&&fb){ttq.track(fb,fp||p||{})}}catch(e){}
+    try{if(typeof posthog!=='undefined'&&posthog.capture)posthog.capture(ga,p)}catch(e){}
+  }
+  function supa(extra){
+    var body=Object.assign({
+      session_id:state.session_id, email:state.email||null,
+      skin:state.skin||null, biggest_blocker:state.blocker||null,
+      connection:state.connection==null?null:state.connection,
+      eras:state.eras||[], answers:state, source:'onboarding'
+    },extra||{});
+    try{fetch(SUPABASE_URL+'/rest/v1/onboarding_responses',{method:'POST',keepalive:true,
+      headers:{apikey:SUPABASE_ANON,Authorization:'Bearer '+SUPABASE_ANON,'Content-Type':'application/json',Prefer:'return=minimal'},
+      body:JSON.stringify(body)}).catch(function(){})}catch(e){}
+  }
+
+  /* ---------- DOM ---------- */
+  var stage=document.getElementById('stage'), dock=document.getElementById('dock');
+  var prog=document.getElementById('prog'), backBtn=document.getElementById('backBtn'), restartBtn=document.getElementById('restartBtn');
+
+  function setProgress(){
+    // non-linear: jumps feel rewarding early
+    var pct=Math.round(8+ (idx/(STEPS.length-1))*92);
+    prog.style.width=pct+'%';
+    backBtn.classList.toggle('show', idx>0 && idx<STEPS.length-1);
+  }
+  function dockBtn(label,cls,fn,disabled){
+    dock.innerHTML=''; dock.style.display='';
+    var b=document.createElement('button');
+    b.className='btn '+(cls||'btn-tertiary'); b.textContent=label; if(disabled)b.setAttribute('disabled','');
+    b.onclick=fn; dock.appendChild(b); return b;
+  }
+  function clearDock(){dock.innerHTML='';dock.style.display='none'}
+
+  function el(html){var d=document.createElement('div');d.innerHTML=html.trim();return d.firstChild}
+  function screenWrap(inner){return '<div class="screen active">'+inner+'</div>'}
+
+  /* ---------- Rive mascots (progressive: static PNG shows instantly, swaps to the
+     animation once the .riv loads, so a heavy file never blocks the screen) ---------- */
+  var RIVE_INST=[];
+  function mascot(riv,png,sz){
+    // PNG sits behind a transparent canvas; the canvas has a real drawing buffer so Rive
+    // always has a surface to paint on. PNG is hidden only once the animation actually loads.
+    return '<div class="rivewrap'+(sz==='sm'?' sm':'')+'" data-riv="'+riv+'">'+
+      '<img src="'+png+'" alt="" loading="lazy"/><canvas width="384" height="384"></canvas></div>';
+  }
+  function mountMascots(){
+    if(typeof rive==='undefined'){ window.addEventListener('load',mountMascots,{once:true}); return; }
+    while(RIVE_INST.length){ try{RIVE_INST.pop().cleanup();}catch(e){} }
+    stage.querySelectorAll('.rivewrap[data-riv]').forEach(function(w){
+      var src=w.getAttribute('data-riv'),c=w.querySelector('canvas'),img=w.querySelector('img');
+      try{
+        var r=new rive.Rive({src:src,canvas:c,autoplay:true,
+          onLoad:function(){try{r.resizeDrawingSurfaceToCanvas();}catch(e){} if(img)img.style.opacity='0';},
+          onLoadError:function(){}});
+        RIVE_INST.push(r);
+      }catch(e){}
+    });
+  }
+
+  /* ---------- renderers ---------- */
+  function render(){
+    setProgress(); save();
+    var step=STEPS[idx];
+    fire('quiz_step',{step:idx,type:step.type,phase:step.phase});
+    stage.innerHTML=''; clearDock();
+    R[step.type](step);
+    stage.scrollTop=0;
+  }
+  function next(){ if(idx<STEPS.length-1){idx++;render()} }
+  function prev(){ if(idx>0){idx--;render()} }
+
+  var R={};
+
+  R.intro_skin=function(){
+    fire('quiz_start',{},'ViewContent');
+    var cards=Object.keys(SKINS).map(function(k){var s=SKINS[k];
+      return '<div class="imgopt" data-k="'+k+'"><img src="'+s.img+'" alt=""/><div class="lab">'+s.label+'</div></div>';
+    }).join('');
+    stage.innerHTML=screenWrap(
+      '<img class="ibu" src="/images/onboarding/ibu-teach.png" alt="Ibu, your guide"/>'+
+      '<div class="head" style="margin-top:4px">'+
+        '<div class="t-hero">Most of us never learned our own history.</div>'+
+        '<p class="t-bl muted mt16">Let\'s fix that in 5 minutes a day. First, what brought you here?</p>'+
+      '</div>'+
+      '<div class="body"><div class="grid">'+cards+'</div></div>'
+    );
+    stage.querySelectorAll('.imgopt').forEach(function(c){
+      c.onclick=function(){state.skin=c.getAttribute('data-k');fire('select_skin',{skin:state.skin});setTimeout(next,180)};
+    });
+  };
+
+  R.slider=function(step){
+    var v=state[step.key]==null?50:state[step.key];
+    stage.innerHTML=screenWrap(
+      '<div class="head"><div class="t-hxl">'+step.title+'</div></div>'+
+      '<div class="body"><div class="slider-wrap">'+
+        '<input type="range" id="sld" min="'+step.min+'" max="'+step.max+'" value="'+v+'"/>'+
+        '<div class="slider-ticks"><span>'+step.labels[0]+'</span><span>'+step.labels[1]+'</span></div>'+
+        '<div class="slider-val t-hm" id="sldv"></div>'+
+      '</div></div>'
+    );
+    var sld=document.getElementById('sld'), out=document.getElementById('sldv');
+    function upd(){out.textContent=step.fmt(+sld.value)}
+    sld.oninput=upd; upd();
+    dockBtn('Continue','btn-tertiary',function(){state[step.key]=+sld.value;next()});
+  };
+
+  R.chips=function(step){
+    var sel=state[step.key]||[];
+    stage.innerHTML=screenWrap(
+      '<div class="head"><div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
+      '<div class="body"><div class="chips">'+step.options.map(function(o){
+        var on=sel.indexOf(o[0])>-1;
+        return '<button class="chip'+(on?' selected':'')+'" data-v="'+o[0]+'"><span>'+o[1]+'</span></button>';
+      }).join('')+'</div></div>'
+    );
+    function refresh(){var b=dock.querySelector('.btn');if(b){ (sel.length>=(step.min||1))?b.removeAttribute('disabled'):b.setAttribute('disabled','') }}
+    stage.querySelectorAll('.chip').forEach(function(ch){
+      ch.onclick=function(){var v=ch.getAttribute('data-v');var i=sel.indexOf(v);
+        if(i>-1){sel.splice(i,1);ch.classList.remove('selected')}else{sel.push(v);ch.classList.add('selected')}
+        state[step.key]=sel;refresh();};
+    });
+    dockBtn('Continue','btn-tertiary',function(){state[step.key]=sel;next()}, sel.length<(step.min||1));
+  };
+
+  R.choice=function(step){
+    stage.innerHTML=screenWrap(
+      '<div class="head"><div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
+      '<div class="body"><div class="opts">'+step.options.map(function(o){
+        return '<button class="opt" data-v="'+o[0]+'"><span>'+o[1]+'</span><span class="check"></span></button>';
+      }).join('')+'</div></div>'
+    );
+    stage.querySelectorAll('.opt').forEach(function(b){
+      b.onclick=function(){state[step.key]=b.getAttribute('data-v');fire('select_'+step.key,{value:state[step.key]});
+        stage.querySelectorAll('.opt').forEach(function(x){x.classList.remove('selected')});b.classList.add('selected');
+        maybeSoftExit()||setTimeout(next,200);};
+    });
+  };
+
+  R.likert=function(step){
+    var ans=state[step.key]||{};
+    var scale=['No','A bit','Neutral','Yes','So much'];
+    stage.innerHTML=screenWrap(
+      '<div class="head"><div class="t-hxl">'+step.title+'</div></div>'+
+      '<div class="body"><div class="likert">'+step.items.map(function(it,i){
+        return '<div class="lk"><div class="q">'+it[1]+'</div><div class="lk-row" data-k="'+it[0]+'">'+
+          scale.map(function(s,n){return '<button data-n="'+n+'"'+(ans[it[0]]===n?' class="on"':'')+'>'+s+'</button>'}).join('')+
+        '</div></div>';
+      }).join('')+'</div></div>'
+    );
+    function done(){return step.items.every(function(it){return ans[it[0]]!=null})}
+    stage.querySelectorAll('.lk-row').forEach(function(row){
+      var k=row.getAttribute('data-k');
+      row.querySelectorAll('button').forEach(function(bt){
+        bt.onclick=function(){ans[k]=+bt.getAttribute('data-n');row.querySelectorAll('button').forEach(function(x){x.classList.remove('on')});bt.classList.add('on');
+          state[step.key]=ans;var b=dock.querySelector('.btn');if(b)done()?b.removeAttribute('disabled'):b.setAttribute('disabled','')};
+      });
+    });
+    dockBtn('Continue','btn-tertiary',function(){state[step.key]=ans;next()},!done());
+  };
+
+  R.stat=function(){
+    stage.innerHTML=screenWrap(
+      '<div class="head center" style="margin-top:14px"><div class="t-display">You\'re in good company</div></div>'+
+      '<div class="body">'+
+        '<img class="appshot" src="/images/onboarding/proof.jpg" alt="Families learning together on Archives" loading="lazy" width="820" height="512"/>'+
+        '<div class="stats3">'+
+          '<div><div class="n" data-c="100000">0</div><div class="l">learners</div></div>'+
+          '<div><div class="n" data-c="200">0</div><div class="l">stories</div></div>'+
+          '<div><div class="n" data-suffix="★">4.8</div><div class="l">App Store</div></div>'+
+        '</div>'+
+        '<div class="badges"><span class="badge">'+I.map+' 14 eras</span><span class="badge">'+I.clock+' 5 mins a day</span></div>'+
+      '</div>'
+    );
+    // count-up
+    stage.querySelectorAll('.n[data-c]').forEach(function(n){
+      var target=+n.getAttribute('data-c'),cur=0,steps=28,inc=target/steps,i=0;
+      var t=setInterval(function(){i++;cur+=inc;if(i>=steps){cur=target;clearInterval(t)}
+        n.textContent=(target>=1000?Math.round(cur/1000)+'k':Math.round(cur));},26);
+    });
+    dockBtn('Keep going','btn-tertiary',next);
+  };
+
+  var REVIEWS=[
+    ['Hana','My 6 year old daughter insists on sitting with me on Archives. We love questioning each other every evening after finishing the day\'s story.'],
+    ['Mohammed','A very informative app with excellent visuals, perfect for kids. They love the daily story and listening along.'],
+    ['Sumayah','The best Islamic stories and history app out there. We loved the Prophets eras and learning about all the Prophets.'],
+    ['Hala','Very simple and easy to follow stories with visuals. I downloaded it for my kids but now I love going through the stories myself.'],
+    ['Mostafa','The easiest way to learn Islamic history. A true gem for anyone passionate about learning their heritage.'],
+    ['Sarah','Highly recommended for students, researchers, and anyone who values spending time productively.'],
+    ['Abdul','I only learned about Marco Polo in school, never about Ibn Battuta. Archives lets me change that for my children.'],
+    ['Fatimah','The quizzes, stories and achievements make it really engaging for me and my students. Highly recommend.'],
+    ['Rashid','The daily story keeps me engaged with Islamic history, and it only takes me 5 minutes a day.'],
+    ['Ali','This app is a game changer. It keeps me interested all week and reminds me to stay focused on what really matters.']
+  ];
+  R.review=function(){
+    var alt=['','style="background:var(--acai-3);box-shadow:0 4px 0 var(--acai-1)"'];
+    stage.innerHTML=screenWrap(
+      '<div class="head center" style="margin-top:12px"><div class="t-display">Join over 50,000 learners</div></div>'+
+      '<div class="body">'+
+        '<div class="laurels">'+
+          '<div class="laurel"><span class="ln">4.9</span><span class="ll">Average rating</span></div>'+
+          '<div class="laurel"><span class="ln">350K+</span><span class="ll">Lessons completed</span></div>'+
+        '</div>'+
+        REVIEWS.map(function(r,i){
+          return '<div class="review" '+alt[i%2]+'><div class="who"><span>'+r[0]+'</span><span class="stars">★★★★★</span></div>'+
+            '<p class="t-bs" style="color:#1a1a1a">'+r[1]+'</p></div>';
+        }).join('')+
+      '</div>'
+    );
+    dockBtn('Continue','btn-tertiary',next);
+  };
+
+  R.recap=function(){
+    var conn=state.connection==null?40:state.connection;
+    var score=Math.max(12,Math.min(48,Math.round(conn*0.55)+8)); // low score = lots of room to grow
+    var profile=profileLabel();
+    stage.innerHTML=screenWrap(
+      '<div class="head center"><div class="t-hxl">Here\'s your starting point</div></div>'+
+      '<div class="body center">'+
+        '<div class="meter" style="--p:'+score+'%"><span class="num">'+score+'</span></div>'+
+        '<p class="t-bm muted">History Connection Score</p>'+
+        '<div class="profile-card"><img class="avatar" src="'+profile.img+'" alt=""/><div class="t-hm">You\'re '+profile.a+' <span style="color:var(--acai-1)">'+profile.name+'</span></div>'+
+          '<p class="t-bs mt8" style="color:#1a1a1a">'+profile.desc+'</p></div>'+
+        '<p class="t-bs muted mt16">Plenty of room to grow, and that\'s the fun part. Let\'s see exactly where to focus.</p>'+
+      '</div>'
+    );
+    dockBtn('Show me','btn-tertiary',next);
+  };
+  function profileLabel(){
+    var s=state.skin, A='/images/onboarding/';
+    if(s==='kids')return {a:'',name:'The Storykeeper',img:A+'avatar-storyteller.png',desc:'You want the next generation to grow up knowing who they are.'};
+    if(s==='curiosity')return {a:'',name:'The Explorer',img:A+'avatar-cartographer.png',desc:'You follow the thread wherever it leads, and there\'s a lot to follow.'};
+    if(s==='deepen')return {a:'',name:'The Scholar-in-progress',img:A+'avatar-astronomer.png',desc:'You know some. Now you want the full, connected picture.'};
+    return {a:'',name:'The Reconnector',img:A+'avatar-scholar.png',desc:'You feel the pull of a history that was never properly handed to you.'};
+  }
+
+  R.diagnosis=function(){
+    var d=computeDiagnosis(state);
+    var order=Object.keys(d).sort(function(a,b){return d[b]-d[a]});
+    var top=order[0];
+    var bars=order.map(function(k){var m=CAT_META[k];
+      return '<div class="bar"><div class="bar-top"><span>'+m.label+'</span><span>'+d[k]+'%</span></div>'+
+        '<div class="track"><i data-w="'+d[k]+'" style="background:'+m.color+'"></i></div></div>';
+    }).join('');
+    var dd=DEEPDIVE[top];
+    stage.innerHTML=screenWrap(
+      '<img class="ibu sm" src="/images/onboarding/ibu-lantern.png" alt=""/>'+
+      '<div class="head center"><div class="t-hxl">What\'s really standing between you and your history</div>'+
+        '<p class="t-bs muted mt8">Built from your answers, not a generic quiz.</p></div>'+
+      '<div class="body"><div class="bars">'+bars+'</div>'+
+        '<div class="deepdive"><span class="tag">Your #1 to fix</span><div class="t-hm">'+dd.t+'</div>'+
+          '<p class="t-bs mt8" style="color:#1a1a1a">'+dd.b+'</p></div>'+
+      '</div>'
+    );
+    fire('diagnosis_view',{top:top});
+    setTimeout(function(){stage.querySelectorAll('.track > i').forEach(function(i){i.style.width=i.getAttribute('data-w')+'%'})},120);
+    dockBtn('Build my plan','btn-tertiary',next);
+  };
+
+  R.compare=function(){
+    stage.innerHTML=screenWrap(
+      '<div class="head center" style="margin-top:10px"><div class="t-hxl">Two ways to spend 5 minutes</div></div>'+
+      '<div class="body"><div class="vs">'+
+        '<div class="vs-card vs-bad">'+
+          '<div class="vs-ico"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></div>'+
+          '<div><div class="t-bm">Doom-scrolling</div><p class="t-bs muted mt8">Endless, forgettable, a little empty afterward.</p></div>'+
+        '</div>'+
+        '<div class="vs-or">vs</div>'+
+        '<div class="vs-card vs-good">'+
+          '<img class="vs-ibu" src="/images/onboarding/ibu-teach.png" alt=""/>'+
+          '<div><div class="t-bm">5 minutes on Archives</div><p class="t-bs mt8" style="color:#1a1a1a">One real story you actually remember, and want to tell.</p></div>'+
+        '</div>'+
+      '</div></div>'
+    );
+    dockBtn('I\'m ready','btn-tertiary',next);
+  };
+
+  R.email=function(step){
+    fire('results_gate_view',{});
+    stage.innerHTML=screenWrap(
+      '<img class="ibu sm" src="/images/onboarding/ibu-wave.png" alt=""/>'+
+      '<div class="head"><div class="t-hxl">Your plan is ready.</div><p class="t-bl muted mt8">Where should we send it, so you never lose your place?</p></div>'+
+      '<div class="body">'+
+        '<label for="em" class="t-bm" style="display:block;margin-bottom:8px">Your email</label>'+
+        '<input class="field" id="em" type="email" inputmode="email" autocomplete="email" aria-label="Your email address" placeholder="you@email.com"/>'+
+        '<div class="reassure">'+I.shield+'<span>We will only email your plan and the occasional nudge.</span></div>'+
+        '<div id="emErr" aria-live="polite" class="t-bs" style="color:var(--red);min-height:18px;margin-top:6px"></div>'+
+      '</div>'
+    );
+    var em=document.getElementById('em'); if(state.email)em.value=state.email;
+    function valid(){return /.+@.+\..+/.test(em.value.trim())}
+    em.oninput=function(){var b=dock.querySelector('.btn');b&&(valid()?b.removeAttribute('disabled'):b.setAttribute('disabled',''))};
+    dockBtn('Reveal my plan','btn-tertiary',function(){
+      state.email=em.value.trim();
+      sha256(state.email).then(function(h){try{if(typeof ttq!=='undefined'&&h)ttq.identify({email:h})}catch(e){}});
+      fire('quiz_complete',{},'CompleteRegistration'); fire('email_submit',{},'Lead');
+      supa({source:'onboarding_email'}); next();
+    }, !valid());
+    var sk=el('<button class="skip">I\'ll add it later</button>');
+    sk.onclick=function(){state.email=null;fire('quiz_skip_email',{}); supa({source:'onboarding_skip'}); next()};
+    dock.appendChild(sk);
+  };
+
+  R.loader=function(step){
+    var rows=[['Mapping your eras',0],['Matching the right stories',0],['Setting your pace',0]];
+    stage.innerHTML=screenWrap(
+      '<img class="ibu sm" src="/images/onboarding/ibu-glide.png" alt=""/>'+
+      '<div class="head center" style="margin-top:6px"><div class="t-hxl">Building your journey…</div></div>'+
+      '<div class="body">'+rows.map(function(r,i){
+        return '<div class="load-row" data-i="'+i+'"><div class="lab"><span>'+r[0]+'</span><span class="pct">0%</span></div><div class="track"><i></i></div></div>';
+      }).join('')+
+      '<div id="snuck" style="display:none;margin-top:22px">'+
+        '<div class="t-hm center">Quick one. When do you learn best?</div>'+
+        '<div class="opts mt16">'+
+          '<button class="opt" data-c="morning"><span>🌅 Mornings</span><span class="check"></span></button>'+
+          '<button class="opt" data-c="evening"><span>🌙 Evenings</span><span class="check"></span></button>'+
+        '</div></div>'+
+      '</div>'
+    );
+    var els=[].slice.call(stage.querySelectorAll('.load-row'));
+    var step_i=0;
+    function run(){
+      if(step_i>=els.length){ // reveal snuck-in question
+        document.getElementById('snuck').style.display='block';
+        stage.querySelectorAll('#snuck .opt').forEach(function(b){
+          b.onclick=function(){state.cadence=b.getAttribute('data-c');fire('select_cadence',{cadence:state.cadence});setTimeout(next,220)};
+        });
+        return;
+      }
+      var row=els[step_i], bar=row.querySelector('i'), pct=row.querySelector('.pct');
+      var v=0; var t=setInterval(function(){v+=Math.random()*22+8;if(v>=100){v=100;clearInterval(t);step_i++;setTimeout(run,180)}
+        bar.style.width=v+'%';pct.textContent=Math.round(v)+'%';},120);
+    }
+    run();
+  };
+
+  R.results=function(){
+    fire('results_view',{},'ViewContent');
+    var eraNames=(state.eras||[]).map(function(id){var e=ERAS.filter(function(x){return x[0]===id})[0];return e?e[1]:null}).filter(Boolean);
+    var when=state.cadence==='morning'?'each morning':'each evening';
+    // Day 1 is always the story of Nuh (that is the real video we show). Their chosen eras come next.
+    var others=eraNames.filter(function(n){return n!=='The Prophets'});
+    var planEras=['The Prophets'].concat(others).slice(0,3);
+    if(planEras.length<2)planEras.push('Golden Age of Baghdad');
+    var nextBit=others.length?(', then '+others.slice(0,2).join(' & ')):'';
+    stage.innerHTML=screenWrap(
+      '<img class="ibu sm" src="/images/onboarding/ibu-celebrate.png" alt=""/>'+
+      '<div class="head"><div class="t-hxl">Your 30-day journey is ready</div>'+
+        '<p class="t-bs muted mt8">You begin with the story of <b>Nuh (Noah)</b>'+nextBit+'. One 5-minute story '+when+'.</p></div>'+
+      '<div class="body">'+
+        '<div class="t-bm" style="margin:2px 0 8px">Here is your first story. Tap to watch.</div>'+
+        '<div class="watch-card" id="watchCard">'+
+          '<img class="watch-bg" src="/images/onboarding/noah-thumb.jpg" alt="Nuh and the Great Flood"/>'+
+          '<div class="watch-ov">'+
+            '<div class="watch-lab">Day 1 of your journey</div>'+
+            '<div class="watch-title">Nuh and the Great Flood</div>'+
+            '<div class="watch-cta"><span class="mins">2 min watch</span><span class="watch-play">▶ Watch</span></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="quiz-q">Then try a question. How long did Nuh (عليه السلام) call his people to Allah?</div>'+
+        '<div id="quizopts">'+
+          [['A','500 years'],['B','750 years'],['C','950 years'],['D','1,000 years']].map(function(o){
+            return '<div class="quiz-opt" data-k="'+o[0]+'"><span class="lt">'+o[0]+'</span><span>'+o[1]+'</span></div>';
+          }).join('')+
+        '</div><div class="feedback" id="fb"></div>'+
+        '<div class="plan-list">'+
+          planEras.map(function(n,i){return '<div class="plan-item"><div class="day">Week<br>'+(i+1)+'</div><div><div class="t-bm">'+n+'</div><div class="t-bs muted">'+(i===0?'Start here tonight':'Unlocks as you go')+'</div></div></div>'}).join('')+
+        '</div>'+
+      '</div>'
+    );
+    // Watch card -> play the real Noah reel (HLS)
+    var wc=document.getElementById('watchCard');
+    if(wc)wc.onclick=function(){
+      if(wc.dataset.playing)return; wc.dataset.playing='1'; wc.classList.add('playing');
+      fire('preview_video_play',{story:'noah-1'});
+      var url='https://d1bcceam8ucosn.cloudfront.net/prophets/6-noah-1/hls/reel.m3u8';
+      var v=document.createElement('video'); v.setAttribute('playsinline',''); v.controls=true; v.autoplay=true;
+      wc.innerHTML=''; wc.appendChild(v);
+      if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=url;}
+      else if(window.Hls&&Hls.isSupported()){var h=new Hls();h.loadSource(url);h.attachMedia(v);}
+      else{v.src=url;}
+      v.play().catch(function(){});
+    };
+    // quiz (real Noah question, correct = C: 950 years)
+    var answered=false;
+    stage.querySelectorAll('.quiz-opt').forEach(function(o){
+      o.onclick=function(){if(answered)return;answered=true;var k=o.getAttribute('data-k');var fbEl=document.getElementById('fb');
+        if(k==='C'){o.classList.add('correct');fbEl.textContent='Right. 950 years, a thousand less fifty, from Surah al-Ankabut. The kind of fact that stays with you.';fbEl.style.color='var(--green)';}
+        else{o.classList.add('wrong');stage.querySelector('.quiz-opt[data-k="C"]').classList.add('correct');fbEl.textContent='It was 950 years, a thousand less fifty. Now you will not forget it.';fbEl.style.color='var(--pink)';}
+        fire('preview_quiz_answer',{correct:k==='C'});
+      };
+    });
+    supa({source:'results_view'});
+    // Results is a long scrolling reveal, so use an inline CTA at the end, not the fixed dock.
+    clearDock();
+    var go=el('<button class="btn btn-gold" style="margin-top:18px">Start my journey</button>');
+    go.onclick=goPaywall;
+    stage.querySelector('.screen .body').appendChild(go);
+    var fine=el('<p class="t-bs muted center mt8" style="margin-bottom:10px">Your first story is ready to play.</p>');
+    stage.querySelector('.screen .body').appendChild(fine);
+  };
+
+  function goPaywall(){
+    fire('view_paywall_intent',{},'InitiateCheckout');
+    var q='sid='+encodeURIComponent(state.session_id)+
+          '&skin='+encodeURIComponent(state.skin||'')+
+          '&eras='+encodeURIComponent((state.eras||[]).join(','))+
+          (state.email?'&email='+encodeURIComponent(state.email):'')+
+          (state.cadence?'&cadence='+encodeURIComponent(state.cadence):'');
+    location.href='/paywall.html?'+q;
+  }
+
+  /* ---------- soft-exit (narrow trigger) ---------- */
+  function maybeSoftExit(){
+    var low=(state.blocker==='time') && (state.connection!=null&&state.connection<25) && ((state.eras||[]).length<=1);
+    if(!low || state._exitShown) return false;
+    state._exitShown=true;
+    var m=document.getElementById('exitModal'); m.classList.add('show');
+    fire('soft_exit_shown',{});
+    document.getElementById('exitSave').onclick=function(){var e=document.getElementById('exitEmail').value.trim();
+      if(/.+@.+\..+/.test(e)){state.email=e;fire('soft_exit_email',{},'Lead');supa({source:'soft_exit'})}
+      m.classList.remove('show');next();};
+    document.getElementById('exitDismiss').onclick=function(){m.classList.remove('show');fire('soft_exit_dismiss',{});next()};
+    return true;
+  }
+
+  /* ---------- sha256 (advanced matching) ---------- */
+  function sha256(str){if(!window.crypto||!crypto.subtle)return Promise.resolve(null);
+    return crypto.subtle.digest('SHA-256',new TextEncoder().encode((str||'').trim().toLowerCase())).then(function(b){
+      return Array.prototype.map.call(new Uint8Array(b),function(x){return('0'+x.toString(16)).slice(-2)}).join('')});}
+
+  /* ---------- nav ---------- */
+  backBtn.onclick=prev;
+  restartBtn.onclick=function(){if(confirm('Start the quiz over?')){state={session_id:state.session_id};idx=0;render()}};
+
+  render();
+})();
+</script>
+</body>
+</html>

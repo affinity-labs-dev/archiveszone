@@ -1,0 +1,16 @@
+{
+  "name": "Archives - Learn Islamic History",
+  "short_name": "Archives",
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "ai.affinitylabs.archivesexpo",
+      "url": "https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/us/app/archives-islamic-history/id6751173663"
+    }
+  ]
+}
