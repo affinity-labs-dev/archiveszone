@@ -107,6 +107,19 @@
     .cta-dock{flex:0 0 auto;z-index:25;background:var(--snow);box-shadow:0 -1px 0 #0000001a;
       padding:14px var(--page-px) calc(14px + env(safe-area-inset-bottom))}
 
+    /* On wider screens (tablet/desktop) let the whole document scroll instead of
+       trapping scroll inside .stage — that nested scroll showed an ugly floating
+       scrollbar mid-window. The progress bar and CTA dock stay put via sticky, so
+       the app-like feel is preserved while the normal window scrollbar is used.
+       Mobile keeps the fixed 100dvh app shell (above). */
+    @media (min-width:768px){
+      html,body{height:auto}
+      #app{height:auto;min-height:100dvh;overflow:visible}
+      .topbar{position:sticky;top:0}
+      .stage{overflow:visible;min-height:auto}
+      .cta-dock{position:sticky;bottom:0}
+    }
+
     /* ===== Option cards ===== */
     .opts{display:flex;flex-direction:column;gap:12px}
     .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;
@@ -493,6 +506,7 @@
     stage.innerHTML=''; clearDock();
     R[step.type](step);
     stage.scrollTop=0;
+    window.scrollTo(0,0); // desktop uses document scroll; reset to top on each step
   }
   function next(){ if(idx<STEPS.length-1){idx++;render()} }
   function prev(){ if(idx>0){idx--;render()} }

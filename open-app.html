@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="en"><head>
+    <!-- Google tag (gtag.js) -->
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-X3WFXSL1DG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-X3WFXSL1DG');
+    </script>
+
+    <script id="vtag-ai-js" async="" src="https://r2.leadsy.ai/tag.js" data-pid="DX1oecml89TGuRPE" data-version="062024"></script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '2673422029698646');
+    fbq('track', 'PageView');
+    </script>
+    <!-- End Meta Pixel Code -->
+
+    <!-- TikTok Pixel Code Start -->
+    <script>
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+
+      ttq.load('D8PGMORC77U8IPSBIE6G');
+      ttq.page();
+    }(window, document, 'ttq');
+    </script>
+    <!-- TikTok Pixel Code End -->
+
+    <!-- TikTok enhanced events: SPA pageviews, downloads, registration — pixel + server-side CAPI (deduped by event_id) -->
+    <script>
+    (function () {
+      var CAPI_URL = 'https://kcgiugdfudbwtjjsvwia.supabase.co/functions/v1/tiktok-events';
+      var SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjZ2l1Z2RmdWRid3RqanN2d2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxOTYxNjgsImV4cCI6MjA2NDc3MjE2OH0.i4q-ZtYzdP6OuotC7Rk1EGC09oW9xj0iA5NQTCXOKTc';
+
+      function genId() { return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12); }
+      function getCookie(name) { var m = document.cookie.match('(?:^|;)\\s*' + name + '=([^;]+)'); return m ? decodeURIComponent(m[1]) : ''; }
+
+      // Persist ttclid from the ad-click landing URL so later events keep attribution.
+      try { var _tc = new URLSearchParams(location.search).get('ttclid'); if (_tc) localStorage.setItem('ttclid', _tc); } catch (e) {}
+      function ttclid() { try { return localStorage.getItem('ttclid') || ''; } catch (e) { return ''; } }
+
+      // SHA-256 hex — used for browser-side Advanced Matching (server re-hashes for CAPI).
+      function sha256(str) {
+        if (!window.crypto || !crypto.subtle) return Promise.resolve(null);
+        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function (buf) {
+          return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+        });
+      }
+
+      // Fire one event to BOTH the browser pixel and the server, sharing an event_id so
+      // TikTok deduplicates the pair (best signal, resilient to browser/ITP loss).
+      function fire(name, properties, email) {
+        var eid = genId();
+        var props = properties || {};
+        if (window.ttq) ttq.track(name, props, { event_id: eid });
+        try {
+          fetch(CAPI_URL, {
+            method: 'POST',
+            keepalive: true,
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPA_ANON, 'Authorization': 'Bearer ' + SUPA_ANON },
+            body: JSON.stringify({
+              event: name,
+              event_id: eid,
+              event_time: Math.floor(Date.now() / 1000),
+              url: location.href,
+              properties: props,
+              email: email || undefined,
+              ttclid: ttclid() || undefined,
+              ttp: getCookie('_ttp') || undefined
+            })
+          }).catch(function () {});
+        } catch (e) {}
+      }
+
+      function viewProps() {
+        return { contents: [{ content_id: location.pathname, content_type: 'product_group', content_name: document.title || location.pathname }] };
+      }
+
+      // 1) SPA route changes -> Pageview (pixel) + ViewContent. Only the first load fires natively.
+      function trackPage() {
+        if (window.ttq) ttq.page();
+        if (window.fbq) fbq('track', 'PageView');
+        fire('ViewContent', viewProps());
+      }
+      var lastPath = location.pathname;
+      function onNavigate() { if (location.pathname === lastPath) return; lastPath = location.pathname; setTimeout(trackPage, 60); }
+      var _push = history.pushState; history.pushState = function () { var r = _push.apply(this, arguments); onNavigate(); return r; };
+      var _replace = history.replaceState; history.replaceState = function () { var r = _replace.apply(this, arguments); onNavigate(); return r; };
+      window.addEventListener('popstate', onNavigate);
+      fire('ViewContent', viewProps()); // initial load (pixel already sent Pageview)
+
+      // 2) Store-download clicks -> Download (covers every CTA, all pages)
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!a) return;
+        var href = a.href || '';
+        var store = href.indexOf('apps.apple.com') !== -1 ? 'App Store' : (href.indexOf('play.google.com') !== -1 ? 'Google Play' : null);
+        if (!store) return;
+        fire('Download', { contents: [{ content_id: 'archives-app', content_type: 'product', content_name: store }] });
+        if (window.fbq) fbq('track', 'Lead', { content_name: store });
+      }, true);
+
+      // 3) Email signup forms -> CompleteRegistration (+ hashed identify for browser matching)
+      document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!form || !form.querySelector) return;
+        var input = form.querySelector('input[type="email"]');
+        if (!input) return;
+        var email = (input.value || '').trim().toLowerCase();
+        if (!email || email.indexOf('@') === -1) return;
+        sha256(email).then(function (hashed) { if (window.ttq && hashed) ttq.identify({ email: hashed }); });
+        fire('CompleteRegistration', { contents: [{ content_id: 'archives-app', content_type: 'product', content_name: 'App link signup' }] }, email);
+        if (window.fbq) fbq('track', 'CompleteRegistration');
+      }, true);
+    })();
+    </script>
+
+    <meta name="facebook-domain-verification" content="fxfcyi3wlgyvhhsmbmt9qdujwxlzzz">
+    
+    <!-- Smart App Banner for iOS -->
+    <meta name="apple-itunes-app" content="app-id=6751173663">
+    
+    <!-- Smart App Banner for Android (Google Play) -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <title>Archives - Learn Islamic History</title>
+    <meta name="description" content="Turn Islamic history into a game! Join thousands learning through bite-sized quests, daily streaks, and AI-powered quizzes. Unlock the stories of Ibn Khaldun, Saladin &amp; more.">
+    <meta name="author" content="Archives">
+    <link rel="icon" href="/lovable-uploads/413e869f-48d1-41d8-9ee0-e1c8ba1ac2bf.png" type="image/png">
+
+    <!-- Self-hosted TikTok Sans (matches the in-app design system). Preload the
+         weights used above the fold: condensed-black display + regular body. -->
+    <link rel="preload" href="/fonts/tiktoksans-condensed-black.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="preload" href="/fonts/tiktoksans-regular.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="preload" href="/fonts/tiktoksans-medium.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="preload" href="/fonts/tiktoksans-semibold.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="preload" href="/fonts/tiktoksans-bold.woff2" as="font" type="font/woff2" crossorigin="">
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://archiveszone.app/#org",
+          "name": "Archives",
+          "url": "https://archiveszone.app/",
+          "logo": "https://archiveszone.app/images/logo-dark.png",
+          "sameAs": ["https://www.instagram.com/baselgazi", "https://web.archiveszone.app/"]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://archiveszone.app/#website",
+          "url": "https://archiveszone.app/",
+          "name": "Archives",
+          "description": "Learn Islamic history in five minutes a day.",
+          "publisher": { "@id": "https://archiveszone.app/#org" }
+        },
+        {
+          "@type": "MobileApplication",
+          "name": "Archives - Islamic History",
+          "operatingSystem": "iOS, Android",
+          "applicationCategory": "EducationalApplication",
+          "url": "https://archiveszone.app/",
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "1000" },
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+        }
+      ]
+    }
+    </script>
+
+    <meta property="og:title" content="Archives - Turn History into a Game">
+    <meta property="og:description" content="Learn Islamic history through gamified quests, daily streaks, and AI-powered lessons. Discover the stories of the Islamic golden age, Ottoman Empire, and legendary figures.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/lovable-uploads/41cb4ead-d67e-478a-93ed-b1cd8d59f006.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@lovable_dev">
+    <meta name="twitter:title" content="Archives - Gamified Islamic History">
+    <meta name="twitter:description" content="Turn learning into adventure with bite-sized Islamic history quests, XP tracking, and interactive timelines spanning from the Prophet's era to the Ottoman Empire.">
+    <meta name="twitter:image" content="/lovable-uploads/41cb4ead-d67e-478a-93ed-b1cd8d59f006.png">
+    <script type="module" async="" crossorigin="" src="/assets/app-DkuPneLQ.js"></script>
+    <link rel="modulepreload" crossorigin="" href="/assets/vendor-Cs4HW2rj.js">
+    <link rel="stylesheet" crossorigin="" href="/assets/app-BUEtgGl_.css">
+  </head>
+  <body>
+    <!-- Meta Pixel noscript fallback -->
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2673422029698646&amp;ev=PageView&amp;noscript=1"></noscript>
+    <div id="root" data-server-rendered="true"><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events:none"><ol tabindex="-1" class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol></div><div class="min-h-screen flex items-center justify-center bg-background"><p class="text-muted-foreground">Redirecting to app store...</p></div><script>window.__staticRouterHydrationData = JSON.parse("{\"loaderData\":{\"0\":null},\"actionData\":null,\"errors\":null}");</script></div>
+<script>window.__VITE_REACT_SSG_HASH__ = 'vqxgwpl607'</script>
+  
+
+</body></html>

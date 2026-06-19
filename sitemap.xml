@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://archiveszone.app/</loc><priority>1.0</priority></url>
+  <url><loc>https://archiveszone.app/family</loc><priority>0.9</priority></url>
+  <url><loc>https://archiveszone.app/curiosity</loc><priority>0.9</priority></url>
+  <url><loc>https://archiveszone.app/reconnect</loc><priority>0.9</priority></url>
+  <url><loc>https://archiveszone.app/schools</loc><priority>0.8</priority></url>
+  <url><loc>https://archiveszone.app/mosques</loc><priority>0.8</priority></url>
+  <url><loc>https://archiveszone.app/podcast</loc><priority>0.7</priority></url>
+  <url><loc>https://archiveszone.app/privacy</loc><priority>0.3</priority></url>
+  <url><loc>https://archiveszone.app/terms</loc><priority>0.3</priority></url>
+  <url><loc>https://archiveszone.app/support</loc><priority>0.4</priority></url>
+</urlset>
