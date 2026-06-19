@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
-  <title>Choose your plan — Archives</title>
+  <title>Choose your plan | Archives</title>
   <meta name="description" content="Unlock your personal journey through Islamic history. Start with a 7-day free trial." />
   <meta name="robots" content="noindex,follow" />
   <link rel="icon" href="/lovable-uploads/413e869f-48d1-41d8-9ee0-e1c8ba1ac2bf.png" type="image/png" />
@@ -99,7 +99,7 @@
 
     <div class="head">
       <div class="t-hero" id="pwTitle">Your journey is ready to begin.</div>
-      <p class="t-bm muted" style="margin-top:10px" id="pwSub">Unlock every era, the daily story, and Ibu, your AI guide.</p>
+      <p class="t-bm muted" style="margin-top:10px" id="pwSub">Unlock all eras, all Daily Stories, and Ibu, your learning Guide.</p>
       <div class="trust-row">
         <span class="pill">★ 4.9 rating</span><span class="pill">50,000+ learners</span><span class="pill">Cancel anytime</span>
       </div>
@@ -110,9 +110,9 @@
     <ul class="included" id="included">
       <li><span class="ic" data-check></span><span>Every era, from the Prophets to the Ottomans</span></li>
       <li><span class="ic" data-check></span><span>A new 5-minute story every day, with streaks</span></li>
-      <li><span class="ic" data-check></span><span>Ibu, your AI guide — ask anything, anytime</span></li>
+      <li><span class="ic" data-check></span><span>Ibu, your learning guide, ask anything, anytime</span></li>
       <li><span class="ic" data-check></span><span>Quizzes, XP and achievements as you learn</span></li>
-      <li><span class="ic" data-check></span><span>Sourced and scholar-reviewed. No myths.</span></li>
+      <li><span class="ic" data-check></span><span>Carefully researched and sourced. No myths.</span></li>
     </ul>
 
     <button class="btn" id="checkoutBtn">Start my 7-day free trial</button>
@@ -152,7 +152,7 @@
      link. The redemption link is only returned for ANONYMOUS web purchases, so
      we configure with an anonymous app-user-id and pass the quiz session id as
      metadata for attribution. The app handles the universal link (redeemWebPurchase). */
-  var RC_WEB_API_KEY = 'rcb_sb_cgUyvSQTikiZyEYbMfKWPxmLx';   // sandbox Web Billing key
+  var RC_WEB_API_KEY = 'rcb_yQedavJlsbzBERTqkBYHIDtKYkDq';   // production Web Billing key
   var _rc=null,_RC=null;
   function rcConfigured(){ return !!RC_WEB_API_KEY; }
   async function rcInstance(){
@@ -179,12 +179,6 @@
   var selected='annual';
   var onb=readOnb();
 
-  /* personalize headline */
-  (function(){
-    var eras=onb.eras||[];
-    if(eras.length){ document.getElementById('pwSub').textContent='Unlock '+(eras.length>1?eras.length+' eras you picked':'the era you picked')+', the daily story, and Ibu, your AI guide.'; }
-  })();
-
   var plansEl=document.getElementById('plans');
   function renderPlans(){
     plansEl.innerHTML=PLANS.map(function(p){
@@ -209,9 +203,12 @@
     document.getElementById('renewNote').textContent = p.trial==='free'
       ? '7 days free, then '+amt+'. Cancel anytime before the trial ends and you pay nothing.'
       : amt+', billed today. Cancel anytime.';
-    document.getElementById('faqRenew').textContent = p.trial==='free'
-      ? 'You get 7 days free. After that your plan renews at '+amt+' until you cancel. Cancel anytime before the trial ends and you are charged nothing.'
-      : 'Your plan renews at '+amt+' until you cancel. You can cancel anytime from your account.';
+    // The free trial is the 7-day trial on the Yearly plan, so this answer always
+    // describes that (independent of which plan is currently selected).
+    var annual=planById('annual');
+    var annualAmt=annual.amt||'the yearly price';
+    document.getElementById('faqRenew').textContent =
+      'You get 7 days completely free. When the trial ends, you are charged '+annualAmt+' for a full year, and it renews yearly until you cancel. Cancel anytime before the trial ends and you pay nothing.';
   }
   renderPlans(); selectPlan('annual');
   fire('view_paywall',{content_name:'paywall'},'ViewContent',{content_name:'paywall'});
