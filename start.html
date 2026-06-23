@@ -448,7 +448,10 @@
       headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON},
       body:JSON.stringify({event:name,event_id:eid,event_time:Math.floor(Date.now()/1000),url:location.href,properties:props||{},email:email||undefined,ttclid:ttClid()||undefined,ttp:ttCookie('_ttp')||undefined})}).catch(function(){});}catch(e){}
   }
-  function ttFire(name,props,email){var eid=ttGenId();props=props||{};try{if(typeof ttq!=='undefined')ttq.track(name,props,{event_id:eid});}catch(e){}ttCapi(name,props,eid,email);}
+  // TikTok requires content_id on every event (VSA matching). Always supply content_id +
+  // content_type + a contents[] entry, deriving the id from content_name when not given.
+  function ttNorm(props){props=props||{};var cid=props.content_id||props.content_name||'archives-app';if(!props.content_id)props.content_id=cid;if(!props.content_type)props.content_type='product';if(!props.contents)props.contents=[{content_id:cid,content_type:props.content_type,content_name:props.content_name||cid,quantity:props.quantity||1}];return props;}
+  function ttFire(name,props,email){var eid=ttGenId();props=ttNorm(props);try{if(typeof ttq!=='undefined')ttq.track(name,props,{event_id:eid});}catch(e){}ttCapi(name,props,eid,email);}
   function fire(ga,p,fb,fp){
     p=p||{};
     try{if(typeof gtag==='function')gtag('event',ga,p)}catch(e){}

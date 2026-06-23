@@ -91,7 +91,7 @@
     try{if(typeof gtag==='function')gtag('event','purchase',{transaction_id:params.get('tx')||undefined,currency:cur,value:val,items:[{item_id:plan,item_name:'Archives '+plan}]});}catch(e){}
     try{if(typeof fbq==='function'){fbq('track','StartTrial',{value:val,currency:cur});fbq('track','Subscribe',{value:val,currency:cur});}}catch(e){}
     // TikTok: PIXEL half of CompletePayment, sharing the event_id the paywall sent to CAPI → TikTok dedups the pair.
-    try{if(typeof ttq!=='undefined'){ttq.track('CompletePayment',{content_id:'plan_'+plan,content_type:'product',content_name:'Archives '+plan,quantity:1,value:val,currency:cur},eid?{event_id:eid}:undefined);}}catch(e){}
+    try{if(typeof ttq!=='undefined'){ttq.track('CompletePayment',{content_id:'plan_'+plan,content_type:'product',content_name:'Archives '+plan,quantity:1,contents:[{content_id:'plan_'+plan,content_type:'product',content_name:'Archives '+plan,quantity:1}],value:val,currency:cur},eid?{event_id:eid}:undefined);}}catch(e){}
     try{if(typeof posthog!=='undefined'&&posthog.capture)posthog.capture('purchase',{plan:plan});}catch(e){}
   }
 

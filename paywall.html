@@ -257,7 +257,7 @@
       // lets it survive this redirect, and it shares event_id with the unlocked.html pixel fire so
       // TikTok dedups the pair (one conversion, double-covered). value/currency drive ROAS optimization.
       var v=pkgValue(pkg), eid=ttGenId();
-      ttCapi('CompletePayment',{content_id:'plan_'+selected,content_type:'product',content_name:'Archives '+selected,quantity:1,value:(v.value||undefined),currency:(v.currency||'USD')},eid,email||onb.email||'');
+      ttCapi('CompletePayment',ttNorm({content_id:'plan_'+selected,content_type:'product',content_name:'Archives '+selected,quantity:1,value:(v.value||undefined),currency:(v.currency||'USD')}),eid,email||onb.email||'');
       location.href='unlocked.html?status=success&plan='+encodeURIComponent(selected)
         +'&v='+encodeURIComponent(v.value||'')+'&cur='+encodeURIComponent(v.currency||'USD')+'&eid='+encodeURIComponent(eid)
         +(redeem?'&redeem='+encodeURIComponent(redeem):'');
@@ -317,7 +317,10 @@
       headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON},
       body:JSON.stringify({event:name,event_id:eid,event_time:Math.floor(Date.now()/1000),url:location.href,properties:props||{},email:email||undefined,ttclid:ttClid()||undefined,ttp:ttCookie('_ttp')||undefined})}).catch(function(){});}catch(e){}
   }
-  function ttFire(name,props,email){var eid=ttGenId();props=props||{};try{if(typeof ttq!=='undefined')ttq.track(name,props,{event_id:eid});}catch(e){}ttCapi(name,props,eid,email);}
+  // TikTok requires content_id on every event (VSA matching). Always supply content_id +
+  // content_type + a contents[] entry, deriving the id from content_name when not given.
+  function ttNorm(props){props=props||{};var cid=props.content_id||props.content_name||'archives-app';if(!props.content_id)props.content_id=cid;if(!props.content_type)props.content_type='product';if(!props.contents)props.contents=[{content_id:cid,content_type:props.content_type,content_name:props.content_name||cid,quantity:props.quantity||1}];return props;}
+  function ttFire(name,props,email){var eid=ttGenId();props=ttNorm(props);try{if(typeof ttq!=='undefined')ttq.track(name,props,{event_id:eid});}catch(e){}ttCapi(name,props,eid,email);}
   function pkgValue(pk){var pr=pk&&(pk.webBillingProduct||pk.rcBillingProduct||pk.product||{});var cp=(pr&&(pr.currentPrice||pr.price))||{};var amt=cp.amountMicros?cp.amountMicros/1e6:(typeof cp.amount==='number'?cp.amount/100:null);return {value:(amt!=null?Math.round(amt*100)/100:null),currency:cp.currency||cp.currencyCode||'USD'};}
   function fire(ga,gp,fb,fp){
     try{if(typeof gtag==='function')gtag('event',ga,gp||{});}catch(e){}
