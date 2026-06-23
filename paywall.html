@@ -178,6 +178,9 @@
   ];
   var selected='annual';
   var onb=readOnb();
+  // Persist the ad-click id for CAPI match quality, and set TikTok advanced matching from the known email.
+  try{var _ttc=new URLSearchParams(location.search).get('ttclid');if(_ttc)localStorage.setItem('ttclid',_ttc);}catch(e){}
+  if(onb.email){try{sha256(onb.email).then(function(h){if(typeof ttq!=='undefined'&&h)ttq.identify({email:h});});}catch(e){}}
 
   var plansEl=document.getElementById('plans');
   function renderPlans(){
@@ -249,8 +252,15 @@
       if(!pkg) throw new Error('Package "'+p.pkg+'" not found in any offering');
       var result=await rc.purchase({ rcPackage:pkg, customerEmail:email||undefined, metadata: sid?{quiz_sid:sid}:undefined });
       var redeem=(result&&result.redemptionInfo&&(result.redemptionInfo.redeemUrl||result.redemptionInfo.url))||'';
-      fire('purchase',{plan:selected},'StartTrial',{}); fire('subscribe',{plan:selected},'Subscribe',{});
-      location.href='unlocked.html?status=success&plan='+encodeURIComponent(selected)+(redeem?'&redeem='+encodeURIComponent(redeem):'');
+      // Conversion fires on unlocked.html (stable landing — the pixel beacon survives there).
+      // Here we send ONLY the TikTok CompletePayment via server-side CAPI as a safety net: keepalive
+      // lets it survive this redirect, and it shares event_id with the unlocked.html pixel fire so
+      // TikTok dedups the pair (one conversion, double-covered). value/currency drive ROAS optimization.
+      var v=pkgValue(pkg), eid=ttGenId();
+      ttCapi('CompletePayment',{content_id:'plan_'+selected,content_type:'product',content_name:'Archives '+selected,quantity:1,value:(v.value||undefined),currency:(v.currency||'USD')},eid,email||onb.email||'');
+      location.href='unlocked.html?status=success&plan='+encodeURIComponent(selected)
+        +'&v='+encodeURIComponent(v.value||'')+'&cur='+encodeURIComponent(v.currency||'USD')+'&eid='+encodeURIComponent(eid)
+        +(redeem?'&redeem='+encodeURIComponent(redeem):'');
     }catch(e){
       console.error('[checkout]',e); btn.disabled=false; btn.textContent=label;
       if(e&&/cancel|closed|dismiss/i.test(String(e.message||e))) return;
@@ -297,10 +307,22 @@
     var pr=new URLSearchParams(location.search); var st=null; try{st=JSON.parse(localStorage.getItem('archives_onb')||'null');}catch(e){}
     return { sid:pr.get('sid')||(st&&st.session_id)||'', email:pr.get('email')||(st&&st.email)||'', eras:(pr.get('eras')||'').split(',').filter(Boolean), cadence:pr.get('cadence')||(st&&st.cadence)||'', answers:st||{} };
   }
+  /* TikTok: pixel + server-side CAPI sharing an event_id (deduped). Mirrors index.html. */
+  function ttGenId(){return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,12);}
+  function ttCookie(n){var m=document.cookie.match('(?:^|;)\\s*'+n+'=([^;]+)');return m?decodeURIComponent(m[1]):'';}
+  function ttClid(){try{return localStorage.getItem('ttclid')||'';}catch(e){return'';}}
+  function sha256(str){if(!window.crypto||!crypto.subtle)return Promise.resolve(null);return crypto.subtle.digest('SHA-256',new TextEncoder().encode((str||'').trim().toLowerCase())).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return('0'+x.toString(16)).slice(-2);}).join('');});}
+  function ttCapi(name,props,eid,email){
+    try{fetch(SUPABASE_URL+'/functions/v1/tiktok-events',{method:'POST',keepalive:true,
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON},
+      body:JSON.stringify({event:name,event_id:eid,event_time:Math.floor(Date.now()/1000),url:location.href,properties:props||{},email:email||undefined,ttclid:ttClid()||undefined,ttp:ttCookie('_ttp')||undefined})}).catch(function(){});}catch(e){}
+  }
+  function ttFire(name,props,email){var eid=ttGenId();props=props||{};try{if(typeof ttq!=='undefined')ttq.track(name,props,{event_id:eid});}catch(e){}ttCapi(name,props,eid,email);}
+  function pkgValue(pk){var pr=pk&&(pk.webBillingProduct||pk.rcBillingProduct||pk.product||{});var cp=(pr&&(pr.currentPrice||pr.price))||{};var amt=cp.amountMicros?cp.amountMicros/1e6:(typeof cp.amount==='number'?cp.amount/100:null);return {value:(amt!=null?Math.round(amt*100)/100:null),currency:cp.currency||cp.currencyCode||'USD'};}
   function fire(ga,gp,fb,fp){
     try{if(typeof gtag==='function')gtag('event',ga,gp||{});}catch(e){}
     try{if(typeof fbq==='function'&&fb){var std={Lead:1,ViewContent:1,InitiateCheckout:1,CompleteRegistration:1,StartTrial:1,Subscribe:1};std[fb]?fbq('track',fb,fp||{}):fbq('trackCustom',fb,fp||{});}}catch(e){}
-    try{if(typeof ttq!=='undefined'&&fb)ttq.track(fb,fp||gp||{});}catch(e){}
+    if(fb){ttFire(fb,fp||gp||{},onb.email||'');}
     try{if(typeof posthog!=='undefined'&&posthog.capture)posthog.capture(ga,gp||{});}catch(e){}
   }
 })();

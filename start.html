@@ -435,11 +435,25 @@
   function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
 
   /* ---------- analytics ---------- */
+  /* TikTok: every event hits BOTH the browser pixel and the server-side CAPI relay,
+     sharing an event_id so TikTok dedups the pair (resilient to ITP/ad-block). Mirrors
+     index.html so the standalone funnel pages are tracked just as accurately. */
+  var TT_CAPI=SUPABASE_URL+'/functions/v1/tiktok-events';
+  try{var _ttc=new URLSearchParams(location.search).get('ttclid');if(_ttc)localStorage.setItem('ttclid',_ttc);}catch(e){}
+  function ttGenId(){return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,12);}
+  function ttCookie(n){var m=document.cookie.match('(?:^|;)\\s*'+n+'=([^;]+)');return m?decodeURIComponent(m[1]):'';}
+  function ttClid(){try{return localStorage.getItem('ttclid')||'';}catch(e){return'';}}
+  function ttCapi(name,props,eid,email){
+    try{fetch(TT_CAPI,{method:'POST',keepalive:true,
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON},
+      body:JSON.stringify({event:name,event_id:eid,event_time:Math.floor(Date.now()/1000),url:location.href,properties:props||{},email:email||undefined,ttclid:ttClid()||undefined,ttp:ttCookie('_ttp')||undefined})}).catch(function(){});}catch(e){}
+  }
+  function ttFire(name,props,email){var eid=ttGenId();props=props||{};try{if(typeof ttq!=='undefined')ttq.track(name,props,{event_id:eid});}catch(e){}ttCapi(name,props,eid,email);}
   function fire(ga,p,fb,fp){
     p=p||{};
     try{if(typeof gtag==='function')gtag('event',ga,p)}catch(e){}
     try{if(typeof fbq==='function'&&fb){var std={Lead:1,ViewContent:1,InitiateCheckout:1,CompleteRegistration:1,StartTrial:1,Subscribe:1};std[fb]?fbq('track',fb,fp||{}):fbq('trackCustom',fb,fp||{})}}catch(e){}
-    try{if(typeof ttq!=='undefined'&&fb){ttq.track(fb,fp||p||{})}}catch(e){}
+    if(fb){ttFire(fb,fp||p||{},state.email||'');}
     try{if(typeof posthog!=='undefined'&&posthog.capture)posthog.capture(ga,p)}catch(e){}
   }
   function supa(extra){
