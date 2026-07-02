@@ -113,6 +113,12 @@
         fire('Download', { contents: [{ content_id: 'archives-app', content_type: 'product', content_name: store }] });
         if (window.fbq) fbq('track', 'Lead', { content_name: store });
         try { window.atrack && window.atrack('store_click'); } catch (err) {}
+        // On mobile, send store clicks through the attributed OneLink (generated below)
+        // so installs attribute back to source/campaign. Desktop keeps the direct store
+        // URL — OneLink would route desktop users to its fallback, not the store page.
+        try {
+          if (window.__afOneLink && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) a.href = window.__afOneLink;
+        } catch (err) {}
       }, true);
 
       // 3) Email signup forms -> CompleteRegistration (+ hashed identify for browser matching)
@@ -137,6 +143,35 @@
     <script>
     !function(t,e,n,s,a,c,i,o,p){t.AppsFlyerSdkObject=a,t.AF=t.AF||function(){(t.AF.q=t.AF.q||[]).push([Date.now()].concat(Array.prototype.slice.call(arguments)))},t.AF.id=t.AF.id||i,t.AF.plugins={},o=e.createElement(n),p=e.getElementsByTagName(n)[0],o.async=1,o.src="https://websdk.appsflyersdk.com?"+(c.length>0?"st="+c.split(",").sort().join(",")+"&":"")+(i.length>0?"af_id="+i:""),p.parentNode.insertBefore(o,p)}(window,document,"script",0,"AF","banners",{banners: {key: "59436bf8-ccff-4c78-9561-39c90d0e57ee"}});
     AF('banners', 'showBanner')
+    </script>
+
+    <!-- AppsFlyer OneLink Smart Script: builds an attributed OneLink from the landing
+         URL's params (source/utm_*, cid_campaign/aid/cid). The store-click listener
+         above swaps badge hrefs to it at click time, mobile only. -->
+    <script>
+    (function () {
+      window.__afOneLink = null;
+      var s = document.createElement('script');
+      s.src = 'https://onelinksmartscript.appsflyersdk.com/onelink-smart-script-latest.js';
+      s.async = true;
+      s.onload = function () {
+        try {
+          var result = window.AF_SMART_SCRIPT.generateOneLinkURL({
+            oneLinkURL: 'https://archives.onelink.me/QLBr',
+            afParameters: {
+              mediaSource: { keys: ['source', 'utm_source'], defaultValue: 'website' },
+              campaign: { keys: ['utm_campaign', 'cid_campaign'] },
+              channel: { keys: ['utm_medium'] },
+              adSet: { keys: ['utm_content', 'aid'] },
+              ad: { keys: ['utm_term', 'cid'] },
+              afCustom: [{ paramKey: 'af_ss_ui', defaultValue: 'true' }]
+            }
+          });
+          if (result && result.clickURL) window.__afOneLink = result.clickURL;
+        } catch (e) {}
+      };
+      document.head.appendChild(s);
+    })();
     </script>
 
     <link rel="manifest" href="/manifest.json">
@@ -213,7 +248,7 @@
     <!-- Meta Pixel noscript fallback -->
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2673422029698646&amp;ev=PageView&amp;noscript=1"></noscript>
     <div id="root" data-server-rendered="true"><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events:none"><ol tabindex="-1" class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol></div><div class="min-h-screen flex items-center justify-center bg-background"><p class="text-muted-foreground">Redirecting to booking page...</p></div><script>window.__staticRouterHydrationData = JSON.parse("{\"loaderData\":{\"0\":null},\"actionData\":null,\"errors\":null}");</script></div>
-<script>window.__VITE_REACT_SSG_HASH__ = 'aknreilbfu'</script>
+<script>window.__VITE_REACT_SSG_HASH__ = '845uilwx8g'</script>
   
 
 </body></html>
