@@ -103,7 +103,7 @@
       <div class="t-hero" id="pwTitle">Your journey is ready to begin.</div>
       <p class="t-bm muted" style="margin-top:10px" id="pwSub">Unlock all eras, all Daily Stories, and Ibu, your learning Guide.</p>
       <div class="trust-row">
-        <span class="pill">★ 4.9 rating</span><span class="pill">50,000+ learners</span><span class="pill">Cancel anytime</span>
+        <span class="pill">★ 4.9 rating</span><span class="pill">60,000+ learners</span><span class="pill">Cancel anytime</span>
       </div>
     </div>
 
@@ -229,7 +229,16 @@
       try{ console.log('[paywall] offerings:', offs.map(function(o){return {offering:o.identifier,packages:(o.availablePackages||[]).map(function(x){return {package:x.identifier,product:prodId(x),price:pkgPrice(x)};})};})); }catch(_){}
       PLANS.forEach(function(p){
         var pk=findPkg(offs,p.pkg,p.kw);
-        if(pk){ p.pkgObj=pk; var pr=pkgPrice(pk); if(pr) p.amt=pr; p.per=perLabel(p); }
+        if(pk){
+          p.pkgObj=pk; var pr=pkgPrice(pk); if(pr) p.amt=pr; p.per=perLabel(p);
+          // Monthly-equivalent anchor on the yearly plan so the value gap vs
+          // monthly reads at a glance. Currency symbol reused from the
+          // formatted price; skipped if it can't be derived safely.
+          if(p.id==='annual'){
+            var v=pkgValue(pk), sym=(pr||'').replace(/[\d.,\s]+/g,'');
+            if(v.value&&sym) p.per='per year · '+sym+(v.value/12).toFixed(2)+'/mo';
+          }
+        }
       });
       renderPlans(); selectPlan(selected);
     }catch(e){ console.warn('[paywall] offerings load failed', e); }
