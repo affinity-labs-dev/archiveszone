@@ -131,11 +131,14 @@
     </script>
 
     <meta name="facebook-domain-verification" content="fxfcyi3wlgyvhhsmbmt9qdujwxlzzz">
-    
-    <!-- Smart App Banner for iOS -->
-    <meta name="apple-itunes-app" content="app-id=6751173663">
-    
-    <!-- Smart App Banner for Android (Google Play) -->
+
+    <!-- AppsFlyer Smart Banner (replaces the native apple-itunes-app banner so iOS
+         doesn't show two install banners; display rules live in the AF console) -->
+    <script>
+    !function(t,e,n,s,a,c,i,o,p){t.AppsFlyerSdkObject=a,t.AF=t.AF||function(){(t.AF.q=t.AF.q||[]).push([Date.now()].concat(Array.prototype.slice.call(arguments)))},t.AF.id=t.AF.id||i,t.AF.plugins={},o=e.createElement(n),p=e.getElementsByTagName(n)[0],o.async=1,o.src="https://websdk.appsflyersdk.com?"+(c.length>0?"st="+c.split(",").sort().join(",")+"&":"")+(i.length>0?"af_id="+i:""),p.parentNode.insertBefore(o,p)}(window,document,"script",0,"AF","banners",{banners: {key: "59436bf8-ccff-4c78-9561-39c90d0e57ee"}});
+    AF('banners', 'showBanner')
+    </script>
+
     <link rel="manifest" href="/manifest.json">
     
     <meta charset="UTF-8">
@@ -210,7 +213,7 @@
     <!-- Meta Pixel noscript fallback -->
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2673422029698646&amp;ev=PageView&amp;noscript=1"></noscript>
     <div id="root" data-server-rendered="true"><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events:none"><ol tabindex="-1" class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol></div><div class="min-h-screen flex items-center justify-center bg-background"><p class="text-muted-foreground">Redirecting to app store...</p></div><script>window.__staticRouterHydrationData = JSON.parse("{\"loaderData\":{\"0\":null},\"actionData\":null,\"errors\":null}");</script></div>
-<script>window.__VITE_REACT_SSG_HASH__ = 'b2v37nml30'</script>
+<script>window.__VITE_REACT_SSG_HASH__ = 'aknreilbfu'</script>
   
 
 </body></html>
