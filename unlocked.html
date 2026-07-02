@@ -131,6 +131,7 @@
       try{if(typeof gtag==='function')gtag('event','store_click',{store:store,link_location:'unlocked_page'});}catch(_){}
       try{if(typeof fbq==='function')fbq('trackCustom','StoreClick',{store:store});}catch(_){}
       try{if(typeof ttq!=='undefined')ttq.track('Download',{content_name:store==='ios'?'App Store':'Google Play'});}catch(_){}
+      try{window.atrack&&window.atrack('store_click');}catch(_){}
     });
   });
 

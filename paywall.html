@@ -303,7 +303,7 @@
     if(kw){var k=kw.toLowerCase();for(var a=0;a<offs.length;a++){var ap2=offs[a].availablePackages||[];for(var b=0;b<ap2.length;b++){var pk2=ap2[b];if((pk2.identifier||'').toLowerCase().indexOf(k)>-1||prodId(pk2).toLowerCase().indexOf(k)>-1)return pk2;}}}
     return null;
   }
-  function goStore(){ var ua=navigator.userAgent||''; var ios=/iPad|iPhone|iPod/.test(ua); location.href = ios?'https://apps.apple.com/us/app/archives-islamic-history/id6751173663':'https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo'; }
+  function goStore(){ try{window.atrack&&window.atrack('store_click');}catch(e){} var ua=navigator.userAgent||''; var ios=/iPad|iPhone|iPod/.test(ua); location.href = ios?'https://apps.apple.com/us/app/archives-islamic-history/id6751173663':'https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo'; }
   function wireStore(){ var l=document.getElementById('storeLink'); if(l)l.addEventListener('click',function(e){e.preventDefault();goStore();}); }
   function readOnb(){
     var pr=new URLSearchParams(location.search); var st=null; try{st=JSON.parse(localStorage.getItem('archives_onb')||'null');}catch(e){}
