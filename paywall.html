@@ -77,6 +77,12 @@
     .reassure{display:flex;gap:8px;align-items:center;justify-content:center;font-size:12px;color:#6a6a6a;margin-top:14px}
     .reassure svg{width:15px;height:15px;stroke:var(--onyx);stroke-width:2;fill:none}
     .restore{display:block;text-align:center;margin-top:18px;font-weight:700;color:#7a7a7a;text-decoration:underline;background:none;border:0;width:100%;cursor:pointer}
+    /* skip: free app download */
+    .skipwrap{margin-top:26px;padding-top:22px;border-top:2px solid #e6e6e6;text-align:center}
+    .skipwrap .skip-label{font-weight:700;font-size:14px;color:#7a7a7a}
+    .store-badges{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:12px}
+    .store-badges img{height:44px;width:auto;display:block}
+    .store-badges a:active img{opacity:.75}
     /* faq */
     .faq{margin-top:26px}
     .faq h2{font-weight:800;font-size:18px;margin-bottom:10px}
@@ -122,6 +128,14 @@
     <p class="err" id="checkoutErr"></p>
     <div class="reassure"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-7 9-7 9s-7-4-7-9V6z"/></svg><span>Secure checkout. Cancel anytime in two taps.</span></div>
     <button class="restore" id="restoreBtn">Already subscribed? Open the app</button>
+
+    <div class="skipwrap">
+      <p class="skip-label">Skip and continue without Premium</p>
+      <div class="store-badges" id="skipBadges">
+        <a href="https://apps.apple.com/us/app/archives-islamic-history/id6751173663" data-store="ios" aria-label="Download on the App Store"><img src="/images/store/app-store-badge.svg" alt="Download on the App Store" loading="lazy" decoding="async" /></a>
+        <a href="https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo" data-store="android" aria-label="Get it on Google Play"><img src="/images/store/google-play-badge.png" alt="Get it on Google Play" loading="lazy" decoding="async" /></a>
+      </div>
+    </div>
 
     <div class="faq">
       <h2>Common questions</h2>
@@ -282,6 +296,15 @@
   });
 
   document.getElementById('restoreBtn').addEventListener('click', function(){ goStore(); });
+
+  /* skip without Premium: badge clicks navigate directly; mirror the store-click
+     tracking goStore() does so the funnel dashboard still sees the exit. */
+  document.querySelectorAll('#skipBadges a').forEach(function(a){
+    a.addEventListener('click', function(){
+      try{window.atrack&&window.atrack('store_click');}catch(e){}
+      fire('paywall_skip_store',{store:a.getAttribute('data-store')},'Download',{content_name:'paywall_skip_'+a.getAttribute('data-store')});
+    });
+  });
 
   /* === exit-intent: email me my plan === */
   var modal=document.getElementById('exitModal'), exitShown=false;
