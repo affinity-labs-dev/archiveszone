@@ -71,13 +71,13 @@
     /* ===== App shell ===== */
     #app{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden}
     .topbar{flex:0 0 auto;z-index:20;display:flex;align-items:center;gap:12px;
-      padding:14px var(--page-px) 10px;background:var(--snow)}
+      padding:10px var(--page-px) 10px;background:var(--snow)}
     .topbar .back{width:34px;height:34px;border:2px solid var(--onyx);border-radius:50%;background:var(--white);
       display:none;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto;font-size:18px;font-weight:700}
     .topbar .back.show{display:flex}
-    /* compact icon mark: the wordmark would crush the progress bar on mobile */
-    .topbar .brand{flex:0 0 auto;display:flex;align-items:center}
-    .topbar .brand img{height:30px;width:30px;border-radius:9px;display:block}
+    /* wordmark header on its own row, above the progress bar row */
+    .brandbar{flex:0 0 auto;display:flex;justify-content:center;padding:14px var(--page-px) 0;background:var(--snow)}
+    .brandbar img{height:28px;width:auto;display:block}
     .progress{flex:1;height:10px;background:#ececec;border:2px solid var(--onyx);border-radius:20px;overflow:hidden}
     .progress > i{display:block;height:100%;width:0;background:var(--blue);transition:width .45s cubic-bezier(.22,1,.36,1)}
     .restart{font-size:12px;font-weight:700;color:#7a7a7a;text-decoration:underline;cursor:pointer;background:none;border:0;flex:0 0 auto;padding:9px 4px;min-height:24px}
@@ -297,8 +297,10 @@
 <body>
   <a href="#stage" class="skiplink">Skip to content</a>
   <div id="app">
+    <div class="brandbar">
+      <a href="/" aria-label="Archives home" onclick="try{window.atrack&&window.atrack('logo_exit',null,{page:'/start.html'})}catch(e){}"><img src="/images/logo-dark.png" alt="Archives"/></a>
+    </div>
     <div class="topbar">
-      <a class="brand" href="/" aria-label="Archives home" onclick="try{window.atrack&&window.atrack('logo_exit',null,{page:'/start.html'})}catch(e){}"><img src="/lovable-uploads/413e869f-48d1-41d8-9ee0-e1c8ba1ac2bf.png" alt="Archives"/></a>
       <button class="back" id="backBtn" aria-label="Back">‹</button>
       <div class="progress"><i id="prog"></i></div>
       <button class="restart" id="restartBtn">Start over</button>
