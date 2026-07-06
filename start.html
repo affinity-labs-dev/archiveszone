@@ -525,7 +525,7 @@
   function render(){
     setProgress(); save();
     var step=STEPS[idx];
-    fire('quiz_step',{step:idx,type:step.type,phase:step.phase});
+    fire('quiz_step',{step:idx,type:step.type,phase:step.phase,key:step.key||null});
     stage.innerHTML=''; clearDock();
     R[step.type](step);
     stage.scrollTop=0;
@@ -567,7 +567,9 @@
     var sld=document.getElementById('sld'), out=document.getElementById('sldv');
     function upd(){out.textContent=step.fmt(+sld.value)}
     sld.oninput=upd; upd();
-    dockBtn('Continue','btn-tertiary',function(){state[step.key]=+sld.value;next()});
+    dockBtn('Continue','btn-tertiary',function(){state[step.key]=+sld.value;
+      /* bucket to nearest 10 so the answers report stays readable */
+      fire('select_'+step.key,{value:String(Math.round(sld.value/10)*10)});next()});
   };
 
   R.chips=function(step){
@@ -585,7 +587,9 @@
         if(i>-1){sel.splice(i,1);ch.classList.remove('selected')}else{sel.push(v);ch.classList.add('selected')}
         state[step.key]=sel;refresh();};
     });
-    dockBtn('Continue','btn-tertiary',function(){state[step.key]=sel;next()}, sel.length<(step.min||1));
+    dockBtn('Continue','btn-tertiary',function(){state[step.key]=sel;
+      /* one event per picked option -> per-era popularity in the answers report */
+      sel.forEach(function(v){fire('select_'+step.key,{value:v})});next()}, sel.length<(step.min||1));
   };
 
   R.choice=function(step){
@@ -621,7 +625,9 @@
           state[step.key]=ans;var b=dock.querySelector('.btn');if(b)done()?b.removeAttribute('disabled'):b.setAttribute('disabled','')};
       });
     });
-    dockBtn('Continue','btn-tertiary',function(){state[step.key]=ans;next()},!done());
+    dockBtn('Continue','btn-tertiary',function(){state[step.key]=ans;
+      /* one event per statement, value like 'identity=4' (1-5 agreement) */
+      Object.keys(ans).forEach(function(k){fire('select_'+step.key,{value:k+'='+ans[k]})});next()},!done());
   };
 
   R.stat=function(){
