@@ -81,6 +81,9 @@
   // RevenueCat redemption scheme rc-<appId> so an installed app can still be opened.
   var DEEP_LINK=redeem||'rc-4b595ca928://';
 
+  /* first-party tracker page view — fires for all traffic, not just ad-attributed */
+  try{window.atrack&&window.atrack('pv_unlocked')}catch(e){}
+
   /* purchase conversion (RC redirects here on success). Server-side RC webhooks
      remain the source of truth for redeemed_in_app / trial_to_paid; firing here
      closes the web funnel. */
@@ -131,7 +134,7 @@
       try{if(typeof gtag==='function')gtag('event','store_click',{store:store,link_location:'unlocked_page'});}catch(_){}
       try{if(typeof fbq==='function')fbq('trackCustom','StoreClick',{store:store});}catch(_){}
       try{if(typeof ttq!=='undefined')ttq.track('Download',{content_name:store==='ios'?'App Store':'Google Play'});}catch(_){}
-      try{window.atrack&&window.atrack('store_click');}catch(_){}
+      try{window.atrack&&window.atrack('store_click',null,{store:store,page:'/unlocked.html'});}catch(_){}
     });
   });
 

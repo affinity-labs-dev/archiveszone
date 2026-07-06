@@ -38,6 +38,10 @@
     </script>
     <!-- TikTok Pixel Code End -->
 
+    <!-- Archives first-party ad funnel tracker (ads -> Supabase dashboard). Sync and BEFORE
+         the enhanced-events script below so window.atrack exists when pv_home fires on load. -->
+    <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
+
     <!-- TikTok enhanced events: SPA pageviews, downloads, registration — pixel + server-side CAPI (deduped by event_id) -->
     <script>
     (function () {
@@ -89,10 +93,17 @@
       }
 
       // 1) SPA route changes -> Pageview (pixel) + ViewContent. Only the first load fires natively.
+      /* First-party funnel entry: home page view, ALL traffic (t.js only auto-fires
+         'landing' for ad-attributed visits). Fires on initial load and SPA navigation. */
+      function pvHome() {
+        if (location.pathname !== '/') return;
+        try { window.atrack && window.atrack('pv_home', null, { page: '/' }); } catch (err) {}
+      }
       function trackPage() {
         if (window.ttq) ttq.page();
         if (window.fbq) fbq('track', 'PageView');
         fire('ViewContent', viewProps());
+        pvHome();
       }
       var lastPath = location.pathname;
       function onNavigate() { if (location.pathname === lastPath) return; lastPath = location.pathname; setTimeout(trackPage, 60); }
@@ -100,6 +111,7 @@
       var _replace = history.replaceState; history.replaceState = function () { var r = _replace.apply(this, arguments); onNavigate(); return r; };
       window.addEventListener('popstate', onNavigate);
       fire('ViewContent', viewProps()); // initial load (pixel already sent Pageview)
+      pvHome();
 
       // 2) Store-download clicks -> Download (covers every CTA, all pages)
       document.addEventListener('click', function (e) {
@@ -110,7 +122,7 @@
         if (!store) return;
         fire('Download', { contents: [{ content_id: 'archives-app', content_type: 'product', content_name: store }] });
         if (window.fbq) fbq('track', 'Lead', { content_name: store });
-        try { window.atrack && window.atrack('store_click'); } catch (err) {}
+        try { window.atrack && window.atrack('store_click', null, { store: href.indexOf('apps.apple.com') !== -1 ? 'ios' : 'android', page: location.pathname }); } catch (err) {}
         // On mobile, send store clicks through the attributed OneLink (generated below)
         // so installs attribute back to source/campaign. Desktop keeps the direct store
         // URL — OneLink would route desktop users to its fallback, not the store page.
@@ -236,8 +248,6 @@
     <meta name="twitter:description" content="Turn learning into adventure with bite-sized Islamic history quests, XP tracking, and interactive timelines spanning from the Prophet's era to the Ottoman Empire.">
     <meta name="twitter:image" content="/lovable-uploads/41cb4ead-d67e-478a-93ed-b1cd8d59f006.png">
 
-    <!-- Archives first-party ad funnel tracker (TikTok ads -> Supabase dashboard) -->
-    <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
     <script type="module" async="" crossorigin="" src="/assets/app-BVuqTO8-.js"></script>
     <link rel="modulepreload" crossorigin="" href="/assets/vendor-Cs4HW2rj.js">
     <link rel="stylesheet" crossorigin="" href="/assets/app-BsFeyn9q.css">
@@ -246,7 +256,7 @@
     <!-- Meta Pixel noscript fallback -->
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2673422029698646&amp;ev=PageView&amp;noscript=1"></noscript>
     <div id="root" data-server-rendered="true"><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events:none"><ol tabindex="-1" class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol></div><div class="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-background/80 px-4"><div class="max-w-md w-full text-center space-y-6"><div class="flex justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-big w-20 h-20 text-primary animate-in zoom-in duration-500"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg></div><h1 class="text-4xl font-bold text-foreground">Email Confirmed!</h1><p class="text-lg text-muted-foreground">Thank you for confirming your email address. You're all set to receive updates about Archives!</p><button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-11 rounded-md px-8 mt-8">Back to Home</button></div></div><script>window.__staticRouterHydrationData = JSON.parse("{\"loaderData\":{\"0\":null},\"actionData\":null,\"errors\":null}");</script></div>
-<script>window.__VITE_REACT_SSG_HASH__ = '8uczonaerw'</script>
+<script>window.__VITE_REACT_SSG_HASH__ = 'm6b2v21jvo'</script>
   
 
 </body></html>

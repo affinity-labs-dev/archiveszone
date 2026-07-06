@@ -460,7 +460,11 @@
     try{if(typeof fbq==='function'&&fb){var std={Lead:1,ViewContent:1,InitiateCheckout:1,CompleteRegistration:1,StartTrial:1,Subscribe:1};std[fb]?fbq('track',fb,fp||{}):fbq('trackCustom',fb,fp||{})}}catch(e){}
     if(fb){ttFire(fb,fp||p||{},state.email||'');}
     try{if(typeof posthog!=='undefined'&&posthog.capture)posthog.capture(ga,p)}catch(e){}
+    /* first-party tracker: every funnel event, organic included (props -> ad_events.raw.props) */
+    try{if(window.atrack)window.atrack(ga,null,p)}catch(e){}
   }
+  /* page view for ALL traffic — t.js only auto-fires 'landing' for ad-attributed visits */
+  try{window.atrack&&window.atrack('pv_start')}catch(e){}
   function supa(extra){
     var body=Object.assign({
       session_id:state.session_id, email:state.email||null,
