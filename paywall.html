@@ -39,6 +39,8 @@
     .t-hm{font-weight:700;font-size:20px}.t-bm{font-weight:600;font-size:16px}.t-bs{font-weight:500;font-size:14px;color:#4a4a4a}
     .accent{color:var(--blue)}.muted{color:#5b5b5b}.center{text-align:center}
     .topbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+    .topbar .brand{flex:0 0 auto;display:flex;align-items:center}
+    .topbar .brand img{height:22px;width:auto;display:block}
     .back{width:36px;height:36px;border:2px solid var(--onyx);border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--onyx);font-size:18px;font-weight:800;flex:0 0 auto}
     .head{margin:6px 0 18px}
     .trust-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
@@ -103,7 +105,10 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="topbar"><a href="/start.html" class="back" aria-label="Back">‹</a></div>
+    <div class="topbar">
+      <a href="/start.html" class="back" aria-label="Back">‹</a>
+      <a class="brand" href="/" aria-label="Archives home" onclick="try{window.atrack&&window.atrack('logo_exit',null,{page:'/paywall.html'})}catch(e){}"><img src="/images/logo-dark.png" alt="Archives"/></a>
+    </div>
 
     <div class="head">
       <div class="t-hero" id="pwTitle">Your journey is ready to begin.</div>
