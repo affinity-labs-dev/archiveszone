@@ -134,12 +134,10 @@
     <div class="reassure"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-7 9-7 9s-7-4-7-9V6z"/></svg><span>Secure checkout. Cancel anytime in two taps.</span></div>
     <button class="restore" id="restoreBtn">Already subscribed? Open the app</button>
 
+    <!-- Skip path demoted from store badges to a text link: badges drew 10
+         sessions vs 19 checkouts in week one — too loud for an escape hatch. -->
     <div class="skipwrap">
-      <p class="skip-label">Skip and continue without Premium</p>
-      <div class="store-badges" id="skipBadges">
-        <a href="https://apps.apple.com/us/app/archives-islamic-history/id6751173663" data-store="ios" aria-label="Download on the App Store"><img src="/images/store/app-store-badge.svg" alt="Download on the App Store" loading="lazy" decoding="async" /></a>
-        <a href="https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo" data-store="android" aria-label="Get it on Google Play"><img src="/images/store/google-play-badge.png" alt="Get it on Google Play" loading="lazy" decoding="async" /></a>
-      </div>
+      <button class="skip" id="skipFree">Not ready? Continue with the free app</button>
     </div>
 
     <div class="faq">
@@ -197,7 +195,9 @@
     {id:'annual', pkg:'$rc_annual', kw:'annual', name:'Yearly', sub:'Best value, 7-day free trial', trial:'free', badge:'Most popular'},
     {id:'monthly',pkg:'$rc_monthly',kw:'month',  name:'Monthly', sub:'Full access, billed monthly', trial:'none', badge:''}
   ];
-  var selected='annual';
+  // Monthly preselected: first-week data (2026-07) had 6/11 monthly checkouts
+  // convert vs 0/8 annual — anchor with the yearly card, sell what closes.
+  var selected='monthly';
   var onb=readOnb();
   // Persist the ad-click id for CAPI match quality, and set TikTok advanced matching from the known email.
   try{var _ttc=new URLSearchParams(location.search).get('ttclid');if(_ttc)localStorage.setItem('ttclid',_ttc);}catch(e){}
@@ -222,7 +222,11 @@
     selected=id;
     plansEl.querySelectorAll('.plan').forEach(function(el){var on=el.getAttribute('data-plan')===id;el.classList.toggle('selected',on);el.setAttribute('aria-checked',on);});
     var p=planById(id);
-    document.getElementById('checkoutBtn').textContent = p.trial==='free'?'Start my 7-day free trial':'Continue with '+p.name;
+    // Price on the button: annual checkouts were abandoned 8/8 when the charge
+    // only became visible inside the payment sheet — say it before the click.
+    document.getElementById('checkoutBtn').textContent = p.trial==='free'
+      ? (p.amt?'Start 7 days free · then '+p.amt+'/year':'Start my 7-day free trial')
+      : (p.amt?'Subscribe · '+p.amt+'/month':'Continue with '+p.name);
     var amt=p.amt||'the listed price';
     document.getElementById('renewNote').textContent = p.trial==='free'
       ? '7 days free, then '+amt+'. Cancel anytime before the trial ends and you pay nothing.'
@@ -234,7 +238,7 @@
     document.getElementById('faqRenew').textContent =
       'You get 7 days completely free. When the trial ends, you are charged '+annualAmt+' for a full year, and it renews yearly until you cancel. Cancel anytime before the trial ends and you pay nothing.';
   }
-  renderPlans(); selectPlan('annual');
+  renderPlans(); selectPlan('monthly');
   fire('view_paywall',{content_name:'paywall'},'ViewContent',{content_name:'paywall'});
 
   /* preload the offering so prices are real and the package is matched before checkout */
@@ -304,11 +308,10 @@
 
   /* skip without Premium: badge clicks navigate directly; mirror the store-click
      tracking goStore() does so the funnel dashboard still sees the exit. */
-  document.querySelectorAll('#skipBadges a').forEach(function(a){
-    a.addEventListener('click', function(){
-      try{window.atrack&&window.atrack('store_click');}catch(e){}
-      fire('paywall_skip_store',{store:a.getAttribute('data-store')},'Download',{content_name:'paywall_skip_'+a.getAttribute('data-store')});
-    });
+  document.getElementById('skipFree').addEventListener('click', function(){
+    var ios=/iPad|iPhone|iPod/.test(navigator.userAgent||'');
+    fire('paywall_skip_store',{store:ios?'ios':'android'},'Download',{content_name:'paywall_skip_'+(ios?'ios':'android')});
+    goStore();
   });
 
   /* === exit-intent: email me my plan === */
