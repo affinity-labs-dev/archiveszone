@@ -200,6 +200,16 @@
     .meter.charging{animation:charge 1s ease-in-out infinite}
     .reveal{opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease}
     .reveal.in{opacity:1;transform:none}
+    /* contextual success sheet: slides up from the bottom after key answers */
+    .toast{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#e9f8ee;border-top:2px solid var(--onyx);
+      padding:18px 20px calc(16px + env(safe-area-inset-bottom));transform:translateY(102%);
+      transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 -6px 24px rgba(0,0,0,.10)}
+    .toast.show{transform:none}
+    .toast .tt{font-weight:800;color:#1d7a3d;font-size:17px}
+    .toast .tb{font-size:14px;line-height:1.5;color:#1a1a1a;margin-top:6px}
+    .toast .btn{width:100%;margin-top:14px}
+    @media(min-width:640px){.toast{left:50%;right:auto;transform:translate(-50%,102%);width:520px;border:2px solid var(--onyx);border-bottom:0;border-radius:18px 18px 0 0}
+      .toast.show{transform:translate(-50%,0)}}
     .profile-card{border:2px solid var(--onyx);border-radius:var(--r-card);background:var(--acai-3);box-shadow:0 4px 0 var(--acai-1);padding:18px;margin-top:6px;text-align:center}
 
     /* diagnosis bars */
@@ -321,7 +331,7 @@
     </div>
     <div class="topbar">
       <button class="back" id="backBtn" aria-label="Back">‹</button>
-      <div class="progress"><i id="prog" style="width: 8%;"></i></div>
+      <div class="progress"><i id="prog" style="width: 40%;"></i></div>
       <button class="restart" id="restartBtn">Start over</button>
     </div>
     <div class="stage" id="stage"><div class="screen active"><div class="head"><div class="t-hxl">Don't know where to start with Islamic history?</div><p class="t-bl muted mt8">Answer 5 questions. We'll build your starting point.</p><p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these did Muslims pioneer?</p></div><div class="body"><div class="opts" style="margin-top:6px"><button class="opt" data-v="camera"><span>The camera</span><span class="check"></span></button><button class="opt" data-v="coffee"><span>Coffee</span><span class="check"></span></button><button class="opt" data-v="algebra"><span>Algebra</span><span class="check"></span></button><button class="opt" data-v="all"><span>All three</span><span class="check"></span></button></div></div></div></div>
@@ -386,6 +396,21 @@
     deepen:{img:'/images/onboarding/skin-deepen.jpg',label:'Deepen what I know'}
   };
 
+  /* Contextual success sheets (shown after ~every 3rd question, not all):
+     affirm the specific answer, then a Next tap continues. */
+  var CONN_TOAST={
+    '10':{t:'Perfect starting point',b:'Everyone starts somewhere. One 5-minute story a day covers more ground than you\'d think.'},
+    '45':{t:'Bits and pieces is plenty',b:'You already have threads. We\'ll connect them into one story you can actually follow.'},
+    '75':{t:'You\'ll go deeper',b:'Good base. We\'ll fill the gaps and take you into the eras most people never reach.'}
+  };
+  var BLOCKER_TOAST={
+    school:{t:'That\'s not on you',b:'School skipped a thousand years. Five minutes a day fills the gap it left.'},
+    dry:{t:'History isn\'t dry. Most sources are.',b:'Every story here is told like a short film. You\'ll feel the difference in the first one.'},
+    start:{t:'You just found your starting point',b:'That\'s exactly what your plan is for. Day one is already picked for you.'},
+    time:{t:'Five minutes is enough',b:'The plan is built for busy days. One story with your coffee and you\'re done.'},
+    authentic:{t:'You\'re right to be careful',b:'Every story is sourced and scholar-reviewed. No myths dressed as history.'}
+  };
+
   /* ---------- step config (CRO-revised order) ---------- */
   // Screen 0 is a one-tap curiosity question, not the identity pick: 79% of
   // visitors bailed when self-categorization was the first ask (2026-07 data),
@@ -399,10 +424,10 @@
       ['10','Starting from zero'],
       ['45','I know bits and pieces'],
       ['75','Fairly connected already']
-    ]},
+    ],toast:function(v){return CONN_TOAST[v]}},
     {type:'chips',key:'eras',phase:'discover',multi:true,title:'Which stories pull you in?',sub:'Pick as many as you like, and we\'ll build your plan around them.',options:ERAS,min:1},
     {type:'stat',phase:'proof'},
-    {type:'choice',key:'blocker',phase:'discover',title:'What\'s gotten in the way?',sub:'Be honest. This shapes your plan most.',options:[
+    {type:'choice',key:'blocker',phase:'discover',title:'What\'s gotten in the way?',sub:'Be honest. This shapes your plan most.',toast:function(v){return BLOCKER_TOAST[v]},options:[
       ['school','School skipped it entirely',I.book],
       ['dry','Sources feel dry or academic',I.deepen],
       ['start','I don\'t know where to start',I.compass],
@@ -526,8 +551,9 @@
   var prog=document.getElementById('prog'), backBtn=document.getElementById('backBtn'), restartBtn=document.getElementById('restartBtn');
 
   function setProgress(){
-    // non-linear: jumps feel rewarding early
-    var pct=Math.round(8+ (idx/(STEPS.length-1))*92);
+    // starts at 40%: arriving already "well underway" reads as momentum,
+    // and the remaining 60% spreads across the screens
+    var pct=Math.round(40+ (idx/(STEPS.length-1))*60);
     prog.style.width=pct+'%';
     backBtn.classList.toggle('show', idx>0 && idx<STEPS.length-1);
   }
@@ -538,6 +564,19 @@
     b.onclick=fn; dock.appendChild(b); return b;
   }
   function clearDock(){dock.innerHTML='';dock.style.display='none'}
+
+  /* Bottom success sheet: contextual affirmation + Next. One at a time. */
+  function showToast(m,onNext){
+    var el=document.getElementById('toast');
+    if(!el){el=document.createElement('div');el.id='toast';el.className='toast';document.body.appendChild(el);}
+    el.innerHTML='<div class="tt">💡 '+m.t+'</div><p class="tb">'+m.b+'</p>'+
+      '<button class="btn btn-tertiary" id="toastNext">Next</button>';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('show')})});
+    document.getElementById('toastNext').onclick=function(){
+      el.classList.remove('show');
+      setTimeout(onNext,200);
+    };
+  }
 
   function el(html){var d=document.createElement('div');d.innerHTML=html.trim();return d.firstChild}
   function screenWrap(inner){return '<div class="screen active">'+inner+'</div>'}
@@ -568,6 +607,7 @@
   /* ---------- renderers ---------- */
   function render(){
     setProgress(); save();
+    var _t=document.getElementById('toast'); if(_t)_t.classList.remove('show');
     var step=STEPS[idx];
     fire('quiz_step',{step:idx,type:step.type,phase:step.phase,key:step.key||null});
     stage.innerHTML=''; clearDock();
@@ -675,6 +715,8 @@
       b.onclick=function(){var v=b.getAttribute('data-v');
         state[step.key]=step.numeric?+v:v;fire('select_'+step.key,{value:v});
         stage.querySelectorAll('.opt').forEach(function(x){x.classList.remove('selected')});b.classList.add('selected');
+        var m=step.toast&&step.toast(v);
+        if(m){showToast(m,function(){maybeSoftExit()||next()});return;}
         maybeSoftExit()||setTimeout(next,200);};
     });
   };
