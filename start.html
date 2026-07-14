@@ -4,7 +4,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
   <title>Archives: Build your journey</title>
-  <meta name="description" content="Answer a few questions and we&#39;ll build your personal journey through 1,400 years of forgotten history.">
+  <meta name="description" content="Answer a few questions and we&#39;ll build your personal journey through 1,400 years of Middle Eastern history.">
   <link rel="icon" href="/lovable-uploads/413e869f-48d1-41d8-9ee0-e1c8ba1ac2bf.png" type="image/png">
 
   <!-- Fonts: Onest (UI/body). Bounded (display) falls back to Onest Black if the webfont isn't present. -->
@@ -335,7 +335,7 @@
       <div class="progress"><i id="prog" style="width: 40%;"></i></div>
       <button class="restart" id="restartBtn">Start over</button>
     </div>
-    <div class="stage" id="stage"><div class="screen active"><div class="head"><div class="t-hxl">Don't know where to start with your history?</div><p class="t-bl muted mt8">Answer 5 questions. We'll build your starting point.</p><p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these was invented over 1,000 years ago?</p></div><div class="body"><div class="opts" style="margin-top:6px"><button class="opt" data-v="camera"><span>The camera</span><span class="check"></span></button><button class="opt" data-v="coffee"><span>Coffee</span><span class="check"></span></button><button class="opt" data-v="algebra"><span>Algebra</span><span class="check"></span></button><button class="opt" data-v="all"><span>All three</span><span class="check"></span></button></div></div></div></div>
+    <div class="stage" id="stage"><div class="screen active"><div class="head"><div class="t-hxl">Don't know where to start with Middle Eastern history?</div><p class="t-bl muted mt8">Answer 5 questions. We'll build your starting point.</p><p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these was invented over 1,000 years ago?</p></div><div class="body"><div class="opts" style="margin-top:6px"><button class="opt" data-v="camera"><span>The camera</span><span class="check"></span></button><button class="opt" data-v="coffee"><span>Coffee</span><span class="check"></span></button><button class="opt" data-v="algebra"><span>Algebra</span><span class="check"></span></button><button class="opt" data-v="all"><span>All three</span><span class="check"></span></button></div></div></div></div>
     <div class="cta-dock" id="dock" style="display: none;"></div>
   </div>
 
@@ -421,7 +421,7 @@
   var STEPS=[
     {type:'hook_quiz',key:'hook',phase:'hook'},
     {type:'intro_skin',key:'skin',phase:'hook'},
-    {type:'choice',key:'connection',numeric:true,phase:'discover',title:'How connected do you feel to your history right now?',options:[
+    {type:'choice',key:'connection',numeric:true,phase:'discover',title:'How connected do you feel to Middle Eastern history right now?',options:[
       ['10','Starting from zero'],
       ['45','I know bits and pieces'],
       ['75','Fairly connected already']
@@ -633,7 +633,7 @@
     fire('quiz_start',{},'ViewContent');
     stage.innerHTML=screenWrap(
       '<div class="head">'+
-        '<div class="t-hxl">Don\'t know where to start with your history?</div>'+
+        '<div class="t-hxl">Don\'t know where to start with Middle Eastern history?</div>'+
         '<p class="t-bl muted mt8">Answer 5 questions. We\'ll build your starting point.</p>'+
         '<p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these was invented over 1,000 years ago?</p>'+
       '</div>'+
@@ -663,7 +663,7 @@
     }).join('');
     stage.innerHTML=screenWrap(
       '<div class="head">'+
-        '<div class="t-hxl">Why does this history matter to you?</div>'+
+        '<div class="t-hxl">Why are you interested in Middle Eastern history?</div>'+
         '<p class="t-bs muted mt8">Tap one to begin — this shapes your plan.</p>'+
       '</div>'+
       '<div class="body"><div class="grid grid-compact">'+cards+'</div></div>'
@@ -791,11 +791,11 @@
     ['Mohammed','A very informative app with excellent visuals, perfect for kids. They love the daily story and listening along.'],
     ['Sumayah','The best history stories app out there. We loved the earliest eras and learning where it all began.'],
     ['Hala','Very simple and easy to follow stories with visuals. I downloaded it for my kids but now I love going through the stories myself.'],
-    ['Mostafa','The easiest way to learn our history. A true gem for anyone passionate about learning their heritage.'],
+    ['Mostafa','The easiest way to learn Middle Eastern history. A true gem for anyone passionate about learning their heritage.'],
     ['Sarah','Highly recommended for students, researchers, and anyone who values spending time productively.'],
     ['Abdul','I only learned about Marco Polo in school, never about Ibn Battuta. Archives lets me change that for my children.'],
     ['Fatimah','The quizzes, stories and achievements make it really engaging for me and my students. Highly recommend.'],
-    ['Rashid','The daily story keeps me engaged with our history, and it only takes me 5 minutes a day.'],
+    ['Rashid','The daily story keeps me engaged with Middle Eastern history, and it only takes me 5 minutes a day.'],
     ['Ali','This app is a game changer. It keeps me interested all week and reminds me to stay focused on what really matters.']
   ];
   R.review=function(){
