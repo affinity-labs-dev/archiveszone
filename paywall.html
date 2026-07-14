@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
   <title>Choose your plan | Archives</title>
-  <meta name="description" content="Unlock your personal journey through Islamic history. Start with a 7-day free trial." />
+  <meta name="description" content="Unlock your personal journey through 1,400 years of history. Start with a 7-day free trial." />
   <meta name="robots" content="noindex,follow" />
   <link rel="icon" href="/lovable-uploads/413e869f-48d1-41d8-9ee0-e1c8ba1ac2bf.png" type="image/png" />
   <meta name="apple-itunes-app" content="app-id=6751173663" />
@@ -121,7 +121,7 @@
     <div class="plans" id="plans" role="radiogroup" aria-label="Choose a plan"></div>
 
     <ul class="included" id="included">
-      <li><span class="ic" data-check></span><span>Every era, from the Prophets to the Ottomans</span></li>
+      <li><span class="ic" data-check></span><span>Every era, from the earliest empires to the Ottomans</span></li>
       <li><span class="ic" data-check></span><span>A new 5-minute story every day, with streaks</span></li>
       <li><span class="ic" data-check></span><span>Ibu, your learning guide, ask anything, anytime</span></li>
       <li><span class="ic" data-check></span><span>Quizzes, XP and achievements as you learn</span></li>
@@ -343,7 +343,7 @@
     if(kw){var k=kw.toLowerCase();for(var a=0;a<offs.length;a++){var ap2=offs[a].availablePackages||[];for(var b=0;b<ap2.length;b++){var pk2=ap2[b];if((pk2.identifier||'').toLowerCase().indexOf(k)>-1||prodId(pk2).toLowerCase().indexOf(k)>-1)return pk2;}}}
     return null;
   }
-  function goStore(){ var ua=navigator.userAgent||''; var ios=/iPad|iPhone|iPod/.test(ua); try{window.atrack&&window.atrack('store_click',null,{store:ios?'ios':'android',page:'/paywall.html'});}catch(e){} location.href = ios?'https://apps.apple.com/us/app/archives-islamic-history/id6751173663':'https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo'; }
+  function goStore(){ var ua=navigator.userAgent||''; var ios=/iPad|iPhone|iPod/.test(ua); try{window.atrack&&window.atrack('store_click',null,{store:ios?'ios':'android',page:'/paywall.html'});}catch(e){} location.href = ios?'https://apps.apple.com/app/id6751173663':'https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo'; }
   function wireStore(){ var l=document.getElementById('storeLink'); if(l)l.addEventListener('click',function(e){e.preventDefault();goStore();}); }
   function readOnb(){
     var pr=new URLSearchParams(location.search); var st=null; try{st=JSON.parse(localStorage.getItem('archives_onb')||'null');}catch(e){}
