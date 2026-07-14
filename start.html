@@ -574,7 +574,7 @@
     requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('show')})});
     document.getElementById('toastNext').onclick=function(){
       el.classList.remove('show');
-      setTimeout(onNext,200);
+      sched(onNext,200);
     };
   }
 
@@ -605,7 +605,13 @@
   }
 
   /* ---------- renderers ---------- */
+  // Generation-guarded timers: an auto-advance armed on one screen must die
+  // if another render happens first (Back, Start over) — otherwise a pending
+  // hook-payoff timer can yank a freshly reset quiz forward on its own.
+  var gen=0;
+  function sched(fn,ms){var g=gen;setTimeout(function(){if(g===gen)fn()},ms)}
   function render(){
+    gen++;
     setProgress(); save();
     var _t=document.getElementById('toast'); if(_t)_t.classList.remove('show');
     var step=STEPS[idx];
@@ -645,7 +651,7 @@
         fb.textContent=(v==='all'?'Right — all three.':'True — and so are the other two.')+
           ' The camera (Ibn al-Haytham), coffee (Yemen), algebra (al-Khwarizmi). There\'s 1,000 years of this.';
         fb.style.fontWeight='700';
-        setTimeout(next,1900);
+        sched(next,1900);
       };
     });
   };
@@ -662,7 +668,7 @@
       '<div class="body"><div class="grid grid-compact">'+cards+'</div></div>'
     );
     stage.querySelectorAll('.imgopt').forEach(function(c){
-      c.onclick=function(){state.skin=c.getAttribute('data-k');fire('select_skin',{skin:state.skin});setTimeout(next,180)};
+      c.onclick=function(){state.skin=c.getAttribute('data-k');fire('select_skin',{skin:state.skin});sched(next,180)};
     });
   };
 
@@ -717,7 +723,7 @@
         stage.querySelectorAll('.opt').forEach(function(x){x.classList.remove('selected')});b.classList.add('selected');
         var m=step.toast&&step.toast(v);
         if(m){showToast(m,function(){maybeSoftExit()||next()});return;}
-        maybeSoftExit()||setTimeout(next,200);};
+        maybeSoftExit()||sched(next,200);};
     });
   };
 
@@ -750,7 +756,7 @@
           bt.classList.add('on');
           /* one event per statement, value like 'identity=4' (0-4 agreement) */
           fire('select_'+step.key,{value:it[0]+'='+ans[it[0]]});
-          setTimeout(function(){ if(i<step.items.length-1){i++;show()} else next(); },240);
+          sched(function(){ if(i<step.items.length-1){i++;show()} else next(); },240);
         };
       });
     }
@@ -941,7 +947,7 @@
       if(step_i>=els.length){ // reveal snuck-in question
         document.getElementById('snuck').style.display='block';
         stage.querySelectorAll('#snuck .opt').forEach(function(b){
-          b.onclick=function(){state.cadence=b.getAttribute('data-c');fire('select_cadence',{cadence:state.cadence});setTimeout(next,220)};
+          b.onclick=function(){state.cadence=b.getAttribute('data-c');fire('select_cadence',{cadence:state.cadence});sched(next,220)};
         });
         return;
       }
@@ -1049,7 +1055,19 @@
 
   /* ---------- nav ---------- */
   backBtn.onclick=prev;
-  restartBtn.onclick=function(){if(confirm('Start the quiz over?')){state={session_id:state.session_id};idx=0;render()}};
+  // No native confirm(): TikTok/Instagram in-app webviews suppress it and
+  // return false, making the button a silent no-op. Two taps instead.
+  var _rstArmed=0;
+  restartBtn.onclick=function(){
+    if(Date.now()-_rstArmed>2600){
+      _rstArmed=Date.now();
+      restartBtn.textContent='Tap again to restart';
+      setTimeout(function(){restartBtn.textContent='Start over';_rstArmed=0;},2600);
+      return;
+    }
+    _rstArmed=0;restartBtn.textContent='Start over';
+    state={session_id:state.session_id};idx=0;render();
+  };
 
   render();
 })();
