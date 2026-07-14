@@ -153,8 +153,9 @@
       .grid-compact .imgopt{height:220px}
       .grid-compact .imgopt .lab{padding:12px 12px 13px;font-size:15px}
     }
-    /* mobile: cap the proof image so the count-up stats stay in view */
-    @media(max-width:639px){.appshot{max-height:148px}}
+    /* mobile: size the proof image to the viewport height so the count-up
+       stats stay in view on short screens without shrinking it on tall ones */
+    @media(max-width:639px){.appshot{max-height:clamp(150px,26vh,230px)}}
     .imgopt{position:relative;border:2px solid var(--onyx);border-radius:18px;overflow:hidden;cursor:pointer;
       box-shadow:0 var(--shadow-y) 0 var(--onyx);aspect-ratio:3/4;transition:transform .08s ease,box-shadow .08s ease}
     .imgopt:active{transform:translateY(var(--shadow-y));box-shadow:0 0 0 var(--onyx)}
