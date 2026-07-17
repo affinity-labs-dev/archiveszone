@@ -22,6 +22,9 @@
   <script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('D8PGMORC77U8IPSBIE6G');ttq.page();}(window,document,'ttq');</script>
   <!-- Archives first-party ad funnel tracker (ads -> Supabase dashboard). Sync (no async/defer) so window.atrack exists before the inline funnel code runs. -->
   <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
+  <!-- Shared RevenueCat checkout + tracking helpers (also used by plan.html).
+       Sync so window.ArchivesCheckout exists before the inline code runs. -->
+  <script src="/js/checkout.js"></script>
 
   <style>
     :root{
@@ -165,25 +168,10 @@
 (function(){
   'use strict';
 
-  /* === RevenueCat Web Billing (embedded Web SDK) ============================
-     Web purchases go through RevenueCat Web Billing (Stripe under the hood):
-     one subscriber + entitlements, handed off into the app via a redemption
-     link. The redemption link is only returned for ANONYMOUS web purchases, so
-     we configure with an anonymous app-user-id and pass the quiz session id as
-     metadata for attribution. The app handles the universal link (redeemWebPurchase). */
-  var RC_WEB_API_KEY = 'rcb_yQedavJlsbzBERTqkBYHIDtKYkDq';   // production Web Billing key
-  var _rc=null,_RC=null;
-  function rcConfigured(){ return !!RC_WEB_API_KEY; }
-  async function rcInstance(){
-    if(_rc) return _rc;
-    var mod = await import('https://cdn.jsdelivr.net/npm/@revenuecat/purchases-js@1/+esm');
-    _RC = mod.Purchases;
-    _rc = _RC.configure({ apiKey: RC_WEB_API_KEY, appUserId: _RC.generateRevenueCatAnonymousAppUserId() });
-    return _rc;
-  }
-
-  var SUPABASE_URL='https://kcgiugdfudbwtjjsvwia.supabase.co';
-  var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjZ2l1Z2RmdWRid3RqanN2d2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxOTYxNjgsImV4cCI6MjA2NDc3MjE2OH0.i4q-ZtYzdP6OuotC7Rk1EGC09oW9xj0iA5NQTCXOKTc';
+  /* RevenueCat Web Billing + tracking helpers live in /js/checkout.js
+     (shared with plan.html — one checkout implementation, two surfaces). */
+  var AC = window.ArchivesCheckout;
+  var SUPABASE_URL = AC.SUPABASE_URL, SUPABASE_ANON = AC.SUPABASE_ANON;
   var EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
   var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
   document.querySelectorAll('[data-check]').forEach(function(e){e.innerHTML=CHECK;});
@@ -197,11 +185,38 @@
   ];
   // Monthly preselected: first-week data (2026-07) had 6/11 monthly checkouts
   // convert vs 0/8 annual — anchor with the yearly card, sell what closes.
+  // (When the winback offer is live on this visit, annual is preselected
+  // instead — that data predates a discounted annual.)
   var selected='monthly';
   var onb=readOnb();
+  var offerOn=false; // true once the RC 'winback' offering resolves for onb.offer
+
+  /* Drip-email variants: v= (or derived from aid=drip_NN) retitles the hero so
+     the page keeps the promise the email made. Urgency stays in email copy —
+     nothing here counts down or expires. */
+  var V_MAP={
+    resume:  {t:'Pick up where you left off.', s:'Your order is one step from done. Your plan and answers are saved.'},
+    activate:{t:'Activate your Archives account.', s:'Your personalized plan is built and waiting on the other side.'},
+    final:   {t:'Whenever you’re ready.', s:'Your plan stays saved. Start any time, no pressure.'}
+  };
+  var AID_TO_V={drip_05:'resume', drip_08:'activate', drip_12:'final'};
+  (function applyVariant(){
+    var vv=onb.v||AID_TO_V[onb.aid]||'';
+    var m=V_MAP[vv];
+    if(m){
+      document.getElementById('pwTitle').textContent=m.t;
+      document.getElementById('pwSub').textContent=m.s;
+    }else if(onb.eras.length){
+      // No explicit variant but we know their quiz picks: name the plan.
+      var eraNames={prophets:'earliest-stories', baghdad:'Baghdad', andalus:'Al-Andalus', ottomans:'Ottomans', saladin:'Saladin', scholars:'great-scholars', mughals:'Mughal', westafrica:'West-Africa'};
+      var first=eraNames[onb.eras[0]];
+      if(first) document.getElementById('pwSub').textContent='Your '+first+'-first plan is saved and waiting. Unlock all eras, all Daily Stories, and Ibu, your learning Guide.';
+    }
+  })();
+
   // Persist the ad-click id for CAPI match quality, and set TikTok advanced matching from the known email.
   try{var _ttc=new URLSearchParams(location.search).get('ttclid');if(_ttc)localStorage.setItem('ttclid',_ttc);}catch(e){}
-  if(onb.email){try{sha256(onb.email).then(function(h){if(typeof ttq!=='undefined'&&h)ttq.identify({email:h});});}catch(e){}}
+  if(onb.email){try{AC.sha256(onb.email).then(function(h){if(typeof ttq!=='undefined'&&h)ttq.identify({email:h});});}catch(e){}}
 
   var plansEl=document.getElementById('plans');
   function renderPlans(){
@@ -224,13 +239,19 @@
     var p=planById(id);
     // Price on the button: annual checkouts were abandoned 8/8 when the charge
     // only became visible inside the payment sheet — say it before the click.
-    document.getElementById('checkoutBtn').textContent = p.trial==='free'
-      ? (p.amt?'Start 7 days free · then '+p.amt+'/year':'Start my 7-day free trial')
-      : (p.amt?'Subscribe · '+p.amt+'/month':'Continue with '+p.name);
-    var amt=p.amt||'the listed price';
-    document.getElementById('renewNote').textContent = p.trial==='free'
-      ? '7 days free, then '+amt+'. Cancel anytime before the trial ends and you pay nothing.'
-      : amt+', billed today. Cancel anytime.';
+    if(offerOn && p.id==='annual'){
+      // Winback intro price: copy comes from the resolved package, never hardcoded.
+      document.getElementById('checkoutBtn').textContent = p.amt?('Get my returning learner rate · '+p.amt):'Continue with Yearly';
+      document.getElementById('renewNote').textContent = (p.amt||'The discounted price')+' for your first year, then it renews at the standard yearly price. Cancel anytime.';
+    }else{
+      document.getElementById('checkoutBtn').textContent = p.trial==='free'
+        ? (p.amt?'Start 7 days free · then '+p.amt+'/year':'Start my 7-day free trial')
+        : (p.amt?'Subscribe · '+p.amt+'/month':'Continue with '+p.name);
+      var amt=p.amt||'the listed price';
+      document.getElementById('renewNote').textContent = p.trial==='free'
+        ? '7 days free, then '+amt+'. Cancel anytime before the trial ends and you pay nothing.'
+        : amt+', billed today. Cancel anytime.';
+    }
     // The free trial is the 7-day trial on the Yearly plan, so this answer always
     // describes that (independent of which plan is currently selected).
     var annual=planById('annual');
@@ -239,30 +260,45 @@
       'You get 7 days completely free. When the trial ends, you are charged '+annualAmt+' for a full year, and it renews yearly until you cancel. Cancel anytime before the trial ends and you pay nothing.';
   }
   renderPlans(); selectPlan('monthly');
-  fire('view_paywall',{content_name:'paywall'},'ViewContent',{content_name:'paywall'});
+  fire('view_paywall',basePr({content_name:'paywall'}),'ViewContent',{content_name:'paywall'});
 
   /* preload the offering so prices are real and the package is matched before checkout */
   loadOfferings();
   async function loadOfferings(){
-    if(!rcConfigured() || location.protocol==='file:') return;
+    if(!AC.rcConfigured() || location.protocol==='file:') return;
     try{
-      var rc=await rcInstance();
+      var rc=await AC.rcInstance();
       var offerings=await rc.getOfferings();
-      var offs=allOfferings(offerings);
-      try{ console.log('[paywall] offerings:', offs.map(function(o){return {offering:o.identifier,packages:(o.availablePackages||[]).map(function(x){return {package:x.identifier,product:prodId(x),price:pkgPrice(x)};})};})); }catch(_){}
+      // offer=wb40 puts the RC 'winback' offering first so its discounted
+      // annual matches; without it (or if it doesn't exist) this is exactly
+      // the old current-first behavior.
+      var offs=AC.resolveOfferings(offerings, onb.offer);
+      offerOn=AC.offerActive(offerings, onb.offer);
+      try{ console.log('[paywall] offerings:', offs.map(function(o){return {offering:o.identifier,packages:(o.availablePackages||[]).map(function(x){return {package:x.identifier,product:AC.prodId(x),price:AC.pkgPrice(x)};})};})); }catch(_){}
       PLANS.forEach(function(p){
-        var pk=findPkg(offs,p.pkg,p.kw);
+        var pk=AC.findPkg(offs,p.pkg,p.kw);
         if(pk){
-          p.pkgObj=pk; var pr=pkgPrice(pk); if(pr) p.amt=pr; p.per=perLabel(p);
+          p.pkgObj=pk; var pr=AC.pkgPrice(pk); if(pr) p.amt=pr; p.per=perLabel(p);
           // Monthly-equivalent anchor on the yearly plan so the value gap vs
           // monthly reads at a glance. Currency symbol reused from the
           // formatted price; skipped if it can't be derived safely.
           if(p.id==='annual'){
-            var v=pkgValue(pk), sym=(pr||'').replace(/[\d.,\s]+/g,'');
+            var v=AC.pkgValue(pk), sym=(pr||'').replace(/[\d.,\s]+/g,'');
             if(v.value&&sym) p.per='per year · '+sym+(v.value/12).toFixed(2)+'/mo';
           }
         }
       });
+      if(offerOn){
+        // Winback: annual card becomes the discounted hero, standard yearly
+        // price (from the default offering) shown as the anchor.
+        var a=planById('annual');
+        var std=AC.findPkg(AC.allOfferings(offerings),'$rc_annual','annual');
+        var stdPr=std?AC.pkgPrice(std):'';
+        a.badge='Returning learner rate';
+        a.sub='40% off your first year'+(stdPr?', then '+stdPr+'/yr':'');
+        if(a.amt) a.per='first year'+(stdPr?' · was '+stdPr:'');
+        selected='annual';
+      }
       renderPlans(); selectPlan(selected);
     }catch(e){ console.warn('[paywall] offerings load failed', e); }
   }
@@ -272,29 +308,22 @@
     var p=planById(selected);
     var email=onb.email||'';
     var sid=onb.sid||'';
-    fire('begin_checkout',{plan:selected},'InitiateCheckout',{content_name:'plan_'+selected});
+    fire('begin_checkout',basePr({plan:selected}),'InitiateCheckout',{content_name:'plan_'+selected});
     var errEl=document.getElementById('checkoutErr'); if(errEl){errEl.classList.remove('show');errEl.textContent='';}
 
-    if(!rcConfigured()){ goStore(); return; }
+    if(!AC.rcConfigured()){ goStore(); return; }
     if(location.protocol==='file:'){ errEl.innerHTML='Checkout runs on the live site, not a local file. <a href="#" id="storeLink">Get the app instead</a>.'; errEl.classList.add('show'); wireStore(); return; }
 
     var btn=this,label=btn.textContent; btn.disabled=true; btn.textContent='Opening secure checkout…';
     try{
-      var rc=await rcInstance();
       var pkg=p.pkgObj;
-      if(!pkg){ var offs=allOfferings(await rc.getOfferings()); pkg=findPkg(offs,p.pkg,p.kw); }
+      if(!pkg){
+        var rc=await AC.rcInstance();
+        var offerings=await rc.getOfferings();
+        pkg=AC.findPkg(AC.resolveOfferings(offerings,onb.offer),p.pkg,p.kw);
+      }
       if(!pkg) throw new Error('Package "'+p.pkg+'" not found in any offering');
-      var result=await rc.purchase({ rcPackage:pkg, customerEmail:email||undefined, metadata: sid?{quiz_sid:sid}:undefined });
-      var redeem=(result&&result.redemptionInfo&&(result.redemptionInfo.redeemUrl||result.redemptionInfo.url))||'';
-      // Conversion fires on unlocked.html (stable landing — the pixel beacon survives there).
-      // Here we send ONLY the TikTok CompletePayment via server-side CAPI as a safety net: keepalive
-      // lets it survive this redirect, and it shares event_id with the unlocked.html pixel fire so
-      // TikTok dedups the pair (one conversion, double-covered). value/currency drive ROAS optimization.
-      var v=pkgValue(pkg), eid=ttGenId();
-      ttCapi('CompletePayment',ttNorm({content_id:'plan_'+selected,content_type:'product',content_name:'Archives '+selected,quantity:1,value:(v.value||undefined),currency:(v.currency||'USD')}),eid,email||onb.email||'');
-      location.href='unlocked.html?status=success&plan='+encodeURIComponent(selected)
-        +'&v='+encodeURIComponent(v.value||'')+'&cur='+encodeURIComponent(v.currency||'USD')+'&eid='+encodeURIComponent(eid)
-        +(redeem?'&redeem='+encodeURIComponent(redeem):'');
+      await AC.purchase({ pkg:pkg, planId:selected, email:email, sid:sid });
     }catch(e){
       console.error('[checkout]',e); btn.disabled=false; btn.textContent=label;
       if(e&&/cancel|closed|dismiss/i.test(String(e.message||e))) return;
@@ -334,43 +363,30 @@
 
   /* === helpers === */
   function planById(id){for(var i=0;i<PLANS.length;i++)if(PLANS[i].id===id)return PLANS[i];return PLANS[0];}
-  function allOfferings(offerings){var offs=[];if(offerings.current)offs.push(offerings.current);if(offerings.all)Object.keys(offerings.all).forEach(function(k){if(offerings.all[k]!==offerings.current)offs.push(offerings.all[k]);});return offs;}
-  function prodId(pk){var pr=pk.webBillingProduct||pk.rcBillingProduct||pk.product||{};return pr.identifier||'';}
-  function pkgPrice(pk){var pr=pk.webBillingProduct||pk.rcBillingProduct||pk.product||{};var cp=pr.currentPrice||pr.price||{};return cp.formattedPrice||cp.formatted||(cp.amountMicros?('$'+(cp.amountMicros/1e6).toFixed(2)):(typeof cp.amount==='number'?('$'+(cp.amount/100).toFixed(2)):''));}
   function perLabel(p){ return p.id==='annual'?'per year':p.id==='monthly'?'per month':'per week'; }
-  function findPkg(offs,id,kw){
-    for(var i=0;i<offs.length;i++){var o=offs[i];if(o.packagesById&&o.packagesById[id])return o.packagesById[id];var ap=o.availablePackages||[];for(var j=0;j<ap.length;j++){var pk=ap[j];if(pk.identifier===id||prodId(pk)===id)return pk;}}
-    if(kw){var k=kw.toLowerCase();for(var a=0;a<offs.length;a++){var ap2=offs[a].availablePackages||[];for(var b=0;b<ap2.length;b++){var pk2=ap2[b];if((pk2.identifier||'').toLowerCase().indexOf(k)>-1||prodId(pk2).toLowerCase().indexOf(k)>-1)return pk2;}}}
-    return null;
-  }
-  function goStore(){ var ua=navigator.userAgent||''; var ios=/iPad|iPhone|iPod/.test(ua); try{window.atrack&&window.atrack('store_click',null,{store:ios?'ios':'android',page:'/paywall.html'});}catch(e){} location.href = ios?'https://apps.apple.com/app/id6751173663':'https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo'; }
+  function goStore(){ AC.goStore('/paywall.html'); }
   function wireStore(){ var l=document.getElementById('storeLink'); if(l)l.addEventListener('click',function(e){e.preventDefault();goStore();}); }
   function readOnb(){
-    var pr=new URLSearchParams(location.search); var st=null; try{st=JSON.parse(localStorage.getItem('archives_onb')||'null');}catch(e){}
-    return { sid:pr.get('sid')||(st&&st.session_id)||'', email:pr.get('email')||(st&&st.email)||'', eras:(pr.get('eras')||'').split(',').filter(Boolean), cadence:pr.get('cadence')||(st&&st.cadence)||'', answers:st||{} };
+    // NOTE: quiz writes localStorage 'archives_onb2' (v2 key since the screen
+    // reorder) — reading the old 'archives_onb' here was a dead fallback.
+    var pr=new URLSearchParams(location.search); var st=null; try{st=JSON.parse(localStorage.getItem('archives_onb2')||'null');}catch(e){}
+    var urlEras=(pr.get('eras')||'').split(',').filter(Boolean);
+    return { sid:pr.get('sid')||(st&&st.session_id)||'', email:pr.get('email')||(st&&st.email)||'',
+      eras:urlEras.length?urlEras:((st&&st.eras)||[]),
+      cadence:pr.get('cadence')||(st&&st.cadence)||'', answers:st||{},
+      v:pr.get('v')||'', aid:pr.get('aid')||'', offer:pr.get('offer')||'' };
   }
-  /* TikTok: pixel + server-side CAPI sharing an event_id (deduped). Mirrors index.html. */
-  function ttGenId(){return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,12);}
-  function ttCookie(n){var m=document.cookie.match('(?:^|;)\\s*'+n+'=([^;]+)');return m?decodeURIComponent(m[1]):'';}
-  function ttClid(){try{return localStorage.getItem('ttclid')||'';}catch(e){return'';}}
-  function sha256(str){if(!window.crypto||!crypto.subtle)return Promise.resolve(null);return crypto.subtle.digest('SHA-256',new TextEncoder().encode((str||'').trim().toLowerCase())).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return('0'+x.toString(16)).slice(-2);}).join('');});}
-  function ttCapi(name,props,eid,email){
-    try{fetch(SUPABASE_URL+'/functions/v1/tiktok-events',{method:'POST',keepalive:true,
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON},
-      body:JSON.stringify({event:name,event_id:eid,event_time:Math.floor(Date.now()/1000),url:location.href,properties:props||{},email:email||undefined,ttclid:ttClid()||undefined,ttp:ttCookie('_ttp')||undefined})}).catch(function(){});}catch(e){}
+  /* Landing-variant props on the funnel events so the dashboard can segment
+     paywall performance per drip email (aid) and variant (v/offer). */
+  function basePr(gp){
+    gp=gp||{}; gp.page='/paywall.html';
+    if(onb.v)gp.v=onb.v; if(onb.offer)gp.offer=onb.offer; if(onb.aid)gp.aid=onb.aid;
+    return gp;
   }
-  // TikTok requires content_id on every event (VSA matching). Always supply content_id +
-  // content_type + a contents[] entry, deriving the id from content_name when not given.
-  function ttNorm(props){props=props||{};var cid=props.content_id||props.content_name||'archives-app';if(!props.content_id)props.content_id=cid;if(!props.content_type)props.content_type='product';if(!props.contents)props.contents=[{content_id:cid,content_type:props.content_type,content_name:props.content_name||cid,quantity:props.quantity||1}];return props;}
-  function ttFire(name,props,email){var eid=ttGenId();props=ttNorm(props);try{if(typeof ttq!=='undefined')ttq.track(name,props,{event_id:eid});}catch(e){}ttCapi(name,props,eid,email);}
-  function pkgValue(pk){var pr=pk&&(pk.webBillingProduct||pk.rcBillingProduct||pk.product||{});var cp=(pr&&(pr.currentPrice||pr.price))||{};var amt=cp.amountMicros?cp.amountMicros/1e6:(typeof cp.amount==='number'?cp.amount/100:null);return {value:(amt!=null?Math.round(amt*100)/100:null),currency:cp.currency||cp.currencyCode||'USD'};}
+  /* GA4/Meta/TikTok/PostHog/first-party fire — shared implementation in
+     checkout.js. Function declaration so it's hoisted like the original. */
   function fire(ga,gp,fb,fp){
-    try{if(typeof gtag==='function')gtag('event',ga,gp||{});}catch(e){}
-    try{if(typeof fbq==='function'&&fb){var std={Lead:1,ViewContent:1,InitiateCheckout:1,CompleteRegistration:1,StartTrial:1,Subscribe:1};std[fb]?fbq('track',fb,fp||{}):fbq('trackCustom',fb,fp||{});}}catch(e){}
-    if(fb){ttFire(fb,fp||gp||{},onb.email||'');}
-    try{if(typeof posthog!=='undefined'&&posthog.capture)posthog.capture(ga,gp||{});}catch(e){}
-    /* first-party tracker: every funnel event, organic included (props -> ad_events.raw.props) */
-    try{if(window.atrack)window.atrack(ga,null,gp||{})}catch(e){}
+    (fire._f||(fire._f=AC.makeFire(function(){return onb.email||'';})))(ga,gp,fb,fp);
   }
 })();
 </script>
