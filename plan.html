@@ -180,7 +180,7 @@
 
     <div class="faq">
       <h2>Common questions</h2>
-      <details><summary>How does the free trial work?</summary><p id="faqRenew"></p></details>
+      <details><summary id="faqTrialQ">How does the free trial work?</summary><p id="faqRenew"></p></details>
       <details><summary>Where do I use my subscription?</summary><p>You pay here on the web, then one tap opens Archives on your phone with everything unlocked. It is the same account, so your progress and streak stay with you.</p></details>
       <details><summary>Can I cancel?</summary><p>Yes, anytime. Cancel before the trial ends and you are charged nothing.</p></details>
     </div>
@@ -363,8 +363,16 @@
         ? '7 days free, then '+amt+'. Cancel anytime before the trial ends and you pay nothing.'
         : amt+', billed today. Cancel anytime.';
     }
+    // FAQ #1 must match the annual card: trial copy normally, returning-rate
+    // copy under the winback offer (that product has no trial).
     var annual=planById('annual');
-    document.getElementById('faqRenew').textContent='You get 7 days completely free. When the trial ends, you are charged '+(annual.amt||'the yearly price')+' for a full year, and it renews yearly until you cancel. Cancel anytime before the trial ends and you pay nothing.';
+    if(offerOn){
+      document.getElementById('faqTrialQ').textContent='How does the returning learner rate work?';
+      document.getElementById('faqRenew').textContent='Your first year is '+(annual.amt||'the discounted price')+' (40% off). After the first year it renews at the standard yearly price, and you can cancel anytime.';
+    }else{
+      document.getElementById('faqTrialQ').textContent='How does the free trial work?';
+      document.getElementById('faqRenew').textContent='You get 7 days completely free. When the trial ends, you are charged '+(annual.amt||'the yearly price')+' for a full year, and it renews yearly until you cancel. Cancel anytime before the trial ends and you pay nothing.';
+    }
   }
   renderPlans(); selectPlan(selected);
 
