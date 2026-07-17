@@ -309,12 +309,57 @@
       if(k==='C'){o.classList.add('correct');fbEl.textContent='Right. 950 years, a thousand less fifty, in the earliest accounts. The kind of fact that stays with you.';fbEl.style.color='var(--green)';}
       else{o.classList.add('wrong');document.querySelector('.quiz-opt[data-k="C"]').classList.add('correct');fbEl.textContent='It was 950 years, a thousand less fifty. Now you will not forget it.';fbEl.style.color='var(--pink)';}
       fire('preview_quiz_answer',pr({correct:k==='C'}));
+      // the aha moment earns the offer: reveal it once the feedback lands
+      setTimeout(function(){var mc=document.getElementById('midCta');if(mc)mc.style.display='none';revealStage(3);},1500);
     };
   });
   document.getElementById('midCta').addEventListener('click',function(){
     fire('plan_cta_click',pr({}));
-    document.getElementById('offerSec').scrollIntoView({behavior:'smooth'});
+    this.style.display='none';
+    revealStage(3);
   });
+
+  /* ---------- progressive reveal ----------
+     The quiz that converts these leads is one-thing-at-a-time; a six-section
+     wall reads as overload (Ahmed, 2026-07-17). Sections appear as each is
+     completed, with a smooth scroll: score/hero -> plan -> first story+quiz
+     (answering auto-reveals the offer) -> offer/reviews/FAQ. A small skip
+     link jumps buyers straight to the plans. */
+  var STAGES=[
+    [document.getElementById('heroSec'),document.getElementById('scoreSec')],
+    [document.getElementById('planSec')],
+    [document.getElementById('watchSec')],
+    [document.getElementById('offerSec'),document.querySelector('.faq'),document.getElementById('skipFree')]
+  ];
+  var stageIdx=0;
+  for(var si=1;si<STAGES.length;si++)STAGES[si].forEach(function(el){if(el)el.style.display='none';});
+  function revealStage(n){
+    if(n<=stageIdx)return;
+    for(var s=stageIdx+1;s<=n&&s<STAGES.length;s++)STAGES[s].forEach(function(el){if(el)el.style.display='';});
+    var was=stageIdx; stageIdx=Math.min(n,STAGES.length-1);
+    var tgt=STAGES[was+1]&&STAGES[was+1][0];
+    if(tgt)setTimeout(function(){tgt.scrollIntoView({behavior:'smooth',block:'start'});},60);
+    fire('plan_stage',pr({stage:stageIdx}));
+  }
+  function stageBtn(label,onclick){
+    var b=document.createElement('button');
+    b.className='btn btn-ghost'; b.style.marginTop='14px'; b.textContent=label;
+    b.addEventListener('click',function(){b.style.display='none';onclick();});
+    return b;
+  }
+  var s0host=(document.getElementById('scoreSec').style.display!=='none')
+    ? document.getElementById('scoreSec') : document.getElementById('heroSec');
+  var s0label=P.v==='challenge'?'Show my 30 days ↓':(P.v==='era'?'Show my plan ↓':'Build my plan ↓');
+  s0host.appendChild(stageBtn(s0label,function(){revealStage(1);}));
+  var skipA=document.createElement('button');
+  skipA.className='skip'; skipA.style.marginTop='6px'; skipA.textContent='or skip straight to the plans';
+  skipA.addEventListener('click',function(){
+    fire('plan_cta_click',pr({skip:true}));
+    revealStage(3);
+    setTimeout(function(){document.getElementById('offerSec').scrollIntoView({behavior:'smooth',block:'start'});},80);
+  });
+  s0host.appendChild(skipA);
+  document.getElementById('planSec').appendChild(stageBtn('Show my first story ↓',function(){revealStage(2);}));
 
   /* ---------- reviews by persona ---------- */
   var revs=REVIEWS[P.skin]||REVIEWS.roots;
