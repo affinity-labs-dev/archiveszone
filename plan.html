@@ -347,9 +347,14 @@
     b.addEventListener('click',function(){b.style.display='none';onclick();});
     return b;
   }
-  var s0host=(document.getElementById('scoreSec').style.display!=='none')
+  // Continue button goes after the LAST visible stage-0 section in DOM order:
+  // normally that's scoreSec, but the score-first variant moves scoreSec above
+  // the hero, so the hero is last there.
+  var s0host=(document.getElementById('scoreSec').style.display!=='none' && !vv.scoreFirst)
     ? document.getElementById('scoreSec') : document.getElementById('heroSec');
-  var s0label=P.v==='challenge'?'Show my 30 days ↓':(P.v==='era'?'Show my plan ↓':'Build my plan ↓');
+  var s0label=P.v==='challenge'?'Show my 30 days ↓'
+    :(P.v==='era'?'Show my plan ↓'
+    :(P.v==='score'?'Build my plan ↓':'See my plan ↓'));
   s0host.appendChild(stageBtn(s0label,function(){revealStage(1);}));
   var skipA=document.createElement('button');
   skipA.className='skip'; skipA.style.marginTop='6px'; skipA.textContent='or skip straight to the plans';
