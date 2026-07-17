@@ -387,12 +387,15 @@
         }
       });
       if(offerOn){
+        // Display the INTRO price (what Stripe charges the first year) —
+        // currentPrice returns the base price for intro products.
         var a=planById('annual');
-        var std=AC.findPkg(AC.allOfferings(offerings),'$rc_annual','annual');
-        var stdPr=std?AC.pkgPrice(std):'';
+        var stdPr=a.amt||'';
+        var intro=AC.pkgIntro(a.pkgObj);
+        if(intro&&intro.formatted)a.amt=intro.formatted;
         a.badge='Returning learner rate';
         a.sub='40% off your first year'+(stdPr?', then '+stdPr+'/yr':'');
-        if(a.amt)a.per='first year'+(stdPr?' · was '+stdPr:'');
+        a.per='first year'+(stdPr?' · was '+stdPr:'');
         selected='annual';
       }
       renderPlans(); selectPlan(selected);

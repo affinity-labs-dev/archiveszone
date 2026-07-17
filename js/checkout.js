@@ -73,6 +73,22 @@
         (typeof cp.amount === 'number' ? ('$' + (cp.amount / 100).toFixed(2)) : ''));
   }
 
+  /* Intro-offer price (e.g. the winback $29.99 first year). currentPrice
+     returns the BASE price for intro products, so offer displays must read
+     the intro phase explicitly or the card shows $49.99 while Stripe
+     charges $29.99. */
+  function pkgIntro(pk) {
+    var pr = pk && (pk.webBillingProduct || pk.rcBillingProduct || pk.product || {});
+    var opt = pr.defaultSubscriptionOption || {};
+    var ip = opt.introPrice;
+    if (!ip || !ip.price) return null;
+    var p = ip.price;
+    var formatted = p.formattedPrice ||
+      (p.amountMicros ? ('$' + (p.amountMicros / 1e6).toFixed(2)) :
+        (typeof p.amount === 'number' ? ('$' + (p.amount / 100).toFixed(2)) : null));
+    return formatted ? { formatted: formatted } : null;
+  }
+
   function pkgValue(pk) {
     var pr = pk && (pk.webBillingProduct || pk.rcBillingProduct || pk.product || {});
     var cp = (pr && (pr.currentPrice || pr.price)) || {};
@@ -196,6 +212,7 @@
     offerActive: offerActive,
     prodId: prodId,
     pkgPrice: pkgPrice,
+    pkgIntro: pkgIntro,
     pkgValue: pkgValue,
     findPkg: findPkg,
     purchase: purchase,
