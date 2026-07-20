@@ -21,7 +21,7 @@
 
   // offer URL param -> RC Offering identifier. Only listed offers exist;
   // anything else resolves to the default (current) offering.
-  var OFFER_TO_OFFERING = { wb40: 'winback' };
+  var OFFER_TO_OFFERING = { wb40: 'winback', webv2: 'web_v2' };
 
   var _rc = null, _RC = null;
 
@@ -86,7 +86,9 @@
     var formatted = p.formattedPrice ||
       (p.amountMicros ? ('$' + (p.amountMicros / 1e6).toFixed(2)) :
         (typeof p.amount === 'number' ? ('$' + (p.amount / 100).toFixed(2)) : null));
-    return formatted ? { formatted: formatted } : null;
+    var value = p.amountMicros ? p.amountMicros / 1e6 :
+      (typeof p.amount === 'number' ? p.amount / 100 : null);
+    return formatted ? { formatted: formatted, value: value } : null;
   }
 
   function pkgValue(pk) {

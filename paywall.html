@@ -95,6 +95,17 @@
     .faq summary{font-weight:700;font-size:15px;cursor:pointer;list-style:none}
     .faq summary::-webkit-details-marker{display:none}
     .faq p{font-size:14px;color:#444;margin-top:8px}
+    /* plan recap + roadmap: the paywall sells the finished plan, not a subscription */
+    .plancard{background:#fff;border:2px solid var(--onyx);border-radius:var(--r-card);box-shadow:0 4px 0 var(--gold);padding:16px;margin:18px 0 4px}
+    .plancard-tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--blue);margin-bottom:9px}
+    .pc-chips{display:flex;flex-wrap:wrap;gap:6px}
+    .pc-chip{font-size:13px;font-weight:700;padding:5px 11px;border:1.5px solid var(--onyx);border-radius:999px;background:var(--snow)}
+    .plancard-meta{font-size:13px;color:#555;margin-top:10px;font-weight:600}
+    .roadmap{display:flex;gap:8px;margin:12px 0 2px}
+    .rm{flex:1;background:#fff;border:1.5px solid #e3e3e3;border-radius:12px;padding:9px 10px}
+    .rm-when{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--acai)}
+    .rm-what{display:block;font-size:12.5px;font-weight:600;color:#444;margin-top:3px}
+    .trustline{font-size:13px;color:#555;font-weight:600;text-align:center;margin:0 0 12px}
     /* exit modal */
     .modal-bg{position:fixed;inset:0;background:#000a;z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
     .modal-bg.open{display:flex}
@@ -121,6 +132,20 @@
       </div>
     </div>
 
+    <!-- Personal recap: quiz answers restated so pricing reads as the final unlock
+         of a finished plan. Hidden when there is no quiz state (direct traffic). -->
+    <div class="plancard" id="planCard" hidden>
+      <div class="plancard-tag">Your plan is ready</div>
+      <div class="pc-chips" id="pcEras"></div>
+      <p class="plancard-meta" id="pcMeta"></p>
+    </div>
+
+    <div class="roadmap">
+      <div class="rm"><span class="rm-when">Today</span><span class="rm-what">Your first 5-minute story</span></div>
+      <div class="rm"><span class="rm-when">Day 7</span><span class="rm-what">One era mapped, streak alive</span></div>
+      <div class="rm"><span class="rm-when">Day 30</span><span class="rm-what">You're the one telling these stories</span></div>
+    </div>
+
     <div class="plans" id="plans" role="radiogroup" aria-label="Choose a plan"></div>
 
     <ul class="included" id="included">
@@ -131,10 +156,11 @@
       <li><span class="ic" data-check></span><span>Carefully researched and sourced. No myths.</span></li>
     </ul>
 
+    <p class="trustline">Carefully researched and sourced. 60,000+ learners across 50 countries.</p>
     <button class="btn" id="checkoutBtn">Start my 7-day free trial</button>
     <p class="renew" id="renewNote"></p>
     <p class="err" id="checkoutErr"></p>
-    <div class="reassure"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-7 9-7 9s-7-4-7-9V6z"/></svg><span>Secure checkout. Cancel anytime in two taps.</span></div>
+    <div class="reassure"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-7 9-7 9s-7-4-7-9V6z"/></svg><span>Secure checkout, about 20 seconds. Cancel anytime in two taps.</span></div>
     <button class="restore" id="restoreBtn">Already subscribed? Open the app</button>
 
     <!-- Skip path demoted from store badges to a text link: badges drew 10
@@ -190,6 +216,7 @@
   var selected='monthly';
   var onb=readOnb();
   var offerOn=false; // true once the RC 'winback' offering resolves for onb.offer
+  var introOn=false; // true when offer=webv2 resolved AND its annual intro price loaded
 
   /* Drip-email variants: v= (or derived from aid=drip_NN) retitles the hero so
      the page keeps the promise the email made. Urgency stays in email copy —
@@ -200,6 +227,8 @@
     final:   {t:'Whenever you’re ready.', s:'Your plan stays saved. Start any time, no pressure.'}
   };
   var AID_TO_V={drip_05:'resume', drip_08:'activate', drip_12:'final'};
+  var ERA_TITLE={prophets:'earliest-stories', baghdad:'Baghdad', andalus:'Al-Andalus', ottomans:'Ottomans', saladin:'Saladin', scholars:'great-scholars', mughals:'Mughal', westafrica:'West-Africa'};
+  var ERA_CHIP={prophets:'Earliest stories', baghdad:'Baghdad', andalus:'Al-Andalus', ottomans:'Ottomans', saladin:'Saladin', scholars:'Great scholars', mughals:'Mughals', westafrica:'West Africa'};
   (function applyVariant(){
     var vv=onb.v||AID_TO_V[onb.aid]||'';
     var m=V_MAP[vv];
@@ -207,11 +236,34 @@
       document.getElementById('pwTitle').textContent=m.t;
       document.getElementById('pwSub').textContent=m.s;
     }else if(onb.eras.length){
-      // No explicit variant but we know their quiz picks: name the plan.
-      var eraNames={prophets:'earliest-stories', baghdad:'Baghdad', andalus:'Al-Andalus', ottomans:'Ottomans', saladin:'Saladin', scholars:'great-scholars', mughals:'Mughal', westafrica:'West-Africa'};
-      var first=eraNames[onb.eras[0]];
-      if(first) document.getElementById('pwSub').textContent='Your '+first+'-first plan is saved and waiting. Unlock all eras, all Daily Stories, and Ibu, your learning Guide.';
+      // No explicit variant but we know their quiz picks: name the plan as the
+      // finished thing pricing unlocks.
+      var first=ERA_TITLE[onb.eras[0]];
+      if(first){
+        document.getElementById('pwTitle').textContent='Your '+first+'-first plan is ready.';
+        document.getElementById('pwSub').textContent='Unlock all eras, all Daily Stories, and Ibu, your learning Guide.';
+      }
     }
+  })();
+
+  /* Personal recap card: restate quiz picks so the plans below read as unlocking
+     an already-built plan. Skipped entirely for traffic with no quiz state. */
+  (function fillPlanCard(){
+    var eras=(onb.eras||[]).filter(function(k){return ERA_CHIP[k];});
+    var a=onb.answers||{};
+    if(!eras.length && !onb.cadence) return;
+    var chips=document.getElementById('pcEras');
+    chips.innerHTML=eras.slice(0,4).map(function(k){return '<span class="pc-chip">'+ERA_CHIP[k]+'</span>';}).join('')+
+      (eras.length>4?'<span class="pc-chip">+'+(eras.length-4)+' more</span>':'');
+    var GAP={school:'built to close knowledge gaps', start:'built around a clear starting point',
+      dry:'built to never feel academic', authentic:'built on sourced, authentic stories',
+      time:'built to survive busy days'};
+    var bits=[];
+    if(onb.cadence) bits.push(onb.cadence==='morning'?'Mornings':'Evenings');
+    bits.push('5 minutes a day');
+    if(GAP[a.blocker]) bits.push(GAP[a.blocker]);
+    document.getElementById('pcMeta').textContent=bits.join(' · ');
+    document.getElementById('planCard').hidden=false;
   })();
 
   // Persist the ad-click id for CAPI match quality, and set TikTok advanced matching from the known email.
@@ -243,6 +295,12 @@
       // Winback intro price: copy comes from the resolved package, never hardcoded.
       document.getElementById('checkoutBtn').textContent = p.amt?('Get my returning learner rate · '+p.amt):'Continue with Yearly';
       document.getElementById('renewNote').textContent = (p.amt||'The discounted price')+' for your first year, then it renews at the standard yearly price. Cancel anytime.';
+    }else if(introOn && p.id==='annual'){
+      document.getElementById('checkoutBtn').textContent = p.amt?('Start my plan · '+p.amt+' for year one'):'Continue with Yearly';
+      document.getElementById('renewNote').textContent = (p.amt||'The intro price')+' for your first year, then '+(p.stdAmt||'the standard yearly price')+'/yr. Cancel anytime.';
+    }else if(p.id==='lifetime'){
+      document.getElementById('checkoutBtn').textContent = p.amt&&p.amt!=='…'?('Get lifetime access · '+p.amt):'Get lifetime access';
+      document.getElementById('renewNote').textContent = 'One payment, yours forever. No renewals.';
     }else{
       document.getElementById('checkoutBtn').textContent = p.trial==='free'
         ? (p.amt?'Start 7 days free · then '+p.amt+'/year':'Start my 7-day free trial')
@@ -260,6 +318,10 @@
       document.getElementById('faqTrialQ').textContent='How does the returning learner rate work?';
       document.getElementById('faqRenew').textContent =
         'Your first year is '+(annual.amt||'the discounted price')+' (40% off). After the first year it renews at the standard yearly price, and you can cancel anytime.';
+    }else if(introOn){
+      document.getElementById('faqTrialQ').textContent='How does the first-year price work?';
+      document.getElementById('faqRenew').textContent =
+        'Your first year of Yearly is '+(annual.amt||'the intro price')+'. After that it renews at '+(annual.stdAmt||'the standard yearly price')+'/yr until you cancel, and you can cancel anytime. Monthly and Lifetime are charged exactly as shown.';
     }else{
       var annualAmt=annual.amt||'the yearly price';
       document.getElementById('faqTrialQ').textContent='How does the free trial work?';
@@ -281,7 +343,10 @@
       // annual matches; without it (or if it doesn't exist) this is exactly
       // the old current-first behavior.
       var offs=AC.resolveOfferings(offerings, onb.offer);
-      offerOn=AC.offerActive(offerings, onb.offer);
+      // offerOn drives the WINBACK-specific copy (returning learner rate, 40%
+      // off FAQ) — gate it to wb40 so other offers (webv2) resolve their
+      // offering without inheriting winback copy.
+      offerOn=onb.offer==='wb40' && AC.offerActive(offerings, onb.offer);
       try{ console.log('[paywall] offerings:', offs.map(function(o){return {offering:o.identifier,packages:(o.availablePackages||[]).map(function(x){return {package:x.identifier,product:AC.prodId(x),price:AC.pkgPrice(x)};})};})); }catch(_){}
       PLANS.forEach(function(p){
         var pk=AC.findPkg(offs,p.pkg,p.kw);
@@ -292,7 +357,7 @@
           // formatted price; skipped if it can't be derived safely.
           if(p.id==='annual'){
             var v=AC.pkgValue(pk), sym=(pr||'').replace(/[\d.,\s]+/g,'');
-            if(v.value&&sym) p.per='per year · '+sym+(v.value/12).toFixed(2)+'/mo';
+            if(v.value&&sym) p.per='per year · '+sym+(v.value/12).toFixed(2)+'/mo · '+sym+(v.value/365).toFixed(2)+'/day';
           }
         }
       });
@@ -308,6 +373,30 @@
         a.sub='40% off your first year'+(stdPr?', then '+stdPr+'/yr':'');
         a.per='first year'+(stdPr?' · was '+stdPr:'');
         selected='annual';
+      }else if(onb.offer==='webv2' && AC.offerActive(offerings, onb.offer)){
+        // web_v2: intro-priced annual (no trial) + lifetime anchor. Copy only
+        // switches when the intro price actually resolved, so a misconfigured
+        // offering degrades to the standard trial copy, never to wrong claims.
+        var a2=planById('annual');
+        var intro2=a2.pkgObj&&AC.pkgIntro(a2.pkgObj);
+        if(intro2&&intro2.formatted){
+          introOn=true;
+          a2.stdAmt=a2.amt||'';
+          var v2=AC.pkgValue(a2.pkgObj);
+          var pct=(intro2.value&&v2.value)?Math.round((1-intro2.value/v2.value)*100):null;
+          a2.amt=intro2.formatted;
+          a2.trial='intro';
+          a2.badge=pct?('Save '+pct+'%'):'Intro offer';
+          a2.sub=(pct?pct+'% off':'A discount on')+' your first year'+(a2.stdAmt?', then '+a2.stdAmt+'/yr':'');
+          a2.per='first year'+(a2.stdAmt?' · was '+a2.stdAmt:'');
+          var lp=AC.findPkg(offs,'$rc_lifetime','lifetime');
+          if(lp&&!PLANS.some(function(x){return x.id==='lifetime'})){
+            PLANS.push({id:'lifetime',pkg:'$rc_lifetime',kw:'lifetime',name:'Lifetime',
+              sub:'One payment, every era forever',trial:'none',badge:'',
+              pkgObj:lp,amt:AC.pkgPrice(lp)||'…',per:'one time'});
+          }
+          selected='annual';
+        }
       }
       renderPlans(); selectPlan(selected);
     }catch(e){ console.warn('[paywall] offerings load failed', e); }
@@ -336,7 +425,13 @@
       await AC.purchase({ pkg:pkg, planId:selected, email:email, sid:sid });
     }catch(e){
       console.error('[checkout]',e); btn.disabled=false; btn.textContent=label;
-      if(e&&/cancel|closed|dismiss/i.test(String(e.message||e))) return;
+      if(e&&/cancel|closed|dismiss/i.test(String(e.message||e))){
+        // Checkout opened then abandoned: capture the lead instead of returning
+        // silently (email follow-ups recover 5-20% of paywall drop-offs).
+        fire('checkout_cancel',basePr({plan:selected}));
+        openExit();
+        return;
+      }
       var notFound=/not found|offering|package/i.test(String(e.message||e));
       errEl.innerHTML=(notFound?'This plan is not live yet in checkout. ':'Checkout could not start. ')+'<a href="#" id="storeLink">Get the app instead</a>.';
       errEl.classList.add('show'); wireStore();

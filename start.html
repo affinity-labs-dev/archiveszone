@@ -335,7 +335,7 @@
       <div class="progress"><i id="prog" style="width: 40%;"></i></div>
       <button class="restart" id="restartBtn">Start over</button>
     </div>
-    <div class="stage" id="stage"><div class="screen active"><div class="head"><div class="t-hxl">Don't know where to start with Middle Eastern history?</div><p class="t-bl muted mt8">Answer 5 questions. We'll build your starting point.</p><p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these was invented over 1,000 years ago by a Muslim?</p></div><div class="body"><div class="opts" style="margin-top:6px"><button class="opt" data-v="camera"><span>The camera</span><span class="check"></span></button><button class="opt" data-v="coffee"><span>Coffee</span><span class="check"></span></button><button class="opt" data-v="algebra"><span>Algebra</span><span class="check"></span></button><button class="opt" data-v="all"><span>All three</span><span class="check"></span></button></div></div></div></div>
+    <div class="stage" id="stage"><div class="screen active"><div class="head"><div class="t-hxl">Don't know where to start with Middle Eastern history?</div><p class="t-bl muted mt8">Answer 5 quick questions, about a minute, and we'll build your starting point.</p><p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these was invented over 1,000 years ago by a Muslim?</p></div><div class="body"><div class="opts" style="margin-top:6px"><button class="opt" data-v="camera"><span>The camera</span><span class="check"></span></button><button class="opt" data-v="coffee"><span>Coffee</span><span class="check"></span></button><button class="opt" data-v="algebra"><span>Algebra</span><span class="check"></span></button><button class="opt" data-v="all"><span>All three</span><span class="check"></span></button></div></div></div></div>
     <div class="cta-dock" id="dock" style="display: none;"></div>
   </div>
 
@@ -392,7 +392,9 @@
   /* ---------- skins ---------- */
   var SKINS={
     roots:{img:'/images/onboarding/skin-roots.jpg',label:'Reconnect with my roots'},
-    curiosity:{img:'/images/onboarding/skin-curiosity.jpg',label:'Pure curiosity'},
+    // 'curiosity' doubles as the low-commitment escape option (Noom's "I haven't
+    // decided" pattern): nobody should stall because none of the labels fits them.
+    curiosity:{img:'/images/onboarding/skin-curiosity.jpg',label:'Just curious, surprise me'},
     kids:{img:'/images/onboarding/skin-kids.jpg',label:'Teach my kids'},
     deepen:{img:'/images/onboarding/skin-deepen.jpg',label:'Deepen what I know'}
   };
@@ -419,23 +421,26 @@
   // they are second. The connection slider is now three tap choices — 64% of
   // sessions never moved the slider off its default, so it produced noise.
   var STEPS=[
+    // qn = position in the "5 quick questions" promise. The hook is the
+    // warm-up ("Quick one first"), the cadence pick is part of plan-building —
+    // neither counts, so the numbering matches the promise and never overflows.
     {type:'hook_quiz',key:'hook',phase:'hook'},
-    {type:'intro_skin',key:'skin',phase:'hook'},
-    {type:'choice',key:'connection',numeric:true,phase:'discover',title:'How connected do you feel to Middle Eastern history right now?',options:[
+    {type:'intro_skin',key:'skin',phase:'hook',qn:1},
+    {type:'choice',key:'connection',numeric:true,phase:'discover',qn:2,title:'How connected do you feel to Middle Eastern history right now?',options:[
       ['10','Starting from zero'],
       ['45','I know bits and pieces'],
       ['75','Fairly connected already']
     ],toast:function(v){return CONN_TOAST[v]}},
-    {type:'chips',key:'eras',phase:'discover',multi:true,title:'Which stories pull you in?',sub:'Pick as many as you like, and we\'ll build your plan around them.',options:ERAS,min:1},
+    {type:'chips',key:'eras',phase:'discover',qn:3,multi:true,title:'Which stories pull you in?',sub:'Pick as many as you like, and we\'ll build your plan around them.',options:ERAS,min:1},
     {type:'stat',phase:'proof'},
-    {type:'choice',key:'blocker',phase:'discover',title:'What\'s gotten in the way?',sub:'Be honest. This shapes your plan most.',toast:function(v){return BLOCKER_TOAST[v]},options:[
+    {type:'choice',key:'blocker',phase:'discover',qn:4,title:'What\'s gotten in the way?',sub:'Be honest. This shapes your plan most.',toast:function(v){return BLOCKER_TOAST[v]},options:[
       ['school','School skipped it entirely',I.book],
       ['dry','Sources feel dry or academic',I.deepen],
       ['start','I don\'t know where to start',I.compass],
       ['time','I never find the time',I.clock],
       ['authentic','I can\'t tell authentic from myth',I.shield]
     ]},
-    {type:'likert',key:'likert',phase:'discover',title:'How much do these sound like you?',items:[
+    {type:'likert',key:'likert',phase:'discover',qn:5,title:'How much do these sound like you?',items:[
       ['tell','I wish I knew these stories well enough to tell them'],
       ['identity','I feel a gap between my identity and my history'],
       ['finish','I start videos or books but rarely finish them'],
@@ -627,6 +632,9 @@
 
   var R={};
 
+  /* "Question N of 5" eyebrow above the title on the five counted questions */
+  function qTag(step){return step.qn?'<p class="t-bs muted" style="font-weight:800;margin-bottom:6px">Question '+step.qn+' of 5</p>':''}
+
   /* Screen 0 — curiosity hook. One easy tap with a payoff, before any ask. */
   var HOOK_OPTS=[['camera','The camera'],['coffee','Coffee'],['algebra','Algebra'],['all','All three']];
   R.hook_quiz=function(){
@@ -634,7 +642,7 @@
     stage.innerHTML=screenWrap(
       '<div class="head">'+
         '<div class="t-hxl">Don\'t know where to start with Middle Eastern history?</div>'+
-        '<p class="t-bl muted mt8">Answer 5 questions. We\'ll build your starting point.</p>'+
+        '<p class="t-bl muted mt8">Answer 5 quick questions, about a minute, and we\'ll build your starting point.</p>'+
         '<p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these was invented over 1,000 years ago by a Muslim?</p>'+
       '</div>'+
       '<div class="body"><div class="opts" style="margin-top:6px">'+HOOK_OPTS.map(function(o){
@@ -657,14 +665,14 @@
     });
   };
 
-  R.intro_skin=function(){
+  R.intro_skin=function(step){
     var cards=Object.keys(SKINS).map(function(k){var s=SKINS[k];
       return '<div class="imgopt" data-k="'+k+'"><img src="'+s.img+'" alt=""/><div class="lab">'+s.label+'</div></div>';
     }).join('');
     stage.innerHTML=screenWrap(
-      '<div class="head">'+
-        '<div class="t-hxl">Why are you interested in Middle Eastern history?</div>'+
-        '<p class="t-bs muted mt8">Tap one to begin — this shapes your plan.</p>'+
+      '<div class="head">'+qTag(step)+
+        '<div class="t-hxl">What should your journey be built around?</div>'+
+        '<p class="t-bs muted mt8">Your answer picks the stories your plan starts with.</p>'+
       '</div>'+
       '<div class="body"><div class="grid grid-compact">'+cards+'</div></div>'
     );
@@ -694,7 +702,7 @@
   R.chips=function(step){
     var sel=state[step.key]||[];
     stage.innerHTML=screenWrap(
-      '<div class="head"><div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
+      '<div class="head">'+qTag(step)+'<div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
       '<div class="body"><div class="chips">'+step.options.map(function(o){
         var on=sel.indexOf(o[0])>-1;
         return '<button class="chip'+(on?' selected':'')+'" data-v="'+o[0]+'"><span>'+o[1]+'</span></button>';
@@ -713,7 +721,7 @@
 
   R.choice=function(step){
     stage.innerHTML=screenWrap(
-      '<div class="head"><div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
+      '<div class="head">'+qTag(step)+'<div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
       '<div class="body"><div class="opts">'+step.options.map(function(o){
         return '<button class="opt" data-v="'+o[0]+'"><span>'+o[1]+'</span><span class="check"></span></button>';
       }).join('')+'</div></div>'
@@ -738,8 +746,8 @@
     function show(){
       var it=step.items[i];
       stage.innerHTML=screenWrap(
-        '<div class="head"><div class="t-hxl">'+step.title+'</div>'+
-          '<p class="t-bs muted mt8">'+(i+1)+' of '+step.items.length+'</p></div>'+
+        '<div class="head">'+qTag(step)+'<div class="t-hxl">'+step.title+'</div>'+
+          '<p class="t-bs muted mt8">Statement '+(i+1)+' of '+step.items.length+'</p></div>'+
         '<div class="body"><div class="likert"><div class="lk">'+
           '<div class="q" style="font-size:19px;line-height:1.35">'+it[1]+'</div>'+
           '<div class="lk-row">'+scale.map(function(s,n){

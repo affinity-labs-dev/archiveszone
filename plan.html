@@ -433,7 +433,8 @@
       var rc=await AC.rcInstance();
       var offerings=await rc.getOfferings();
       var offs=AC.resolveOfferings(offerings,P.offer);
-      offerOn=AC.offerActive(offerings,P.offer);
+      // Winback-copy gate mirrors paywall.html: only wb40 gets winback framing.
+      offerOn=P.offer==='wb40' && AC.offerActive(offerings,P.offer);
       PLANS.forEach(function(p){
         var pk=AC.findPkg(offs,p.pkg,p.kw);
         if(pk){
