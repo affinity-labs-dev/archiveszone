@@ -106,7 +106,7 @@
     try{
       var _ck='atrack_conv_'+(eid||plan+'_'+(val||''));
       if(window.atrack&&!localStorage.getItem(_ck)){
-        window.atrack('conversion',(typeof val==='number'&&isFinite(val))?val:undefined);
+        window.atrack('conversion',(typeof val==='number'&&isFinite(val))?val:undefined,{plan:plan});
         localStorage.setItem(_ck,'1');
       }
     }catch(e){}
