@@ -478,14 +478,32 @@
         pkg=AC.findPkg(AC.resolveOfferings(offerings,P.offer),p.pkg,p.kw);
       }
       if(!pkg)throw new Error('Package "'+p.pkg+'" not found in any offering');
+      // Abandon flag: set before the RC modal opens, cleared on success
+      // (checkout.js) and on every catch; pagehide beacon below catches
+      // tab-close abandons the in-page handler never sees.
+      try{sessionStorage.setItem('arc_ck_open',selected);}catch(_e){}
       await AC.purchase({pkg:pkg,planId:selected,email:P.email,sid:P.sid});
     }catch(e){
+      try{sessionStorage.removeItem('arc_ck_open');}catch(_e){}
       console.error('[checkout]',e); btn.disabled=false; btn.textContent=label;
-      if(e&&/cancel|closed|dismiss/i.test(String(e.message||e)))return;
+      if(e&&/cancel|closed|dismiss/i.test(String(e.message||e))){
+        // Was a silent return: the drip's checkout-abandon segment needs this.
+        fire('checkout_cancel',pr({plan:selected}));
+        return;
+      }
       var notFound=/not found|offering|package/i.test(String(e.message||e));
       errEl.innerHTML=(notFound?'This plan is not live yet in checkout. ':'Checkout could not start. ')+'<a href="#" id="storeLink">Get the app instead</a>.';
       errEl.classList.add('show'); wireStore();
     }
+  });
+  window.addEventListener('pagehide',function(){
+    try{
+      var pl=sessionStorage.getItem('arc_ck_open');
+      if(pl){
+        sessionStorage.removeItem('arc_ck_open');
+        if(window.atrack)window.atrack('checkout_cancel',null,pr({plan:pl,exit:'pagehide'}));
+      }
+    }catch(_e){}
   });
   function wireStore(){var l=document.getElementById('storeLink');if(l)l.addEventListener('click',function(e){e.preventDefault();AC.goStore('/plan.html');});}
   document.getElementById('restoreBtn').addEventListener('click',function(){AC.goStore('/plan.html');});

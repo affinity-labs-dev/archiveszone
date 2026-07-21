@@ -140,8 +140,16 @@
     ttCapi('CompletePayment',
       ttNorm({ content_id: 'plan_' + opts.planId, content_type: 'product', content_name: 'Archives ' + opts.planId, quantity: 1, value: (v.value || undefined), currency: (v.currency || 'USD') }),
       eid, opts.email || '');
+    // Checkout completed: clear the abandon flag BEFORE navigating so the
+    // pagehide checkout_cancel beacon never fires for a converted buyer.
+    try { sessionStorage.removeItem('arc_ck_open'); } catch (e) { }
+    // em: base64 buyer email so unlocked.html's conversion event carries it
+    // even on drip-link visits with no localStorage quiz state — the email
+    // drip engine suppresses paying customers by this field.
+    var em = ''; try { em = opts.email ? btoa(unescape(encodeURIComponent(opts.email))) : ''; } catch (e) { }
     location.href = 'unlocked.html?status=success&plan=' + encodeURIComponent(opts.planId)
       + '&v=' + encodeURIComponent(v.value || '') + '&cur=' + encodeURIComponent(v.currency || 'USD') + '&eid=' + encodeURIComponent(eid)
+      + (em ? '&em=' + encodeURIComponent(em) : '')
       + (redeem ? '&redeem=' + encodeURIComponent(redeem) : '');
   }
 

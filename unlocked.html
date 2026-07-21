@@ -104,11 +104,19 @@
     try{if(typeof ttq!=='undefined'){ttq.track('CompletePayment',{content_id:'plan_'+plan,content_type:'product',content_name:'Archives '+plan,quantity:1,contents:[{content_id:'plan_'+plan,content_type:'product',content_name:'Archives '+plan,quantity:1}],value:val,currency:cur},eid?{event_id:eid}:undefined);}}catch(e){}
     try{if(typeof posthog!=='undefined'&&posthog.capture)posthog.capture('purchase',{plan:plan});}catch(e){}
     /* First-party tracker conversion — eid-keyed guard so a page refresh can't
-       double count (the isSuccess params persist in the URL). */
+       double count (the isSuccess params persist in the URL). Carries the
+       buyer email (em= from checkout.js, base64; localStorage fallback) so
+       the drip engine can suppress paying customers by email, not just
+       session id — cross-device buyers were previously unmatchable. */
     try{
+      var buyerEmail='';
+      try{var _em=params.get('em')||'';if(_em)buyerEmail=decodeURIComponent(escape(atob(_em)));}catch(_e){}
+      if(!buyerEmail){try{var _st=JSON.parse(localStorage.getItem('archives_onb2')||'null');buyerEmail=(_st&&_st.email)||'';}catch(_e){}}
+      try{sessionStorage.removeItem('arc_ck_open');}catch(_e){}
       var _ck='atrack_conv_'+(eid||plan+'_'+(val||''));
       if(window.atrack&&!localStorage.getItem(_ck)){
-        window.atrack('conversion',(typeof val==='number'&&isFinite(val))?val:undefined,{plan:plan});
+        window.atrack('conversion',(typeof val==='number'&&isFinite(val))?val:undefined,
+          buyerEmail?{plan:plan,email:buyerEmail}:{plan:plan});
         localStorage.setItem(_ck,'1');
       }
     }catch(e){}

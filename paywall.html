@@ -424,8 +424,15 @@
         pkg=AC.findPkg(AC.resolveOfferings(offerings,onb.offer),p.pkg,p.kw);
       }
       if(!pkg) throw new Error('Package "'+p.pkg+'" not found in any offering');
+      // Abandon flag: set just before the RC modal opens, cleared on success
+      // (checkout.js, pre-redirect) and on every catch below. If the tab
+      // closes with the flag still set, the pagehide beacon fires
+      // checkout_cancel — tab-closes are the majority of abandons and the
+      // in-page cancel handler never sees them.
+      try{sessionStorage.setItem('arc_ck_open',selected);}catch(_e){}
       await AC.purchase({ pkg:pkg, planId:selected, email:email, sid:sid });
     }catch(e){
+      try{sessionStorage.removeItem('arc_ck_open');}catch(_e){}
       console.error('[checkout]',e); btn.disabled=false; btn.textContent=label;
       if(e&&/cancel|closed|dismiss/i.test(String(e.message||e))){
         // Checkout opened then abandoned: capture the lead instead of returning
@@ -438,6 +445,18 @@
       errEl.innerHTML=(notFound?'This plan is not live yet in checkout. ':'Checkout could not start. ')+'<a href="#" id="storeLink">Get the app instead</a>.';
       errEl.classList.add('show'); wireStore();
     }
+  });
+
+  /* Tab-close during an open checkout = abandon. t.js sends via beacon, so
+     this survives pagehide. Flag cleared first so it fires at most once. */
+  window.addEventListener('pagehide',function(){
+    try{
+      var pl=sessionStorage.getItem('arc_ck_open');
+      if(pl){
+        sessionStorage.removeItem('arc_ck_open');
+        if(window.atrack)window.atrack('checkout_cancel',null,basePr({plan:pl,exit:'pagehide'}));
+      }
+    }catch(_e){}
   });
 
   document.getElementById('restoreBtn').addEventListener('click', function(){ goStore(); });
