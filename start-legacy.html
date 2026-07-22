@@ -4,7 +4,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
   <title>Archives: Build your journey</title>
-  <meta name="description" content="Answer a few questions and we&#39;ll build your personal journey through 1,400 years of Islamic history.">
+  <meta name="description" content="Answer a few questions and we&#39;ll build your personal journey through 1,400 years of Middle Eastern history.">
   <link rel="icon" href="/lovable-uploads/413e869f-48d1-41d8-9ee0-e1c8ba1ac2bf.png" type="image/png">
 
   <!-- Fonts: Onest (UI/body). Bounded (display) falls back to Onest Black if the webfont isn't present. -->
@@ -14,9 +14,6 @@
 
   <!-- hls.js for the Noah reel. Deferred so it never blocks first paint. -->
   <script defer src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
-  <!-- Rive runtime (canvas build, WASM embedded) for the animated Ibu mascots.
-       Deferred: static PNGs render instantly and swap in once this loads. -->
-  <script defer src="https://cdn.jsdelivr.net/npm/@rive-app/canvas@2.30.3/rive.js"></script>
 
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-X3WFXSL1DG"></script>
@@ -40,6 +37,11 @@
   <!-- Archives first-party ad funnel tracker (ads -> Supabase dashboard). Sync (no async/defer) so window.atrack exists before the inline funnel code runs. -->
   <!-- Funnel version stamp (raw.fv) — must stay ABOVE t.js; bump in js/fv.js -->
   <script src="/js/fv.js"></script>
+  <!-- Legacy ramp arm: frozen pre-55-view funnel served to the ramp remainder
+       by start.html's RAMP gate. Override the shared fv stamp so the dashboard
+       cohorts the two arms separately. Delete this file (and the RAMP gate in
+       start.html) once the ramp hits 100 and the comparison is decided. -->
+  <script>window.__fv='0722-quizv3-legacy';</script>
   <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
   <!-- TODO(PostHog): paste the project's current snippet here (phc_ key, host https://eu.i.posthog.com, with defaults). fire() already forwards to posthog.capture when present. -->
 
@@ -151,6 +153,8 @@
     .grid-compact .imgopt{height:112px;width:100%}
     .grid-compact .imgopt img{width:100%;height:100%;object-fit:cover}
     .grid-compact .imgopt .lab{padding:8px 10px 9px;font-size:13px}
+    @keyframes nudge{0%,100%{transform:none}50%{transform:scale(1.035)}}
+    .grid-compact .imgopt:first-child{animation:nudge 1.5s ease-in-out .6s 2}
     /* desktop has room: let the journey images breathe */
     @media(min-width:640px){
       .grid-compact .imgopt{height:220px}
@@ -233,8 +237,8 @@
     .badge svg,.reassure svg{width:16px;height:16px;stroke:var(--onyx);stroke-width:2;fill:none;flex:0 0 auto}
 
     /* stat counters */
-    .stats3{display:flex;gap:12px;text-align:center;margin:10px 0;align-items:stretch}
-    .stats3 > div{flex:1;border:2px solid var(--onyx);border-radius:16px;background:#fff;box-shadow:0 4px 0 var(--gold);padding:16px 8px;display:flex;flex-direction:column;justify-content:center}
+    .stats3{display:flex;gap:12px;text-align:center;margin:10px 0}
+    .stats3 > div{flex:1;border:2px solid var(--onyx);border-radius:16px;background:#fff;box-shadow:0 4px 0 var(--gold);padding:16px 8px}
     .stats3 .n{font-family:var(--display);font-weight:900;font-size:26px;color:var(--blue)}
     .stats3 .l{font-size:12px;font-weight:600;color:#555;margin-top:4px}
 
@@ -291,12 +295,11 @@
     .center{text-align:center}
     .mt8{margin-top:8px}.mt16{margin-top:16px}.mt24{margin-top:24px}
     .hero-img{width:100%;border-radius:var(--r-card);border:2px solid var(--onyx);box-shadow:0 4px 0 var(--blue);margin:6px 0 18px;aspect-ratio:16/10;object-fit:cover}
-    .ibu{display:block;margin:0 auto;width:148px;height:148px;object-fit:contain}
+    .ibu{display:block;margin:0 auto;width:148px;height:148px;object-fit:contain;animation:bob 3.2s ease-in-out infinite}
     .ibu.sm{width:104px;height:104px}
+    @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
     .avatar{width:110px;height:110px;object-fit:contain;margin:0 auto 6px;display:block}
-    .appshot{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:50% 40%;border-radius:18px;border:2px solid var(--onyx);box-shadow:0 4px 0 var(--blue);display:block;margin:4px 0 16px;background:#fdf6ea}
-    /* uncropped variant: show the whole image at its natural ratio, never clamped */
-    .appshot.full{aspect-ratio:auto;height:auto;object-fit:contain;max-height:none}
+    .appshot{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:50% 64%;border-radius:18px;border:2px solid var(--onyx);box-shadow:0 4px 0 var(--blue);display:block;margin:4px 0 16px;background:#fdf6ea}
     /* review laurels */
     .laurels{display:flex;gap:12px;margin:4px 0 16px}
     .laurel{flex:1;text-align:center;border:2px solid var(--onyx);border-radius:16px;background:#fff;box-shadow:0 4px 0 var(--gold);padding:14px 8px}
@@ -326,41 +329,6 @@
     .rivewrap{width:176px;height:176px;margin:0 auto 2px;position:relative}
     .rivewrap.sm{width:112px;height:112px;margin-bottom:4px}
     .rivewrap img,.rivewrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;transition:opacity .25s}
-    /* insight interstitial (personalized give-back cards) */
-    .insight-card{border:2px solid var(--onyx);border-radius:var(--r-card);background:#fff;box-shadow:0 4px 0 var(--blue-2);padding:18px;margin-top:8px;text-align:left}
-    /* Headway-style break screens: big centered mascot, plain text below */
-    .insight-hero{width:210px;height:210px;object-fit:contain;display:block;margin:10px auto 4px}
-    /* 2-column grid variant for short-option questions (design variety) */
-    .opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .opts-grid .opt{flex-direction:column;text-align:center;justify-content:center;gap:8px;padding:18px 10px;min-height:92px;font-size:15px}
-    /* odd-count grids: the last option spans the full row instead of dangling */
-    .opts-grid:not(.opts-row) .opt:last-child:nth-child(odd){grid-column:1/-1}
-    /* 3-across single-row variant for short 3-option questions */
-    .opts-row{grid-template-columns:repeat(3,1fr)}
-    .opts-row .opt{padding:16px 6px;font-size:14px}
-    .opt .emo{font-size:26px;line-height:1;flex:0 0 auto}
-    .opts:not(.opts-grid) .opt .emo{font-size:22px}
-    /* circular avatar variant for the stat screen */
-    .stat-avatar{width:150px;height:150px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:2px solid var(--onyx);box-shadow:0 4px 0 var(--blue);display:block;margin:4px auto 16px;background:#fdf6ea}
-    /* recap "what you told us" summary */
-    .sum-card{border:2px solid var(--onyx);border-radius:var(--r-card);background:#fff;box-shadow:0 4px 0 var(--acai-1);padding:6px 16px;text-align:left;margin-top:6px}
-    .sum-row{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1.5px solid #efefef;font-size:14px}
-    .sum-row:last-child{border-bottom:0}
-    .sum-k{font-weight:800;color:#6a6a6a;flex:0 0 auto;text-transform:uppercase;font-size:11px;letter-spacing:.5px;padding-top:2px}
-    .sum-v{font-weight:600;text-align:right}
-    /* day-30 projection chart */
-    .chart-card{border:2px solid var(--onyx);border-radius:var(--r-card);background:#fff;box-shadow:0 4px 0 var(--blue-2);padding:14px 8px 4px;margin-top:8px}
-    .chart-card svg text{font-family:var(--ui)}
-    /* plan-preview timeline */
-    .timeline{display:flex;flex-direction:column;margin-top:10px}
-    .tl-row{display:flex;gap:14px}
-    .tl-rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto;width:22px}
-    .tl-dot{width:16px;height:16px;border-radius:50%;background:var(--blue);border:2px solid var(--onyx);flex:0 0 auto}
-    .tl-line{width:3px;flex:1;background:#d9d9d9;min-height:22px}
-    .tl-body{padding-bottom:20px}
-    .tl-when{display:block;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--acai-1)}
-    .tl-what{display:block;font-weight:700;font-size:16px;margin-top:3px}
-    .tl-sub{display:block;font-size:13px;color:#5b5b5b;font-weight:500;margin-top:2px}
   </style>
 </head>
 <body>
@@ -371,10 +339,10 @@
     </div>
     <div class="topbar">
       <button class="back" id="backBtn" aria-label="Back">‹</button>
-      <div class="progress"><i id="prog" style="width: 12%;"></i></div>
+      <div class="progress"><i id="prog" style="width: 40%;"></i></div>
       <button class="restart" id="restartBtn">Start over</button>
     </div>
-    <div class="stage" id="stage"><div class="screen active"><div class="head"><div class="t-hxl">Don't know where to start with Islamic history?</div><p class="t-bl muted mt8">A short quiz builds a plan around the topics you care about. It takes a few minutes.</p><p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these did Muslim scholars pioneer over 1,000 years ago?</p></div><div class="body"><div class="opts" style="margin-top:6px"><button class="opt" data-v="camera"><span>The camera</span><span class="check"></span></button><button class="opt" data-v="university"><span>The university</span><span class="check"></span></button><button class="opt" data-v="algebra"><span>Algebra</span><span class="check"></span></button><button class="opt" data-v="all"><span>All three</span><span class="check"></span></button></div></div></div></div>
+    <div class="stage" id="stage"><div class="screen active"><div class="head"><div class="t-hxl">Don't know where to start with Middle Eastern history?</div><p class="t-bl muted mt8">Answer 5 quick questions, about a minute, and we'll build your starting point.</p><p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these was invented over 1,000 years ago by a Muslim?</p></div><div class="body"><div class="opts" style="margin-top:6px"><button class="opt" data-v="camera"><span>The camera</span><span class="check"></span></button><button class="opt" data-v="university"><span>The university</span><span class="check"></span></button><button class="opt" data-v="algebra"><span>Algebra</span><span class="check"></span></button><button class="opt" data-v="all"><span>All three</span><span class="check"></span></button></div></div></div></div>
     <div class="cta-dock" id="dock" style="display: none;"></div>
   </div>
 
@@ -396,32 +364,6 @@
 (function(){
   'use strict';
 
-  /* ---------- rollout ramp (55-view funnel) ----------
-     RAMP = % of NEW visitors who see this funnel; the remainder are redirected
-     to the frozen pre-expansion build at /start-legacy.html (its own fv stamp,
-     '0722-quizv3-legacy', so the dashboard compares the arms cleanly). The arm
-     is sticky per browser. Dial RAMP to 100 after the first-hours check, then
-     delete start-legacy.html and this whole block. */
-  var RAMP=50;
-  if(RAMP<100){
-    // QA override: ?arm=new|legacy pins this browser to an arm (persisted).
-    var _qa=(location.search.match(/[?&]arm=(new|legacy)\b/)||[])[1];
-    if(_qa){try{localStorage.setItem('fv_arm',_qa)}catch(e){}try{document.cookie='fv_arm='+_qa+';path=/;max-age=2592000'}catch(e){}}
-    var _arm=null; try{_arm=localStorage.getItem('fv_arm')}catch(e){}
-    if(_qa)_arm=_qa;
-    if(_arm!=='new'&&_arm!=='legacy'){
-      // cookie fallback keeps the arm sticky when localStorage is unavailable
-      // (private mode) — re-randomizing per load would contaminate both arms.
-      var _cm=document.cookie.match(/(?:^|;)\s*fv_arm=(new|legacy)/); _arm=_cm?_cm[1]:null;
-    }
-    if(_arm!=='new'&&_arm!=='legacy'){
-      _arm=(Math.random()*100<RAMP)?'new':'legacy';
-      try{localStorage.setItem('fv_arm',_arm)}catch(e){}
-      try{document.cookie='fv_arm='+_arm+';path=/;max-age=2592000'}catch(e){}
-    }
-    if(_arm==='legacy'){location.replace('/start-legacy.html'+location.search);return;}
-  }else{try{localStorage.removeItem('fv_arm')}catch(e){}}
-
   var SUPABASE_URL='https://kcgiugdfudbwtjjsvwia.supabase.co';
   var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjZ2l1Z2RmdWRid3RqanN2d2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxOTYxNjgsImV4cCI6MjA2NDc3MjE2OH0.i4q-ZtYzdP6OuotC7Rk1EGC09oW9xj0iA5NQTCXOKTc';
 
@@ -442,129 +384,17 @@
     map:'<svg viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg>'
   };
 
-  /* ---------- era catalogue (chips) ----------
-     Every era here has a REAL hosted first-story video wired in ERA_PLAN
-     below. Mughal India / West African empires were dropped (no produced
-     video anywhere) in favor of the app's own Rise of Islam + Umayyad eras. */
+  /* ---------- era catalogue (chips) ---------- */
   var ERAS=[
     ['prophets','The earliest stories',I.book],
-    ['riseofislam','The rise of Islam',I.mosque],
-    ['umayyads','The Umayyads',I.globe],
     ['baghdad','Golden Age of Baghdad',I.star],
     ['andalus','Al-Andalus (Spain)',I.compass],
     ['ottomans','The Ottomans',I.crown],
-    ['saladin','Salahuddin & the Crusades',I.shield],
-    ['scholars','The great scholars',I.book]
+    ['saladin','Saladin & the Crusades',I.shield],
+    ['scholars','The great scholars',I.book],
+    ['mughals','Mughal India',I.crown],
+    ['westafrica','West African empires',I.globe]
   ];
-
-  /* ---------- topic chips (interest layer under the eras) ---------- */
-  var TOPICS=[
-    ['inventions','Inventions and science',I.star],
-    ['battles','Battles and leaders',I.shield],
-    ['ideas','Scholars and ideas',I.book],
-    ['daily','Everyday life',I.mosque],
-    ['art','Art and architecture',I.compass]
-  ];
-
-  /* Era hero art for the era_hook insight. prophets/baghdad/andalus reuse
-     existing site/funnel art; the other five were generated to match the
-     same painterly style (fal.ai FLUX, 2026-07-21, no people/prophet faces). */
-  var ERA_IMG={
-    prophets:'/images/onboarding/noah-thumb.jpg',
-    riseofislam:'https://d8kbkcbgr0qv4.cloudfront.net/module-thumbnails/rise_of_islam/adventure_1_world_before_revelation/module_1.jpg',
-    umayyads:'https://d8kbkcbgr0qv4.cloudfront.net/module-thumbnails/umayyad/adventure_1_rise_of_damascus/module_1.jpg',
-    baghdad:'/lovable-uploads/c4557c4b-7258-4047-9421-4074e2d699d1.webp',
-    andalus:'/lovable-uploads/729fc679-3be5-40fb-bd9f-479fb312c226.webp',
-    ottomans:'/images/onboarding/era-ottomans.webp',
-    saladin:'/images/onboarding/era-saladin.webp',
-    scholars:'/images/onboarding/era-scholars.webp'
-  };
-
-  /* ---------- one era-specific fact per chip, for the era_hook insight ---------- */
-  var ERA_FACTS={
-    prophets:'The story of the Great Flood you\'ll start with spans generations, far deeper than the picture-book version most people know.',
-    riseofislam:'Before Islam, Makkah was a caravan city on the trade routes between Yemen and Syria, and the Kaaba itself was filled with idols. Within a single lifetime, that entire world changed.',
-    umayyads:'From their new capital in Damascus, the Umayyads ruled an empire that stretched from Spain to the borders of China, one of the largest the world had ever seen.',
-    baghdad:'Baghdad\'s House of Wisdom drew scholars, translators and inventors from three continents. Algebra got its name there.',
-    andalus:'Cordoba in Al-Andalus grew into one of the largest cities in the world, with libraries said to hold hundreds of thousands of books.',
-    ottomans:'The Ottoman state lasted more than 600 years. That is longer than the entire western Roman Empire.',
-    saladin:'When Salahuddin retook Jerusalem in 1187, he took the city without a massacre and let thousands leave safely. Even his enemies wrote about that mercy.',
-    scholars:'Ibn Sina\'s medical encyclopedia was still being taught in European universities 600 years after he wrote it.'
-  };
-
-  /* Topic hero art + one-line overviews for the topic_hook insight
-     (fal.ai FLUX, same painterly style, 2026-07-22, no people). */
-  var TOPIC_IMG={
-    inventions:'/images/onboarding/topic-inventions.webp',
-    battles:'/images/onboarding/topic-battles.webp',
-    ideas:'/images/onboarding/topic-ideas.webp',
-    daily:'/images/onboarding/topic-daily.webp',
-    art:'/images/onboarding/topic-art.webp'
-  };
-  var TOPIC_FACTS={
-    inventions:'The camera obscura, the first university, algebra, early hospitals. A surprising amount of the modern world has a founding story in this history.',
-    battles:'Salahuddin at Jerusalem, Ain Jalut, the fall of Constantinople. Campaigns that redrew the map for centuries.',
-    ideas:'Ibn Sina\'s medicine, al-Khwarizmi\'s mathematics, Ibn Khaldun inventing how we study history itself. Ideas that outlived empires.',
-    daily:'What people ate in Abbasid Baghdad, how Cordoba\'s markets worked, what school looked like in Timbuktu. History at street level.',
-    art:'Blue tilework in Samarkand, calligraphy on the Dome of the Rock, carpets that took years to weave. Art made to last a thousand years.'
-  };
-
-  /* ---------- day-one plan per era ----------
-     The roadmap + results screens open with the FIRST era the user picked,
-     not a fixed story. Every era has a REAL hosted video: app HLS reels
-     (d1bcceam8ucosn / d8kbkcbgr0qv4) or daily-story mp4s (d3dld7ughp8odz).
-     Questions come from the app's own module quizzes or mirror ERA_FACTS. */
-  var DS='https://d3dld7ughp8odz.cloudfront.net/February/';
-  var ERA_PLAN={
-    prophets:{story:'The Great Flood',img:'/images/onboarding/noah-thumb.jpg',
-      video:'https://d1bcceam8ucosn.cloudfront.net/prophets/6-noah-1/hls/reel.m3u8',mins:'2 min watch',
-      q:{ask:'How many years did the warning before the Great Flood last?',
-        opts:['500 years','750 years','950 years','1,000 years'],correct:2,
-        right:'Right. 950 years, a thousand less fifty. The kind of fact that stays with you.',
-        wrong:'It was 950 years, a thousand less fifty. Now you won\'t forget it.'}},
-    riseofislam:{story:'Mecca: City of Caravans',img:ERA_IMG.riseofislam,
-      video:'https://d1bcceam8ucosn.cloudfront.net/adventure1/Era2_Adv1_M1/Era2_Adv1_M1.m3u8',mins:'2 min watch',
-      q:{ask:'What was the Kaaba used for before Islam?',
-        opts:['A library','A tribal market','Idol worship','A royal palace'],correct:2,
-        right:'Right. Filled with idols. That\'s the world this story opens in, right before everything changed.',
-        wrong:'It was filled with idols before Islam. This story shows that world, right before everything changed.'}},
-    umayyads:{story:'The Bayah Ceremony',img:ERA_IMG.umayyads,
-      video:'https://d1bcceam8ucosn.cloudfront.net/umayyed/umayyed_Adv1_M1_Reel1/Adv1_M1_Reel1.m3u8',mins:'2 min watch',
-      q:{ask:'Which city did Muawiya make the new capital in 661?',
-        opts:['Medina','Baghdad','Damascus','Cairo'],correct:2,
-        right:'Right. Damascus, a crossroads of trade and the seat of an empire that reached from Spain to China.',
-        wrong:'It was Damascus, a crossroads of trade and the seat of an empire that reached from Spain to China.'}},
-    baghdad:{story:'The City Designed as a Circle',img:ERA_IMG.baghdad,
-      video:DS+'day-7-building-baghdad-a-city-designed-as-a-circle/final_video.mp4',mins:'1 min watch',
-      q:{ask:'What shape did Caliph al-Mansur choose for Baghdad\'s original design?',
-        opts:['A square','A near-perfect circle','A crescent','A triangle'],correct:1,
-        right:'Right. A near-perfect circle, first traced on the ground in lines of ash before a single brick was laid.',
-        wrong:'A near-perfect circle, first traced in lines of ash. Every road in the empire led to its center.'}},
-    andalus:{story:'Tariq\'s Leap',img:ERA_IMG.andalus,
-      video:'https://d8kbkcbgr0qv4.cloudfront.net/al-andalus/e1-1-1-tariqs-leap/hls/reel.m3u8',mins:'2 min watch',
-      q:{ask:'What is the modern name of Jabal Tariq?',
-        opts:['Almuñécar','Gibraltar','Toledo','Cádiz'],correct:1,
-        right:'Right. Jabal Tariq, "Tariq\'s Mountain", softened over the centuries into Gibraltar.',
-        wrong:'It became Gibraltar. Jabal Tariq, "Tariq\'s Mountain", worn smooth by European tongues.'}},
-    ottomans:{story:'The Sultan Who Inherited the World',img:ERA_IMG.ottomans,
-      video:DS+'day-1-the-sultan-who-inherited-the-world/final_video.mp4',mins:'1 min watch',
-      q:{ask:'How long did the Ottoman state last?',
-        opts:['About 150 years','About 300 years','More than 600 years','Exactly 500 years'],correct:2,
-        right:'Right. More than 600 years, longer than the entire western Roman Empire.',
-        wrong:'More than 600 years, longer than the entire western Roman Empire. Day one starts there.'}},
-    saladin:{story:'Jerusalem Falls Gently',img:ERA_IMG.saladin,
-      video:DS+'day-5-jerusalem-falls-gently/final_video.mp4',mins:'1 min watch',
-      q:{ask:'What did Salahuddin do when he retook Jerusalem in 1187?',
-        opts:['Took revenge on the city','Let thousands leave safely','Burned its libraries','Banned all pilgrims'],correct:1,
-        right:'Right. No massacre, thousands left safely. Even his enemies wrote about that mercy.',
-        wrong:'He let thousands leave safely. Even his enemies wrote about that mercy.'}},
-    scholars:{story:'The Book That Ruled Medicine for Six Centuries',img:ERA_IMG.scholars,
-      video:DS+'day-6-the-book-that-ruled-medicine-for-six-centuries/final_video.mp4',mins:'1 min watch',
-      q:{ask:'How long was Ibn Sina\'s medical encyclopedia taught in European universities?',
-        opts:['About 50 years','About 100 years','About 300 years','About 600 years'],correct:3,
-        right:'Right. 600 years on the curriculum, centuries after he wrote it.',
-        wrong:'600 years on the curriculum, centuries after he wrote it. That\'s the scale of this era.'}}
-  };
 
   /* ---------- skins ---------- */
   var SKINS={
@@ -583,144 +413,55 @@
     '45':{t:'Bits and pieces is plenty',b:'You already have threads. We\'ll connect them into one story you can actually follow.'},
     '75':{t:'You\'ll go deeper',b:'Good base. We\'ll fill the gaps and take you into the eras most people never reach.'}
   };
+  var BLOCKER_TOAST={
+    school:{t:'That\'s not on you',b:'School skipped a thousand years. Five minutes a day fills the gap it left.'},
+    dry:{t:'History isn\'t dry. Most sources are.',b:'Every story here is told like a short film. You\'ll feel the difference in the first one.'},
+    start:{t:'You just found your starting point',b:'That\'s exactly what your plan is for. Day one is already picked for you.'},
+    time:{t:'Five minutes is enough',b:'The plan is built for busy days. One story with your coffee and you\'re done.'},
+    authentic:{t:'You\'re right to be careful',b:'Every story is carefully researched and sourced. No myths dressed as history.'}
+  };
 
-  /* ---------- step config (55-view, 4-act narrative) ----------
-     Long-funnel expansion (2026-07): establish the starting point (Act 1),
-     map interests and habits (Act 2), pay it all back as personalized insight
-     (Act 3), then build the plan and sell it as a finished thing (Act 4).
-     Question screens carry a "Part N of 4" act eyebrow instead of a question
-     count; proof/insight screens carry none. Micro-rewards (stat, review,
-     insight) land every 3 to 5 questions to hold the pace. Screen 0 stays a
-     one-tap curiosity question (79% bailed when self-categorization was the
-     first ask, 2026-07 data). */
-  var ACTS=[{label:'Your starting point'},{label:'Your interests'},{label:'Your results'},{label:'Your plan'}];
+  /* ---------- step config (CRO-revised order) ---------- */
+  // Screen 0 is a one-tap curiosity question, not the identity pick: 79% of
+  // visitors bailed when self-categorization was the first ask (2026-07 data),
+  // while 71% engaged with the results-page preview quiz. Hook first, ask who
+  // they are second. The connection slider is now three tap choices — 64% of
+  // sessions never moved the slider off its default, so it produced noise.
   var STEPS=[
-    /* ===== Act 1 - Your starting point ===== */
-    {type:'hook_quiz',key:'hook',phase:'hook',act:1},
-    {type:'intro_skin',key:'skin',phase:'hook',act:1},
-    {type:'choice',key:'age_band',phase:'discover',act:1,layout:'grid',title:'Which decade are you in?',options:[
-      ['u20','Under 20'],['20s','In my 20s'],['30s','In my 30s'],['40s','In my 40s'],['50p','50 and up']
-    ]},
-    {type:'insight',key:'affirm_welcome',phase:'insight',act:1,content:'affirmWelcome'},
-    {type:'choice',key:'connection',numeric:true,phase:'discover',act:1,title:'How connected do you feel to Islamic history right now?',options:[
+    // qn = position in the "5 quick questions" promise. The hook is the
+    // warm-up ("Quick one first"), the cadence pick is part of plan-building —
+    // neither counts, so the numbering matches the promise and never overflows.
+    {type:'hook_quiz',key:'hook',phase:'hook'},
+    {type:'intro_skin',key:'skin',phase:'hook',qn:1},
+    {type:'choice',key:'connection',numeric:true,phase:'discover',qn:2,title:'How connected do you feel to Middle Eastern history right now?',options:[
       ['10','Starting from zero'],
       ['45','I know bits and pieces'],
       ['75','Fairly connected already']
     ],toast:function(v){return CONN_TOAST[v]}},
-    {type:'choice',key:'last_learned',phase:'discover',act:1,title:'When did you last learn something new about Islamic history?',options:[
-      ['week','This week'],['year','Sometime this year'],['school','Back in school'],['cant','Honestly, I can\'t remember']
-    ]},
-    {type:'choice',key:'school_coverage',phase:'discover',act:1,title:'How much of this history did school actually cover?',options:[
-      ['fair','A fair amount'],['pages','A few pages'],['nothing','Almost nothing'],['elsewhere','I went to school elsewhere']
-    ]},
-    {type:'stat',key:'stat',phase:'proof',act:1},
-    {type:'choice',key:'feel',phase:'discover',act:1,title:'When you hear "Baghdad in its golden age", what comes up?',options:[
-      ['curiosity','Curiosity'],['pride','Pride'],['pang','I wish I knew more, honestly'],['notmuch','Not much yet']
-    ]},
-    {type:'choice',key:'blocker',phase:'discover',act:1,title:'What\'s gotten in the way?',sub:'Be honest. This shapes your plan most.',options:[
+    {type:'chips',key:'eras',phase:'discover',qn:3,multi:true,title:'Which stories pull you in?',sub:'Pick as many as you like, and we\'ll build your plan around them.',options:ERAS,min:1},
+    {type:'stat',phase:'proof'},
+    {type:'choice',key:'blocker',phase:'discover',qn:4,title:'What\'s gotten in the way?',sub:'Be honest. This shapes your plan most.',toast:function(v){return BLOCKER_TOAST[v]},options:[
       ['school','School skipped it entirely',I.book],
       ['dry','Sources feel dry or academic',I.deepen],
       ['start','I don\'t know where to start',I.compass],
       ['time','I never find the time',I.clock],
       ['authentic','I can\'t tell authentic from myth',I.shield]
     ]},
-    /* Mirror the blocker back immediately, while the admission is fresh
-       (moved up from Act 3; replaces the old blocker toast). */
-    {type:'insight',key:'blocker_mirror',phase:'insight',act:1,content:'blockerMirror'},
-    {type:'choice',key:'retell_check',phase:'discover',act:1,title:'Could you tell a friend the story of Salahuddin taking back Jerusalem?',options:[
-      ['confident','Confidently'],['broad','The broad strokes'],['name','I know the name'],['notyet','Not yet']
-    ]},
-    {type:'insight',key:'insight_1',phase:'insight',act:1,content:'insight1'},
-    {type:'choice',key:'source_trust',phase:'discover',act:1,title:'Where does your history mostly come from right now?',options:[
-      ['books','Books'],['podcasts','YouTube and podcasts'],['social','Social media clips'],['nowhere','Nowhere I\'d call reliable']
-    ]},
-    {type:'likert',key:'likert',phase:'discover',act:1,title:'How much do these sound like you?',items:[
-      ['tell','I wish I knew Islamic history topics well enough to tell them'],
+    {type:'likert',key:'likert',phase:'discover',qn:5,title:'How much do these sound like you?',items:[
+      ['tell','I wish I knew these stories well enough to tell them'],
       ['identity','I feel a gap between my identity and my history'],
       ['finish','I start videos or books but rarely finish them'],
       ['kids','I want my kids to grow up knowing this'],
       ['empty','Doom-scrolling leaves me feeling empty']
     ]},
-    /* Payoff for the doom-scroll admission they just made (moved up from Act 3). */
-    {type:'compare',key:'compare',phase:'proof',act:1},
-    {type:'review',key:'review',phase:'proof',act:1},
-    /* ===== Act 2 - Your interests ===== */
-    {type:'chips',key:'eras',phase:'discover',act:2,multi:true,title:'Which stories in Islamic history are you most interested in?',sub:'Pick as many as you like, and we\'ll build your plan around them.',options:ERAS,min:1},
-    {type:'insight',key:'era_hook',phase:'insight',act:2,content:'eraHook'},
-    {type:'chips',key:'topics',phase:'discover',act:2,multi:true,title:'Within those eras, what pulls you in most?',sub:'Pick as many as you like.',options:TOPICS,min:1},
-    {type:'insight',key:'topic_hook',phase:'insight',act:2,content:'topicHook'},
-    {type:'choice',key:'format',phase:'discover',act:2,layout:'grid',title:'How do you like to take things in?',options:[
-      ['video','Short videos','\ud83c\udfac'],['audio','Listening','\ud83c\udfa7'],['read','Reading','\ud83d\udcd6'],['quiz','Quiz me','\ud83e\udde0']
-    ]},
-    {type:'choice',key:'depth',phase:'discover',act:2,title:'What pace sounds right?',options:[
-      ['quick','Quick daily stories'],['deep','Occasional deep dives'],['mix','A mix of both']
-    ]},
-    /* No 2-minute option: the daily story takes five, and offering a budget
-       the plan can't honor contradicts the "five minutes a day" commitment. */
-    {type:'choice',key:'daily_time',phase:'discover',act:2,layout:'grid',title:'On a normal day, how much time can you give this?',options:[
-      ['5','5 minutes'],['10','10 minutes'],['15','15 minutes or more']
-    ]},
-    {type:'stat',key:'stat_basel',phase:'proof',act:2,title:'This history has an audience',
-      sub:'Built with Basel Gazi, the history creator behind Archives.',
-      stats:[[1000000,'follow Basel'],[850000,'lessons completed'],[50,'countries']],
-      img:'/lovable-uploads/basel-headshot-v2.webp',imgShape:'circle',
-      imgAlt:'Basel Gazi, the creator behind Archives',
-      badges:[['map','14 eras'],['clock','5 mins a day']]},
-    {type:'choice',key:'moment',phase:'discover',act:2,title:'Where would this fit in your day?',options:[
-      ['coffee','With my morning coffee','\u2615'],['commute','On my commute','\ud83d\ude8c'],['lunch','On a lunch break','\ud83e\udd6a'],['bed','Before bed','\ud83c\udf19'],['kids','With the kids','\ud83e\uddf8']
-    ]},
-    {type:'choice',key:'streak_history',phase:'discover',act:2,title:'Ever kept a learning streak going?',options:[
-      ['active','Yes, still am'],['dropped','Kept one going, then dropped it'],['never','Never really tried']
-    ]},
-    {type:'choice',key:'obstacle_past',phase:'discover',act:2,title:'If a learning habit ever died on you, what killed it?',options:[
-      ['boring','It got boring'],['busy','Life got busy'],['heavy','It felt too heavy'],['alone','No one to share it with'],['none','Nothing yet']
-    ]},
-    {type:'insight',key:'affirm_habit',phase:'insight',act:2,content:'affirmHabit'},
-    {type:'choice',key:'kids_household',phase:'discover',act:2,title:'Who else might end up learning with you?',options:[
-      ['solo','Just me'],['partner','My partner'],['kids','My kids'],['family','The whole family']
-    ]},
-    {type:'choice',key:'goal_30',phase:'discover',act:2,title:'Thirty days from now, what would feel like a win?',options:[
-      ['story','I can tell one story really well','\ud83d\udde3\ufe0f'],['habit','A daily habit that sticks','\ud83d\udcc6'],['era','I know my chosen era properly','\ud83d\uddfa\ufe0f'],['family','A ritual we share as a family','\ud83c\udfe1']
-    ]},
-    {type:'choice',key:'life_season',phase:'discover',act:2,title:'Which sounds most like your days right now?',options:[
-      ['nonstop','Nonstop, back to back'],['pockets','Busy, with some free time'],['flexible','Fairly flexible']
-    ]},
-    {type:'review',key:'review_2',phase:'proof',act:2,title:'People like you are already in',pick:'bySkin'},
-    {type:'likert',key:'likert2',phase:'discover',act:2,title:'Last few. How much do these sound like you?',items:[
-      ['pride','I feel proud when I can explain where something came from'],
-      ['feed','My feed shows me everyone\'s history except my own'],
-      ['share','I\'d love to be the one at dinner who knows the real story'],
-      ['books','I\'ve bought books about this that I never finished'],
-      ['habit','I want this to be something I do, not something I mean to do']
-    ]},
-    {type:'insight',key:'insight_2',phase:'insight',act:2,content:'insight2'},
-    /* ===== Act 3 - Your results (the payoff) ===== */
-    {type:'insight',key:'recap_intro',phase:'insight',act:3,content:'recapIntro',cta:'Show me'},
-    {type:'recap',key:'recap',phase:'insight',act:3},
-    {type:'diagnosis',key:'diagnosis',phase:'insight',act:3},
-    {type:'insight',key:'meaning',phase:'insight',act:3,content:'meaning',cta:'Keep going'},
-    {type:'recap',key:'potential',phase:'insight',act:3,future:true},
-    /* ===== Act 4 - Your plan ===== */
-    {type:'email',key:'email',phase:'gate',act:4},
-    {type:'choice',key:'commitment',phase:'build',act:4,layout:'row',title:'Your plan needs five minutes a day. Can you give it that?',sub:'An honest answer makes a better plan.',options:[
-      ['every','Every day','\ud83d\udd25'],['most','Most days','\ud83d\udc4d'],['try','I\'ll try','\ud83c\udf31']
-    ]},
-    {type:'loader',key:'cadence',phase:'build',act:4},
-    {type:'roadmap',key:'plan_preview',phase:'build',act:4},
-    {type:'results',key:'results',phase:'reveal',act:4}
+    {type:'review',phase:'proof'},
+    {type:'recap',phase:'discover'},
+    {type:'diagnosis',phase:'discover'},
+    {type:'compare',phase:'proof'},
+    {type:'email',key:'email',phase:'gate'},
+    {type:'loader',key:'cadence',phase:'build'},
+    {type:'results',phase:'reveal'}
   ];
-  /* view math: likert batteries render one statement per view */
-  var VIEWS=STEPS.map(function(s){return s.type==='likert'?s.items.length:1});
-  var VIEW_START=[],TOTAL_VIEWS=0;
-  VIEWS.forEach(function(v,i){VIEW_START[i]=TOTAL_VIEWS;TOTAL_VIEWS+=v});
-  function questionCount(upTo){
-    var n=0;
-    STEPS.slice(0,upTo==null?STEPS.length:upTo).forEach(function(s){
-      if(s.type==='likert')n+=s.items.length;
-      else if(s.type==='choice'||s.type==='chips'||s.type==='intro_skin'||s.type==='hook_quiz')n++;
-    });
-    return n;
-  }
 
   /* ---------- diagnosis model ---------- */
   // categories: knowledge, time, access, identity
@@ -738,23 +479,6 @@
     if(lk.empty>=3)c.identity+=6;
     var conn=(s.connection==null?40:s.connection);
     if(conn<40){c.knowledge+=8;c.identity+=8}
-    // Additive weights from the Act 1/2 questions (55-view expansion). The
-    // four category keys stay exactly knowledge/time/access/identity — the
-    // drip engine and plan.html depend on them. Weights land BEFORE the
-    // normalization below so the 60-92 band still holds.
-    if(s.school_coverage==='nothing')c.knowledge+=10; else if(s.school_coverage==='pages')c.knowledge+=6;
-    if(s.retell_check==='name'||s.retell_check==='notyet')c.knowledge+=8;
-    if(s.last_learned==='cant')c.knowledge+=6;
-    if(s.streak_history==='dropped')c.time+=10; else if(s.streak_history==='never')c.time+=6;
-    if(s.obstacle_past==='busy')c.time+=8;
-    else if(s.obstacle_past==='boring'||s.obstacle_past==='heavy')c.access+=6;
-    if(s.life_season==='nonstop')c.time+=6;
-    if(s.source_trust==='social')c.access+=10; else if(s.source_trust==='nowhere')c.access+=12;
-    if(s.feel==='pang')c.identity+=10;
-    var lk2=s.likert2||{};
-    if(lk2.share>=3)c.knowledge+=6;
-    if(lk2.habit>=3)c.time+=8; if(lk2.books>=3)c.time+=6;
-    if(lk2.pride>=3)c.identity+=6; if(lk2.feed>=3)c.identity+=8;
     // normalize each to 0-100 with a cap
     var max=Math.max(c.knowledge,c.time,c.access,c.identity,1);
     var scale=Math.min(92,Math.max(60,max))/max; // keep top bar in a believable 60-92 band
@@ -770,7 +494,7 @@
   var DEEPDIVE={
     knowledge:{t:'Your biggest gap: the stories themselves',b:'This isn\'t a discipline problem. No one ever handed you these stories. School skipped a thousand years of history. Archives gives them to you in 5-minute pieces, in the right order, so it finally connects.'},
     time:{t:'Your biggest gap: a way to stay consistent',b:'You don\'t lack interest. You lack a format that survives a busy day. One 5-minute story a day, with a streak that gently pulls you back, does what a 400-page book never will.'},
-    access:{t:'Your biggest gap: sources you can actually trust',b:'You\'re right to be careful. Most of what\'s online is myth dressed as history. Every Archives story is carefully researched and sourced, so you know where each one comes from.'},
+    access:{t:'Your biggest gap: sources you can actually trust',b:'You\'re right to be careful. Most of what\'s online is myth dressed as history. Every Archives story is carefully researched and sourced, so you get what actually happened, not myth.'},
     identity:{t:'Your biggest gap: a felt connection to your story',b:'That gap between who you are and where you come from is real, and it closes faster than you\'d think. When the people in these stories stop being names and start being yours, something shifts.'}
   };
 
@@ -780,22 +504,8 @@
   var KEY='archives_onb2';
   var state=load()||{};
   if(!state.session_id) state.session_id='s_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-  // v5 (blocker_mirror + compare moved up into Act 1; blocker toast removed):
-  // the flat answer object is kept whole — every answer field, session_id and
-  // email survive (paywall reads them) — but a saved _idx from any older STEPS
-  // shape can't resume mid-quiz askew, so the cursor resets on version
-  // mismatch. Bump this whenever STEPS order changes. Never nest answers.
-  var SV=5;
-  if(state._v!==SV){
-    state._v=SV;state._idx=0;state._sub=0;
-    // Rewound sessions re-answer everything; clear the soft-exit drivers so
-    // stale answers from an old pass can't trip the exit modal early.
-    delete state.blocker; delete state.connection; delete state.eras;
-    state._exitShown=false;
-  }
   var idx=typeof state._idx==='number'?state._idx:0;
-  if(idx>=STEPS.length)idx=0;
-  if(location.search.indexOf('reset=1')>-1){state={session_id:state.session_id,_v:SV};idx=0}
+  if(location.search.indexOf('reset=1')>-1){state={session_id:state.session_id};idx=0}
 
   function save(){state._idx=idx;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
   function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
@@ -854,12 +564,9 @@
   var prog=document.getElementById('prog'), backBtn=document.getElementById('backBtn'), restartBtn=document.getElementById('restartBtn');
 
   function setProgress(){
-    // View-based: the bar moves on EVERY tap, including likert statements
-    // (subView). Starts at 12% so 55 views still read as steady motion
-    // (~1.6% per tap); the old 40% head start would leave the long middle
-    // visually stalled.
-    var view=VIEW_START[idx]+Math.min(subView,VIEWS[idx]-1);
-    var pct=Math.round(12+(view/(TOTAL_VIEWS-1))*88);
+    // starts at 40%: arriving already "well underway" reads as momentum,
+    // and the remaining 60% spreads across the screens
+    var pct=Math.round(40+ (idx/(STEPS.length-1))*60);
     prog.style.width=pct+'%';
     backBtn.classList.toggle('show', idx>0 && idx<STEPS.length-1);
   }
@@ -903,36 +610,11 @@
       var src=w.getAttribute('data-riv'),c=w.querySelector('canvas'),img=w.querySelector('img');
       try{
         var r=new rive.Rive({src:src,canvas:c,autoplay:true,
-          onLoad:function(){
-            try{r.resizeDrawingSurfaceToCanvas();}catch(e){}
-            // These files animate via a state machine (plain autoplay only
-            // runs the first linear animation, so the mascot froze). Prefer
-            // the state machine; fall back to playing every animation.
-            try{
-              var sm=r.stateMachineNames||[], an=r.animationNames||[];
-              if(sm.length)r.play(sm[0]);
-              else if(an.length)r.play(an);
-            }catch(e){}
-            if(img)img.style.opacity='0';
-          },
+          onLoad:function(){try{r.resizeDrawingSurfaceToCanvas();}catch(e){} if(img)img.style.opacity='0';},
           onLoadError:function(){}});
         RIVE_INST.push(r);
       }catch(e){}
     });
-  }
-  /* Named Ibu poses: each screen gets its OWN animation (never reuse one on
-     two screens) with a matching captured still as the pre-load poster.
-     ibu(key) renders the Rive pose; ibu('some.png','sm') renders a static
-     PNG for screens that don't animate. */
-  var IBU={
-    teach:'onboarding', sad:'ibu-sad', laying:'ibu-laying', hero:'ibu-hero',
-    blinking:'ibu-blinking', excited:'ibu-openmouth', loading:'ibu-loading',
-    celebrating:'ibu-celebrating'
-  };
-  function ibu(key,sz){
-    var f=IBU[key];
-    if(f)return mascot('/animations/'+f+'.riv','/images/onboarding/ibu-still-'+f+'.png',sz);
-    return '<img class="ibu'+(sz==='sm'?' sm':'')+'" src="/images/onboarding/'+key+'" alt=""/>';
   }
 
   /* ---------- renderers ---------- */
@@ -940,47 +622,35 @@
   // if another render happens first (Back, Start over) — otherwise a pending
   // hook-payoff timer can yank a freshly reset quiz forward on its own.
   var gen=0;
-  var subView=0;
-  var qsFired=false;
   function sched(fn,ms){var g=gen;setTimeout(function(){if(g===gen)fn()},ms)}
   function render(){
     gen++;
-    var step=STEPS[idx];
-    subView=(step.type==='likert')?Math.min(state._sub||0,step.items.length-1):0;
     setProgress(); save();
     var _t=document.getElementById('toast'); if(_t)_t.classList.remove('show');
-    // quiz_start must precede the first quiz_step (canonical order); it used
-    // to fire inside R.hook_quiz, AFTER that screen's quiz_step.
-    if(idx===0&&!qsFired){qsFired=true;fire('quiz_start',{},'ViewContent');}
-    fire('quiz_step',{step:idx,type:step.type,phase:step.phase,key:step.key||null,act:step.act||null,view:VIEW_START[idx]+subView+1,total_views:TOTAL_VIEWS});
+    var step=STEPS[idx];
+    fire('quiz_step',{step:idx,type:step.type,phase:step.phase,key:step.key||null});
     stage.innerHTML=''; clearDock();
     R[step.type](step);
-    mountMascots();
     stage.scrollTop=0;
     window.scrollTo(0,0); // desktop uses document scroll; reset to top on each step
   }
-  function next(){ if(idx<STEPS.length-1){state._sub=0;idx++;render()} }
-  function prev(){ if(idx>0){state._sub=0;idx--;render()} }
+  function next(){ if(idx<STEPS.length-1){idx++;render()} }
+  function prev(){ if(idx>0){idx--;render()} }
 
   var R={};
 
-  /* "Part N of 4 · label" act eyebrow: question screens, plus the recap_intro
-     bridge so Act 3 (which has no questions) still announces itself. */
-  function actTag(step){
-    if(!step.act)return '';
-    var qt=step.type==='choice'||step.type==='chips'||step.type==='likert'||step.type==='intro_skin'||step.key==='recap_intro';
-    if(!qt)return '';
-    return '<p class="t-bs muted" style="font-weight:800;margin-bottom:6px">Part '+step.act+' of 4 · '+ACTS[step.act-1].label+'</p>';
-  }
+  /* "Question N of 5" eyebrow above the title on the five counted questions */
+  function qTag(step){return step.qn?'<p class="t-bs muted" style="font-weight:800;margin-bottom:6px">Question '+step.qn+' of 5</p>':''}
 
   /* Screen 0 — curiosity hook. One easy tap with a payoff, before any ask. */
   var HOOK_OPTS=[['camera','The camera'],['university','The university'],['algebra','Algebra'],['all','All three']];
   R.hook_quiz=function(){
+    fire('quiz_start',{},'ViewContent');
     stage.innerHTML=screenWrap(
       '<div class="head">'+
-        '<div class="t-hxl">Don\'t know where to start with Islamic history?</div>'+
-        '<p class="t-bl muted mt8">A short quiz builds a plan around the topics you care about. It takes a few minutes.</p>'+
-        '<p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these did Muslim scholars pioneer over 1,000 years ago?</p>'+
+        '<div class="t-hxl">Don\'t know where to start with Middle Eastern history?</div>'+
+        '<p class="t-bl muted mt8">Answer 5 quick questions, about a minute, and we\'ll build your starting point.</p>'+
+        '<p class="t-bs mt16" style="font-weight:800;margin-bottom:8px">Quick one first: which of these was invented over 1,000 years ago by a Muslim?</p>'+
       '</div>'+
       '<div class="body"><div class="opts" style="margin-top:6px">'+HOOK_OPTS.map(function(o){
         return '<button class="opt" data-v="'+o[0]+'"><span>'+o[1]+'</span><span class="check"></span></button>';
@@ -994,8 +664,8 @@
         fire('select_hook',{value:v});
         stage.querySelectorAll('.opt').forEach(function(x){if(x.getAttribute('data-v')==='all')x.classList.add('selected')});
         var fb=document.getElementById('hookfb');
-        fb.textContent=(v==='all'?'Right. All three.':'True, and so are the other two.')+
-          ' The camera obscura Ibn al-Haytham turned into the foundation of modern optics, the world\'s oldest still-running university (founded by Fatima al-Fihri), and algebra, named after al-Khwarizmi\'s "al-jabr". There\'s 1,000 years of this.';
+        fb.textContent=(v==='all'?'Right — all three.':'True — and so are the other two.')+
+          ' The first camera (Ibn al-Haytham\'s camera obscura), the first university (founded by Fatima al-Fihri), algebra (al-Khwarizmi). There\'s 1,000 years of this.';
         fb.style.fontWeight='700';
         sched(next,1900);
       };
@@ -1007,7 +677,7 @@
       return '<div class="imgopt" data-k="'+k+'"><img src="'+s.img+'" alt=""/><div class="lab">'+s.label+'</div></div>';
     }).join('');
     stage.innerHTML=screenWrap(
-      '<div class="head">'+actTag(step)+
+      '<div class="head">'+qTag(step)+
         '<div class="t-hxl">What should your journey be built around?</div>'+
         '<p class="t-bs muted mt8">Your answer picks the stories your plan starts with.</p>'+
       '</div>'+
@@ -1039,7 +709,7 @@
   R.chips=function(step){
     var sel=state[step.key]||[];
     stage.innerHTML=screenWrap(
-      '<div class="head">'+actTag(step)+'<div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
+      '<div class="head">'+qTag(step)+'<div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
       '<div class="body"><div class="chips">'+step.options.map(function(o){
         var on=sel.indexOf(o[0])>-1;
         return '<button class="chip'+(on?' selected':'')+'" data-v="'+o[0]+'"><span>'+o[1]+'</span></button>';
@@ -1057,16 +727,10 @@
   };
 
   R.choice=function(step){
-    // layout:'grid' renders short-option questions as 2-column centered cards
-    // (design variety); 'row' puts 3 short options in one 3-across row;
-    // option[2] renders as an svg icon or an emoji accent.
-    var grid=step.layout==='grid'||step.layout==='row';
-    var cls=step.layout==='row'?' opts-grid opts-row':(step.layout==='grid'?' opts-grid':'');
     stage.innerHTML=screenWrap(
-      '<div class="head">'+actTag(step)+'<div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
-      '<div class="body"><div class="opts'+cls+'">'+step.options.map(function(o){
-        var ic=o[2]?(String(o[2]).indexOf('<svg')===0?'<span class="ico">'+o[2]+'</span>':'<span class="emo">'+o[2]+'</span>'):'';
-        return '<button class="opt" data-v="'+o[0]+'">'+ic+'<span>'+o[1]+'</span>'+(grid?'':'<span class="check"></span>')+'</button>';
+      '<div class="head">'+qTag(step)+'<div class="t-hxl">'+step.title+'</div>'+(step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
+      '<div class="body"><div class="opts">'+step.options.map(function(o){
+        return '<button class="opt" data-v="'+o[0]+'"><span>'+o[1]+'</span><span class="check"></span></button>';
       }).join('')+'</div></div>'
     );
     stage.querySelectorAll('.opt').forEach(function(b){
@@ -1085,17 +749,11 @@
   R.likert=function(step){
     var ans=state[step.key]||{};
     var scale=['No','A bit','Neutral','Yes','So much'];
-    // resume mid-battery: sub-position persists in state._sub (saved per tap)
-    var i=Math.min(state._sub||0,step.items.length-1);
-    var entryI=i; // render() already fired quiz_step for the entry statement
+    var i=0;
     function show(){
       var it=step.items[i];
-      subView=i; state._sub=i; setProgress(); save();
-      // every interior statement is a view — fire quiz_step so view-based
-      // funnels have no gaps (entry statement covered by render()).
-      if(i!==entryI)fire('quiz_step',{step:idx,type:step.type,phase:step.phase,key:step.key||null,act:step.act||null,view:VIEW_START[idx]+i+1,total_views:TOTAL_VIEWS});
       stage.innerHTML=screenWrap(
-        '<div class="head">'+actTag(step)+'<div class="t-hxl">'+step.title+'</div>'+
+        '<div class="head">'+qTag(step)+'<div class="t-hxl">'+step.title+'</div>'+
           '<p class="t-bs muted mt8">Statement '+(i+1)+' of '+step.items.length+'</p></div>'+
         '<div class="body"><div class="likert"><div class="lk">'+
           '<div class="q" style="font-size:19px;line-height:1.35">'+it[1]+'</div>'+
@@ -1121,33 +779,24 @@
     show();
   };
 
-  /* Parameterized proof screen: step may override title/stats/badges/img
-     (stat_basel does); defaults preserve the original Act 1 screen. Numeric
-     stat values count up; string values render static. */
-  R.stat=function(step){
-    step=step||{};
-    var title=step.title||'You\'re in good company';
-    var stats=step.stats||[[70000,'learners'],[50,'countries'],['4.9★','across App Stores']];
-    var img=(step.img===null)?'':(step.imgShape==='circle'
-      ? '<img class="stat-avatar" src="'+step.img+'" alt="'+(step.imgAlt||'')+'" loading="lazy"/>'
-      : '<img class="appshot'+(step.img?'':' full')+'" src="'+(step.img||'/images/onboarding/proof-ibu-board.webp')+'"'+(step.imgPos?' style="object-position:'+step.imgPos+'"':'')+' alt="'+(step.imgAlt||'Ibu teaching an Archives story at the board')+'" loading="lazy"/>');
-    var badges=step.badges||[['map','14 eras'],['clock','5 mins a day']];
+  R.stat=function(){
     stage.innerHTML=screenWrap(
-      '<div class="head center" style="margin-top:14px"><div class="t-display">'+title+'</div>'+
-        (step.sub?'<p class="t-bs muted mt8">'+step.sub+'</p>':'')+'</div>'+
-      '<div class="body">'+img+
-        '<div class="stats3">'+stats.map(function(s){
-          return '<div>'+(typeof s[0]==='number'?'<div class="n" data-c="'+s[0]+'">0</div>':'<div class="n">'+s[0]+'</div>')+'<div class="l">'+s[1]+'</div></div>';
-        }).join('')+'</div>'+
-        '<div class="badges">'+badges.map(function(b){return '<span class="badge">'+(I[b[0]]||'')+' '+b[1]+'</span>'}).join('')+'</div>'+
+      '<div class="head center" style="margin-top:14px"><div class="t-display">You\'re in good company</div></div>'+
+      '<div class="body">'+
+        '<img class="appshot" src="/images/onboarding/proof.jpg" alt="Families learning together on Archives" loading="lazy" width="820" height="512"/>'+
+        '<div class="stats3">'+
+          '<div><div class="n" data-c="70000">0</div><div class="l">learners</div></div>'+
+          '<div><div class="n" data-c="200">0</div><div class="l">stories</div></div>'+
+          '<div><div class="n" data-suffix="★">4.9</div><div class="l">across App Stores</div></div>'+
+        '</div>'+
+        '<div class="badges"><span class="badge">'+I.map+' 14 eras</span><span class="badge">'+I.clock+' 5 mins a day</span></div>'+
       '</div>'
     );
-    // count-up (60000 -> 60k, 1000000 -> 1M)
+    // count-up
     stage.querySelectorAll('.n[data-c]').forEach(function(n){
       var target=+n.getAttribute('data-c'),cur=0,steps=28,inc=target/steps,i=0;
-      function fmt(v){return target>=1e6?(Math.round(v/1e5)/10)+'M':target>=1000?Math.round(v/1000)+'k':Math.round(v)}
       var t=setInterval(function(){i++;cur+=inc;if(i>=steps){cur=target;clearInterval(t)}
-        n.textContent=fmt(cur);},26);
+        n.textContent=(target>=1000?Math.round(cur/1000)+'k':Math.round(cur));},26);
     });
     dockBtn('Keep going','btn-tertiary',next);
   };
@@ -1164,29 +813,16 @@
     ['Rashid','The daily story keeps me engaged with Middle Eastern history, and it only takes me 5 minutes a day.'],
     ['Ali','This app is a game changer. It keeps me interested all week and reminds me to stay focused on what really matters.']
   ];
-  /* Personalized 3-review slice for the mid-funnel proof beat: matched to
-     the journey pick. Indices into REVIEWS above. The full wall (no pick)
-     keeps its laurels. */
-  var REVIEW_PICKS={
-    bySkin:function(s){
-      var m={kids:[0,1,6],curiosity:[2,4,8],deepen:[5,7,4],roots:[6,9,3]};
-      return m[s.skin]||m.roots;
-    }
-  };
-  R.review=function(step){
-    step=step||{};
+  R.review=function(){
     var alt=['','style="background:var(--acai-3);box-shadow:0 4px 0 var(--acai-1)"'];
-    var title=step.title||'Join over 70,000 learners';
-    var idxs=step.pick&&REVIEW_PICKS[step.pick]?REVIEW_PICKS[step.pick](state):null;
-    var list=idxs?idxs.map(function(i){return REVIEWS[i]}).filter(Boolean):REVIEWS;
-    var laurels=idxs?'':'<div class="laurels">'+
-        '<div class="laurel"><span class="ln">4.9</span><span class="ll">Average rating</span></div>'+
-        '<div class="laurel"><span class="ln">850K+</span><span class="ll">Lessons completed</span></div>'+
-      '</div>';
     stage.innerHTML=screenWrap(
-      '<div class="head center" style="margin-top:12px"><div class="t-display">'+title+'</div></div>'+
-      '<div class="body">'+laurels+
-        list.map(function(r,i){
+      '<div class="head center" style="margin-top:12px"><div class="t-display">Join over 70,000 learners</div></div>'+
+      '<div class="body">'+
+        '<div class="laurels">'+
+          '<div class="laurel"><span class="ln">4.9</span><span class="ll">Average rating</span></div>'+
+          '<div class="laurel"><span class="ln">850K+</span><span class="ll">Lessons completed</span></div>'+
+        '</div>'+
+        REVIEWS.map(function(r,i){
           return '<div class="review" '+alt[i%2]+'><div class="who"><span>'+r[0]+'</span><span class="stars">★★★★★</span></div>'+
             '<p class="t-bs" style="color:#1a1a1a">'+r[1]+'</p></div>';
         }).join('')+
@@ -1195,92 +831,24 @@
     dockBtn('Continue','btn-tertiary',next);
   };
 
-  /* One score function for the recap meter AND the day-30 chart so the two
-     screens can never disagree. Low starting score = lots of room to grow. */
-  function connScore(){
+  R.recap=function(){
     var conn=state.connection==null?40:state.connection;
-    return Math.max(12,Math.min(48,Math.round(conn*0.55)+8));
-  }
-  function projScore(){return Math.min(92,connScore()+38);}
-
-  /* "What you told us" rows for the recap, built from state with graceful
-     skips (sparse sessions just show fewer rows). */
-  function buildSummary(){
-    var rows=[];
-    if(state.skin&&SKINS[state.skin])rows.push(['Journey',SKINS[state.skin].label]);
-    var eras=(state.eras||[]).map(function(id){var e=ERAS.filter(function(x){return x[0]===id})[0];return e?e[1]:null}).filter(Boolean);
-    if(eras.length)rows.push(['Eras',eras.slice(0,3).join(', ')+(eras.length>3?' +'+(eras.length-3):'')]);
-    var tps=(state.topics||[]).map(function(id){var t=TOPICS.filter(function(x){return x[0]===id})[0];return t?t[1]:null}).filter(Boolean);
-    if(tps.length)rows.push(['Topics',tps.slice(0,3).join(', ')]);
-    var tmap={'2':'2 minutes','5':'5 minutes','10':'10 minutes','15':'15+ minutes'};
-    var mmap={coffee:'with morning coffee',commute:'on the commute',lunch:'at lunch',bed:'before bed',kids:'with the kids'};
-    if(state.daily_time&&tmap[state.daily_time])rows.push(['A day',tmap[state.daily_time]+(state.moment&&mmap[state.moment]?', '+mmap[state.moment]:'')]);
-    var gmap={story:'Tell one story really well',habit:'A habit that sticks',era:'Know my era properly',family:'A family ritual'};
-    if(state.goal_30&&gmap[state.goal_30])rows.push(['Day-30 win',gmap[state.goal_30]]);
-    return rows;
-  }
-
-  /* Recap. Default: score meter + a summary list of what they picked.
-     step.future: a Headway-style progress chart projecting the day-30 score
-     (same score math as the meter; framed as an illustration, not a promise). */
-  R.recap=function(step){
-    step=step||{};
-    var base=connScore();
-    if(step.future){
-      var proj=projScore();
-      var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      function fd(d){return d.getDate()+' '+MN[d.getMonth()];}
-      // calendar-day math (not +720h) so DST/month boundaries label correctly
-      var d0=new Date(), d30=new Date(d0); d30.setDate(d0.getDate()+30);
-      stage.innerHTML=screenWrap(
-        '<div class="head center"><div class="t-hxl">Where you could be by day 30</div>'+
-          '<p class="t-bs muted mt8">Based on your answers. One 5-minute story a day.</p></div>'+
-        '<div class="body center">'+
-          '<div class="chart-card">'+
-            '<svg viewBox="0 0 320 192" width="100%" role="img" aria-label="History Connection Score rising from '+base+' now to about '+proj+' by day 30">'+
-              '<defs>'+
-                '<linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1E3C88"/><stop offset=".55" stop-color="#8C60CD"/><stop offset="1" stop-color="#E0568B"/></linearGradient>'+
-                '<linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8C60CD" stop-opacity=".25"/><stop offset="1" stop-color="#8C60CD" stop-opacity="0"/></linearGradient>'+
-              '</defs>'+
-              '<line x1="24" y1="42" x2="296" y2="42" stroke="#eee"/><line x1="24" y1="86" x2="296" y2="86" stroke="#eee"/><line x1="24" y1="130" x2="296" y2="130" stroke="#eee"/>'+
-              '<path d="M30 150 C85 148 92 122 140 108 C185 95 200 66 262 42 L262 158 L30 158 Z" fill="url(#ag)" stroke="none"/>'+
-              '<path d="M30 150 C85 148 92 122 140 108 C185 95 200 66 262 42" fill="none" stroke="url(#cg)" stroke-width="5" stroke-linecap="round"/>'+
-              '<line x1="262" y1="42" x2="262" y2="158" stroke="#FFD965" stroke-width="2" stroke-dasharray="3 3"/>'+
-              '<circle cx="30" cy="150" r="6" fill="#1E3C88" stroke="#fff" stroke-width="2"/>'+
-              '<circle cx="262" cy="42" r="7" fill="#E0568B" stroke="#fff" stroke-width="2"/>'+
-              '<g><rect x="12" y="112" rx="11" width="82" height="24" fill="#1E3C88"/><text x="53" y="128" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">Now: '+base+'</text></g>'+
-              '<g><rect x="192" y="8" rx="11" width="116" height="24" fill="#FFD965" stroke="#1A1A1A" stroke-width="1.5"/><text x="250" y="24" text-anchor="middle" font-size="12" font-weight="800" fill="#1A1A1A">Day 30: '+proj+'</text></g>'+
-              '<text x="30" y="182" font-size="11" fill="#8a8a8a" font-weight="700">'+fd(d0).toUpperCase()+'</text>'+
-              '<text x="262" y="182" text-anchor="middle" font-size="11" fill="#8a8a8a" font-weight="700">'+fd(d30).toUpperCase()+'</text>'+
-            '</svg>'+
-          '</div>'+
-          '<p class="t-bm mt16" style="color:#1a1a1a">History Connection Score: '+base+' today, around '+proj+' by '+fd(d30)+'.</p>'+
-          '<p class="t-bs muted mt8">The score runs 0 to 100: how much of this history you can place and retell. Around '+proj+' means you could confidently tell the key stories from your chosen eras, in order, from memory.</p>'+
-          '<p class="t-bs muted mt8">Treat it as a sketch of the pace. It assumes one 5-minute story a day, and everyone\'s is different.</p>'+
-        '</div>'
-      );
-      dockBtn('Show me how','btn-tertiary',next);
-      return;
-    }
-    var score=base;
-    var rows=buildSummary();
-    var inner='<div class="reveal">'+
-      '<p class="t-bs muted mt8">Out of 100: how much of this history you can place and retell today, based on your answers.</p>'+
-      (rows.length?'<div class="sum-card">'+rows.map(function(r){
-        return '<div class="sum-row"><span class="sum-k">'+r[0]+'</span><span class="sum-v">'+r[1]+'</span></div>';
-      }).join('')+'</div>':'')+
-      '<p class="t-bs muted mt16">Plenty of room to grow, and that\'s the fun part. The next screen shows exactly where to focus.</p>'+
-    '</div>';
+    var score=Math.max(12,Math.min(48,Math.round(conn*0.55)+8)); // low score = lots of room to grow
+    var profile=profileLabel();
     stage.innerHTML=screenWrap(
       '<div class="head center"><div class="t-hxl">Here\'s your starting point</div></div>'+
       '<div class="body center">'+
         '<div class="meter charging" style="--p:0%"><span class="num">0</span></div>'+
         '<p class="t-bm muted" id="meterLabel">Calculating your History Connection Score…</p>'+
-        inner+
+        '<div class="reveal">'+
+          '<div class="profile-card"><img class="avatar" src="'+profile.img+'" alt=""/><div class="t-hm">You\'re '+profile.a+' <span style="color:var(--acai-1)">'+profile.name+'</span></div>'+
+            '<p class="t-bs mt8" style="color:#1a1a1a">'+profile.desc+'</p></div>'+
+          '<p class="t-bs muted mt16">Plenty of room to grow, and that\'s the fun part. Let\'s see exactly where to focus.</p>'+
+        '</div>'+
       '</div>'
     );
     clearDock();
-    // Power-up: ring and number climb together, then the content reveals.
+    // Power-up: ring and number climb together, then the profile reveals.
     var m=stage.querySelector('.meter'), num=m.querySelector('.num'), t0=null, DUR=1700;
     function tick(ts){
       if(t0==null)t0=ts;
@@ -1315,9 +883,9 @@
     }).join('');
     var dd=DEEPDIVE[top];
     stage.innerHTML=screenWrap(
-      ibu('ibu-lantern.png','sm')+
+      '<img class="ibu sm" src="/images/onboarding/ibu-lantern.png" alt=""/>'+
       '<div class="head center"><div class="t-hxl">What\'s really standing between you and your history</div>'+
-        '<p class="t-bs muted mt8">Built from every answer you just gave.</p></div>'+
+        '<p class="t-bs muted mt8">Built from your answers, not a generic quiz.</p></div>'+
       '<div class="body"><div class="bars">'+bars+'</div>'+
         '<div class="deepdive"><span class="tag">Your #1 to fix</span><div class="t-hm">'+dd.t+'</div>'+
           '<p class="t-bs mt8" style="color:#1a1a1a">'+dd.b+'</p></div>'+
@@ -1346,167 +914,15 @@
     dockBtn('I\'m ready','btn-tertiary',next);
   };
 
-  /* ---------- insight interstitials (the value-before-the-ask engine) ----------
-     One renderer, parameterized by a content function that turns state into
-     {tag,title,body,img}. All personalization copy lives here, next to the
-     diagnosis, so insights and diagnosis can never disagree. Edge rule: every
-     function must return coherent, truthful copy for a sparse state (skipped
-     answers), so each personalized fragment has a neutral fallback. */
-  var INSIGHT={
-    insight1:function(s){
-      var threads=[];
-      if(s.school_coverage==='nothing'||s.school_coverage==='pages')threads.push('school barely touched it');
-      if(s.last_learned==='school'||s.last_learned==='cant')threads.push('nothing has brought it back since');
-      if(s.retell_check==='name'||s.retell_check==='notyet')threads.push('the stories never reached you whole');
-      if(!threads.length){
-        // Strong starters (school covered it, still engaged): the gap framing
-        // would contradict their own answers, so pitch depth instead.
-        return {tag:'Early read',title:'You\'ve got a base most people don\'t',
-          body:'Your answers say the foundations reached you. The plan\'s job is depth: the eras and stories school never got to.',img:'teach'};
-      }
-      var line='Your answers agree: '+threads.slice(0,2).join(', and ')+'.';
-      return {tag:'Early read',title:'That gap is a curriculum problem, not a you problem',
-        body:line+' A thousand years, squeezed into a few pages. Five minutes of the right story a day closes that gap.',img:'teach'};
-    },
-    affirmWelcome:function(s){
-      // Mirror the journey they just picked in their own words — never a
-      // persona label they were never shown ("Reconnector" tested jarring).
-      var t={
-        roots:'Reconnecting with your roots. Good choice.',
-        curiosity:'Staying curious. Good choice.',
-        kids:'Teaching your kids. Good choice.',
-        deepen:'Going deeper. Good choice.'
-      }[s.skin]||'Good choice.';
-      var p=profileLabel();
-      return {hero:true,img:'affirm-welcome.webp',title:t,
-        body:p.desc+' The next few questions decide what your plan starts with.'};
-    },
-    topicHook:function(s){
-      var first=(s.topics||[])[0];
-      var t=TOPICS.filter(function(x){return x[0]===first})[0];
-      var fact=TOPIC_FACTS[first]||TOPIC_FACTS.inventions;
-      return {tag:'Locked in',title:(t?t[1]:'Inventions and science')+' it is',
-        body:fact+' Stories like these are ahead in your plan.',
-        heroImg:TOPIC_IMG[first]||TOPIC_IMG.inventions,img:'ibu-teach.png'};
-    },
-    affirmHabit:function(s){
-      var m={
-        busy:{img:'affirm-busy.webp',title:'Life got busy. That\'s not a character flaw.',body:'Most plans die because they ask for an hour. Yours asks for five minutes, attached to something you already do.'},
-        boring:{img:'affirm-boring.webp',title:'Boring killed it. Fair.',body:'A story told well fixes what a textbook can\'t. Day one will prove it.'},
-        heavy:{img:'ibu-lantern.png',title:'Too heavy is a format problem',body:'Whole books are heavy. One five-minute story isn\'t. We\'ll keep the pieces small.'},
-        alone:{img:'affirm-alone.webp',title:'Learning alone is the hard mode',body:'Stories are made for retelling. You\'ll have one worth sharing at dinner within the week.'},
-        none:{img:'affirm-none.webp',title:'A clean slate works in your favor',body:'No half-finished books haunting you. One story a day from day one, and the streak does the rest.'}
-      };
-      var c=m[s.obstacle_past]||m.none;
-      return {hero:true,img:c.img,title:c.title,body:c.body};
-    },
-    eraHook:function(s){
-      var first=(s.eras||[])[0];
-      var era=ERAS.filter(function(e){return e[0]===first})[0];
-      var fact=ERA_FACTS[first]||ERA_FACTS.baghdad;
-      return {tag:'Good pick',title:(era?era[1]:'The Golden Age of Baghdad')+' won\'t disappoint',
-        body:fact+' Your plan starts with stories like this one.',
-        heroImg:ERA_IMG[first]||null,img:'ibu-teach.png'};
-    },
-    insight2:function(s){
-      var f={video:'short videos',audio:'listening',read:'reading',quiz:'quick quizzes'}[s.format]||'short sessions';
-      var t={'2':'two','5':'five','10':'ten','15':'fifteen'}[s.daily_time]||'five';
-      var m={coffee:'morning coffee',commute:'commute',lunch:'lunch break',bed:'wind-down before bed',kids:'time with the kids'}[s.moment]||'day';
-      var seasonal=s.life_season==='nonstop'?' Even in a nonstop season, that window is enough.':'';
-      return {tag:'Your learning style',title:'You learn in windows, not marathons',
-        body:'Here\'s what your answers add up to: '+f+', about '+t+' minutes at a time, built into your '+m+'.'+seasonal+' Long documentaries and 400-page books were never going to fit that. Daily stories will.',img:'laying'};
-    },
-    recapIntro:function(){
-      return {tag:'Analyzing',title:'You answered '+questionCount(idx)+' questions. Here\'s what they add up to.',
-        body:'Most people never look this closely at their relationship with their own history. The next few screens show your starting point, what\'s really in the way, and where a month of small steps could take you.',img:'hero'};
-    },
-    meaning:function(s){
-      var d=computeDiagnosis(s);
-      var top=Object.keys(d).sort(function(a,b){return d[b]-d[a]})[0];
-      var gap={knowledge:'the stories themselves',time:'a rhythm that survives busy days',access:'sources you can trust',identity:'a felt connection to your story'}[top];
-      var first=(s.eras||[])[0];
-      var era=ERAS.filter(function(e){return e[0]===first})[0];
-      var t={'2':'two','5':'five','10':'ten','15':'fifteen'}[s.daily_time]||'five';
-      return {tag:'What this means',title:'Your gap has a shape, and it\'s fixable',
-        body:'Your #1 gap is '+gap+'. Your strongest pull is '+(era?era[1]:'the eras you picked')+'. And you have about '+t+' minutes a day. That exact combination is what a daily story plan is built for: the right era first, in pieces that fit your day.',img:'blinking'};
-    },
-    blockerMirror:function(s){
-      var m={
-        school:'If school skipped it, here\'s what usually changes: once the stories finally arrive in order, it stops feeling like studying and starts feeling like being let in on something.',
-        dry:'If the sources felt dry, blame the telling. The same events, told well, hold you like a film. You\'ll feel it in one sitting.',
-        start:'If you didn\'t know where to start, here\'s what changes: day one is already picked for you, and every day after follows from it.',
-        time:'If time kept winning, here\'s what changes: five minutes attached to something you already do every day is the version that survives a busy week.',
-        authentic:'If you couldn\'t tell authentic from myth, here\'s what changes: every story is carefully researched and sourced, so you can finally relax into learning.'
-      };
-      return {tag:'You\'re not alone',title:'Others started exactly here',
-        body:(m[s.blocker]||m.start)+' Your plan is built the same way.',img:'sad'};
-    }
-  };
-  R.insight=function(step){
-    var c=INSIGHT[step.content](state)||{};
-    // Three visual variants: heroImg = wide art banner (era/topic hooks);
-    // hero = big centered mascot, Headway-style, body as plain text (affirm
-    // break screens); default = small Ibu + bordered insight card.
-    var top=c.heroImg
-      ? '<img class="hero-img" src="'+c.heroImg+'" alt="" style="margin:6px 0 8px"/>'
-      : (c.hero&&c.img
-        ? (IBU[c.img]?ibu(c.img)
-          :'<img class="insight-hero" src="/images/onboarding/'+c.img+'" alt=""/>')
-        : (c.img?(IBU[c.img]?ibu(c.img):ibu(c.img,'sm')):''));
-    var bodyHtml=c.hero
-      ? '<p class="t-bl center" style="color:#4a4a4a;font-weight:500;margin-top:2px">'+c.body+'</p>'
-      : '<div class="insight-card"><p class="t-bl" style="color:#1a1a1a;font-weight:500">'+c.body+'</p></div>';
-    stage.innerHTML=screenWrap(
-      top+
-      '<div class="head center">'+actTag(step)+(c.tag?'<span class="kicker">'+c.tag+'</span>':'')+
-        '<div class="t-hxl">'+c.title+'</div></div>'+
-      '<div class="body">'+bodyHtml+'</div>'
-    );
-    dockBtn(step.cta||'Continue','btn-tertiary',next);
-  };
-
-  /* ---------- plan preview roadmap (Today / Week 1 / Weeks 2-3 / Day 30) ----------
-     Mirrors the paywall's roadmap strip so the paywall feels familiar. Built
-     from eras + cadence + the goal_30 answer. */
-  R.roadmap=function(){
-    var eraNames=(state.eras||[]).map(function(id){var e=ERAS.filter(function(x){return x[0]===id})[0];return e?e[1]:null}).filter(Boolean);
-    var tps=(state.topics||[]).map(function(id){var t=TOPICS.filter(function(x){return x[0]===id})[0];return t?t[1].toLowerCase():null}).filter(Boolean);
-    // Day one opens the FIRST era they picked, not a fixed story.
-    var plan=ERA_PLAN[(state.eras||[])[0]]||ERA_PLAN.prophets;
-    var wk1=eraNames[0]||'Golden Age of Baghdad';
-    var wk23=eraNames.slice(1,3).join(' & ')||'New eras as you finish each one';
-    var fam=(state.kids_household==='kids'||state.kids_household==='family')?' with the family':'';
-    var goal={story:'You tell one of these stories really well',habit:'The daily habit has stuck',era:'You know your chosen era properly',family:'It\'s a ritual you share'+fam}[state.goal_30]||'You know stories most people never learned';
-    var when=state.cadence==='morning'?'morning':'evening';
-    // The commitment answer shapes the pace line — an honest "most days"
-    // answer gets a plan that says so.
-    var pace=state.commitment==='every'?('One story each '+when):('One story most '+when+'s, streaks forgive a missed day');
-    var rows=[
-      ['Today',plan.story,'Your first story'+(plan.video?', ready to watch':', ready on day one')],
-      ['Week 1',wk1,pace],
-      ['Weeks 2 to 3',wk23,tps.length?('Heavy on '+tps.slice(0,2).join(', plus ')):'Unlock as you go'],
-      ['Day 30',goal,'The win you picked']
-    ];
-    stage.innerHTML=screenWrap(
-      '<div class="head"><div class="t-hxl">Here\'s the shape of your next 30 days</div>'+
-        '<p class="t-bs muted mt8">Built from your eras, your topics, your pace and the win you chose.</p></div>'+
-      '<div class="body"><div class="timeline">'+rows.map(function(r,i){
-        return '<div class="tl-row"><div class="tl-rail"><span class="tl-dot"></span>'+(i<rows.length-1?'<span class="tl-line"></span>':'')+'</div>'+
-          '<div class="tl-body"><span class="tl-when">'+r[0]+'</span><span class="tl-what">'+r[1]+'</span><span class="tl-sub">'+r[2]+'</span></div></div>';
-      }).join('')+'</div></div>'
-    );
-    dockBtn('Show me day one','btn-tertiary',next);
-  };
-
   R.email=function(step){
     fire('results_gate_view',{});
     stage.innerHTML=screenWrap(
-      ibu('excited')+
+      '<img class="ibu sm" src="/images/onboarding/ibu-wave.png" alt=""/>'+
       '<div class="head"><div class="t-hxl">Your plan is ready.</div><p class="t-bl muted mt8">Where should we send it, so you never lose your place?</p></div>'+
       '<div class="body">'+
         '<label for="em" class="t-bm" style="display:block;margin-bottom:8px">Your email</label>'+
         '<input class="field" id="em" type="email" inputmode="email" autocomplete="email" aria-label="Your email address" placeholder="you@email.com"/>'+
-        '<div class="reassure">'+I.shield+'<span>We\'ll email your plan and a short series to get you started. No spam, unsubscribe anytime.</span></div>'+
+        '<div class="reassure">'+I.shield+'<span>We will only email your plan and the occasional nudge.</span></div>'+
         '<div id="emErr" aria-live="polite" class="t-bs" style="color:var(--red);min-height:18px;margin-top:6px"></div>'+
       '</div>'
     );
@@ -1528,7 +944,7 @@
   R.loader=function(step){
     var rows=[['Mapping your eras',0],['Matching the right stories',0],['Setting your pace',0]];
     stage.innerHTML=screenWrap(
-      ibu('loading')+
+      '<img class="ibu sm" src="/images/onboarding/ibu-glide.png" alt=""/>'+
       '<div class="head center" style="margin-top:6px"><div class="t-hxl">Building your journey…</div></div>'+
       '<div class="body">'+rows.map(function(r,i){
         return '<div class="load-row" data-i="'+i+'"><div class="lab"><span>'+r[0]+'</span><span class="pct">0%</span></div><div class="track"><i></i></div></div>';
@@ -1561,38 +977,30 @@
   R.results=function(){
     fire('results_view',{},'ViewContent');
     var eraNames=(state.eras||[]).map(function(id){var e=ERAS.filter(function(x){return x[0]===id})[0];return e?e[1]:null}).filter(Boolean);
-    var tps=(state.topics||[]).map(function(id){var t=TOPICS.filter(function(x){return x[0]===id})[0];return t?t[1].toLowerCase():null}).filter(Boolean);
     var when=state.cadence==='morning'?'each morning':'each evening';
-    // Day 1 opens the first era they picked; their other eras follow.
-    var firstEra=(state.eras||[])[0];
-    var plan=ERA_PLAN[firstEra]||ERA_PLAN.prophets;
-    var others=eraNames.slice(1);
-    var planEras=eraNames.slice(0,3);
-    if(!planEras.length)planEras=['The earliest stories'];
-    if(planEras.length<2)planEras.push(firstEra==='baghdad'?'The earliest stories':'Golden Age of Baghdad');
+    // Day 1 is always the story of Nuh (that is the real video we show). Their chosen eras come next.
+    var others=eraNames.filter(function(n){return n!=='The earliest stories'});
+    var planEras=['The earliest stories'].concat(others).slice(0,3);
+    if(planEras.length<2)planEras.push('Golden Age of Baghdad');
     var nextBit=others.length?(', then '+others.slice(0,2).join(' & ')):'';
-    var topicBit=tps.length?(' Expect plenty of '+tps.slice(0,2).join(', plus ')+'.'):'';
-    var kLetters=['A','B','C','D'];
-    var correctK=kLetters[plan.q.correct];
     stage.innerHTML=screenWrap(
-      ibu('celebrating')+
+      '<img class="ibu sm" src="/images/onboarding/ibu-celebrate.png" alt=""/>'+
       '<div class="head"><div class="t-hxl">Your 30-day journey is ready</div>'+
-        '<p class="t-bs muted mt8">You begin with <b>'+plan.story+'</b>'+nextBit+'. One 5-minute story '+when+'.'+topicBit+'</p></div>'+
+        '<p class="t-bs muted mt8">You begin with <b>The Great Flood</b>'+nextBit+'. One 5-minute story '+when+'.</p></div>'+
       '<div class="body">'+
-        '<div class="t-bm" style="margin:2px 0 8px">'+(plan.video?'Here is your first story. Tap to watch.':'Here is your first story.')+'</div>'+
-        '<div class="watch-card" id="watchCard"'+(plan.video?'':' style="cursor:default"')+'>'+
-          '<img class="watch-bg" src="'+plan.img+'" alt="'+plan.story+'"/>'+
+        '<div class="t-bm" style="margin:2px 0 8px">Here is your first story. Tap to watch.</div>'+
+        '<div class="watch-card" id="watchCard">'+
+          '<img class="watch-bg" src="/images/onboarding/noah-thumb.jpg" alt="The Great Flood"/>'+
           '<div class="watch-ov">'+
             '<div class="watch-lab">Day 1 of your journey</div>'+
-            '<div class="watch-title">'+plan.story+'</div>'+
-            '<div class="watch-cta"><span class="mins">'+(plan.video?plan.mins:'5-minute story')+'</span>'+
-              (plan.video?'<span class="watch-play">▶ Watch</span>':'<span class="mins">Unlocks on day one</span>')+'</div>'+
+            '<div class="watch-title">The Great Flood</div>'+
+            '<div class="watch-cta"><span class="mins">2 min watch</span><span class="watch-play">▶ Watch</span></div>'+
           '</div>'+
         '</div>'+
-        '<div class="quiz-q">Then try a question. '+plan.q.ask+'</div>'+
+        '<div class="quiz-q">Then try a question. How many years did the warning before the Great Flood last?</div>'+
         '<div id="quizopts">'+
-          plan.q.opts.map(function(o,i){
-            return '<div class="quiz-opt" data-k="'+kLetters[i]+'"><span class="lt">'+kLetters[i]+'</span><span>'+o+'</span></div>';
+          [['A','500 years'],['B','750 years'],['C','950 years'],['D','1,000 years']].map(function(o){
+            return '<div class="quiz-opt" data-k="'+o[0]+'"><span class="lt">'+o[0]+'</span><span>'+o[1]+'</span></div>';
           }).join('')+
         '</div><div class="feedback" id="fb"></div>'+
         '<div class="plan-list">'+
@@ -1600,27 +1008,26 @@
         '</div>'+
       '</div>'
     );
-    // Watch card -> play the era's reel (HLS), only when one really exists
+    // Watch card -> play the real Noah reel (HLS)
     var wc=document.getElementById('watchCard');
-    if(wc&&plan.video)wc.onclick=function(){
+    if(wc)wc.onclick=function(){
       if(wc.dataset.playing)return; wc.dataset.playing='1'; wc.classList.add('playing');
-      fire('preview_video_play',{story:firstEra||'noah-1'});
-      var url=plan.video;
+      fire('preview_video_play',{story:'noah-1'});
+      var url='https://d1bcceam8ucosn.cloudfront.net/prophets/6-noah-1/hls/reel.m3u8';
       var v=document.createElement('video'); v.setAttribute('playsinline',''); v.controls=true; v.autoplay=true;
       wc.innerHTML=''; wc.appendChild(v);
-      // HLS reels need hls.js on non-Safari; daily-story mp4s play natively.
-      if(url.indexOf('.m3u8')>-1&&!v.canPlayType('application/vnd.apple.mpegurl')&&window.Hls&&Hls.isSupported()){
-        var h=new Hls();h.loadSource(url);h.attachMedia(v);
-      }else{v.src=url;}
+      if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=url;}
+      else if(window.Hls&&Hls.isSupported()){var h=new Hls();h.loadSource(url);h.attachMedia(v);}
+      else{v.src=url;}
       v.play().catch(function(){});
     };
-    // era-matched preview question
+    // quiz (real Noah question, correct = C: 950 years)
     var answered=false;
     stage.querySelectorAll('.quiz-opt').forEach(function(o){
       o.onclick=function(){if(answered)return;answered=true;var k=o.getAttribute('data-k');var fbEl=document.getElementById('fb');
-        if(k===correctK){o.classList.add('correct');fbEl.textContent=plan.q.right;fbEl.style.color='var(--green)';}
-        else{o.classList.add('wrong');stage.querySelector('.quiz-opt[data-k="'+correctK+'"]').classList.add('correct');fbEl.textContent=plan.q.wrong;fbEl.style.color='var(--pink)';}
-        fire('preview_quiz_answer',{correct:k===correctK,era:firstEra||'prophets'});
+        if(k==='C'){o.classList.add('correct');fbEl.textContent='Right. 950 years, a thousand less fifty, in the earliest accounts. The kind of fact that stays with you.';fbEl.style.color='var(--green)';}
+        else{o.classList.add('wrong');stage.querySelector('.quiz-opt[data-k="C"]').classList.add('correct');fbEl.textContent='It was 950 years, a thousand less fifty. Now you will not forget it.';fbEl.style.color='var(--pink)';}
+        fire('preview_quiz_answer',{correct:k==='C'});
       };
     });
     supa({source:'results_view'});
@@ -1629,7 +1036,7 @@
     var go=el('<button class="btn btn-gold" style="margin-top:18px">Start my journey</button>');
     go.onclick=goPaywall;
     stage.querySelector('.screen .body').appendChild(go);
-    var fine=el('<p class="t-bs muted center mt8" style="margin-bottom:10px">Your first story is picked and waiting.</p>');
+    var fine=el('<p class="t-bs muted center mt8" style="margin-bottom:10px">Your first story is ready to play.</p>');
     stage.querySelector('.screen .body').appendChild(fine);
   };
 
@@ -1665,7 +1072,7 @@
   /* ---------- nav ---------- */
   backBtn.onclick=prev;
   restartBtn.onclick=function(){
-    state={session_id:state.session_id,_v:SV};idx=0;render();
+    state={session_id:state.session_id};idx=0;render();
   };
 
   render();
