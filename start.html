@@ -402,7 +402,7 @@
      '0722-quizv3-legacy', so the dashboard compares the arms cleanly). The arm
      is sticky per browser. Dial RAMP to 100 after the first-hours check, then
      delete start-legacy.html and this whole block. */
-  var RAMP=50;
+  var RAMP=100;
   if(RAMP<100){
     // QA override: ?arm=new|legacy pins this browser to an arm (persisted).
     var _qa=(location.search.match(/[?&]arm=(new|legacy)\b/)||[])[1];
