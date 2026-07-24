@@ -1047,6 +1047,9 @@
           '&eras='+encodeURIComponent((state.eras||[]).join(','))+
           (state.email?'&email='+encodeURIComponent(state.email):'')+
           (state.cadence?'&cadence='+encodeURIComponent(state.cadence):'');
+    /* Same attribution relay as start.html's goPaywall — kept in step so the
+       frozen arm can't quietly go back to minting organic paywall sessions. */
+    try{if(window.atrackParams){var _ap=window.atrackParams();if(_ap)q+='&'+_ap;}}catch(e){}
     location.href='/paywall.html?'+q;
   }
 

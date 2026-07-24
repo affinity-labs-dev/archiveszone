@@ -122,10 +122,18 @@
       if(!buyerEmail){try{var _st=JSON.parse(localStorage.getItem('archives_onb2')||'null');buyerEmail=(_st&&_st.email)||'';}catch(_e){}}
       try{sessionStorage.removeItem('arc_ck_open');}catch(_e){}
       var _ck='atrack_conv_'+(eid||plan+'_'+(val||''));
-      if(window.atrack&&!localStorage.getItem(_ck)){
-        window.atrack('conversion',(typeof val==='number'&&isFinite(val))?val:undefined,
-          buyerEmail?{plan:plan,email:buyerEmail}:{plan:plan});
-        localStorage.setItem(_ck,'1');
+      /* The refresh guard must never be able to swallow the sale: in browsers
+         that block storage, localStorage.getItem THREW out of this whole block
+         and the conversion was dropped instead of merely de-duplicated. */
+      var _seen=false; try{_seen=!!localStorage.getItem(_ck);}catch(_e){}
+      if(window.atrack&&!_seen){
+        /* eid travels WITH the event: it is the purchase's identity, and the
+           server rejects a second conversion carrying the same one. Without it
+           a storage-blocked browser (where the guard above can't persist) fires
+           a fresh conversion on every reload of this URL and inflates revenue. */
+        var _p={plan:plan}; if(eid)_p.eid=eid; if(buyerEmail)_p.email=buyerEmail;
+        window.atrack('conversion',(typeof val==='number'&&isFinite(val))?val:undefined,_p);
+        try{localStorage.setItem(_ck,'1');}catch(_e){}
       }
     }catch(e){}
   }

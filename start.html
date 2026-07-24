@@ -1640,6 +1640,12 @@
           '&eras='+encodeURIComponent((state.eras||[]).join(','))+
           (state.email?'&email='+encodeURIComponent(state.email):'')+
           (state.cadence?'&cadence='+encodeURIComponent(state.cadence):'');
+    /* Hand the ad attribution + tracker session to the next page. t.js keeps
+       them in storage, and storage does not survive this hop in Instagram/
+       Facebook/Snap webviews, private mode or under ITP — those visits used to
+       land on paywall.html as a brand-new unattributed session, which is why
+       ~38% of paywall views were reading as "organic" in the dashboard. */
+    try{if(window.atrackParams){var _ap=window.atrackParams();if(_ap)q+='&'+_ap;}}catch(e){}
     location.href='/paywall.html?'+q;
   }
 

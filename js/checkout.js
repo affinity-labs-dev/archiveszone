@@ -282,11 +282,16 @@
     // even on drip-link visits with no localStorage quiz state — the email
     // drip engine suppresses paying customers by this field.
     var em = ''; try { em = opts.email ? btoa(unescape(encodeURIComponent(opts.email))) : ''; } catch (e) { }
-    location.href = 'unlocked.html?status=success&plan=' + encodeURIComponent(opts.planId)
+    var dest = 'unlocked.html?status=success&plan=' + encodeURIComponent(opts.planId)
       + '&v=' + encodeURIComponent(v.value || '') + '&cur=' + encodeURIComponent(v.currency || 'USD') + '&eid=' + encodeURIComponent(eid)
       + (isTrial ? '&trial=1' : '')
       + (em ? '&em=' + encodeURIComponent(em) : '')
       + (redeem ? '&redeem=' + encodeURIComponent(redeem) : '');
+    // The conversion event fires on unlocked.html, a fresh page load after a
+    // cross-site checkout round trip — relay the session + ad attribution so
+    // the sale is credited to the ad that paid for it rather than to organic.
+    try { if (window.atrackRelay) dest = window.atrackRelay(dest); } catch (e) { }
+    location.href = dest;
   }
 
   /* ---- store fallback ---- */

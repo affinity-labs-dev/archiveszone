@@ -124,6 +124,8 @@
 <body>
   <div class="wrap">
     <div class="topbar">
+      <!-- Relay wired in the inline script below (click + auxclick), not inline
+           here, so middle-click and ctrl/cmd-click keep the session too. -->
       <a href="/start.html" class="back" aria-label="Back">‹</a>
       <a class="brand" href="/" aria-label="Archives home" onclick="try{window.atrack&&window.atrack('logo_exit',null,{page:'/paywall.html'})}catch(e){}"><img src="/images/logo-dark.png" alt="Archives"/></a>
     </div>
@@ -354,6 +356,19 @@
   }
   renderPlans(); selectPlan('monthly');
   fire('view_paywall',basePr({content_name:'paywall'}),'ViewContent',{content_name:'paywall'});
+
+  /* Back into the quiz is another page hop, so it carries the tracker session
+     and ad attribution (see goPaywall in start.html). Bound to BOTH click and
+     auxclick: onclick alone misses middle-click and ctrl/cmd-click, which open
+     a new tab and would land on the quiz as a fresh unattributed session — the
+     exact bug this relay exists to kill. Href is rewritten at click time, not
+     on load, so the address bar stays clean for everyone who never clicks it. */
+  (function(){
+    var back=document.querySelector('a.back'); if(!back) return;
+    function relayBack(){ try{ if(window.atrackRelay) back.href=window.atrackRelay('/start.html'); }catch(e){} }
+    back.addEventListener('click',relayBack);
+    back.addEventListener('auxclick',relayBack);
+  })();
 
   /* preload the offering so prices are real and the package is matched before
      checkout. resolveOfferContext (js/checkout.js) does ALL RC-data work —
