@@ -1,0 +1,88 @@
+/* Archives — Islamic quiz for kids.
+   Loaded after quiz-pages.css to give the kids page its own softer, brighter,
+   larger-type treatment. Deliberately a different look from the adult quiz. */
+
+body.kidpage{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255,217,101,.30), transparent 42%),
+    radial-gradient(circle at 88% 4%, rgba(167,124,222,.24), transparent 40%),
+    linear-gradient(#fffdf6, #f4fbf7);
+  background-attachment:fixed;
+}
+.kidpage .wrap{max-width:880px}
+
+/* rounder, friendlier headings */
+.kidpage h1.display{font-size:clamp(2.1rem,5.2vw,3.2rem);letter-spacing:-.01em}
+.kidpage h2.display{font-size:clamp(1.55rem,3.6vw,2.1rem)}
+.kidpage section{border-top:0;padding:44px 0}
+.kidpage .divider{height:4px;border-radius:999px;background:repeating-linear-gradient(90deg,var(--gold) 0 14px,transparent 14px 28px);opacity:.7;margin:0}
+.kidpage .lead{font-size:1.18rem;color:#3d3a33}
+
+/* age band chips */
+.ages{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.age{cursor:pointer;font-family:inherit;font-weight:800;font-size:.95rem;border:3px solid rgba(26,26,26,.12);background:#fff;color:var(--onyx);border-radius:18px;padding:11px 17px;display:inline-flex;align-items:center;gap:8px;transition:all .12s ease;box-shadow:0 3px 0 rgba(26,26,26,.08)}
+.age .ae{font-size:1.25rem;line-height:1}
+.age:hover{transform:translateY(-2px)}
+.age[aria-pressed="true"]{background:#fff5d1;border-color:var(--gold);box-shadow:0 3px 0 #d9ae2e}
+
+/* topic packs — big colourful tiles, not pills */
+.packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px}
+.pack{cursor:pointer;font-family:inherit;text-align:center;border:3px solid rgba(26,26,26,.1);border-radius:22px;padding:16px 12px;background:#fff;transition:all .12s ease;box-shadow:0 4px 0 rgba(26,26,26,.08)}
+.pack:hover{transform:translateY(-3px)}
+.pack .pe{display:block;font-size:2.1rem;line-height:1;margin-bottom:6px}
+.pack .pn{font-weight:800;font-size:.98rem;color:var(--onyx)}
+.pack[aria-pressed="true"]{border-color:var(--accent);background:#f6f0ff;box-shadow:0 4px 0 #9b7ac4}
+.pack.p1[aria-pressed="true"]{border-color:#e8a33d;background:#fff6e6;box-shadow:0 4px 0 #c98722}
+.pack.p2[aria-pressed="true"]{border-color:#3fa981;background:#eefaf4;box-shadow:0 4px 0 #2e8a67}
+.pack.p3[aria-pressed="true"]{border-color:#4a86d6;background:#eef4fd;box-shadow:0 4px 0 #356bb0}
+
+/* quiz card: softer, bigger text, no hard shadow */
+.kidpage #quiz{border:4px solid var(--onyx);border-radius:30px;box-shadow:0 8px 0 rgba(26,26,26,.10);margin-top:18px;background:#fff}
+.kidpage .q-head{background:linear-gradient(120deg,#fff2c9,#e6f7ec);padding:15px 20px;border-bottom:3px solid rgba(26,26,26,.07)}
+.kidpage .q-emoji{font-size:2.3rem}
+.kidpage .q-head .lbl{font-size:1.08rem}
+.kidpage .q-text{font-size:1.55rem;line-height:1.3}
+.kidpage .q-bar{height:16px;background:#f0ece0}
+.kidpage .q-bar>i{background:linear-gradient(90deg,#ffd965,#4fc48c)}
+.kidpage .opt{border-width:3px;border-radius:20px;padding:16px 18px;font-size:1.1rem;font-weight:700}
+.kidpage .opt .key{width:32px;height:32px;border-radius:12px;font-size:1rem}
+.kidpage .explain{border-radius:20px;font-size:1.02rem;background:#fff6df;border:2px solid rgba(184,145,47,.35)}
+.kidpage .btn{border-radius:20px;font-size:16px;padding:14px 24px}
+.kidpage .result .big{font-size:4rem}
+
+/* star progress instead of XP grid */
+.stars{background:#fff;border:3px solid rgba(26,26,26,.1);border-radius:26px;padding:22px;text-align:center;margin-top:18px;box-shadow:0 4px 0 rgba(26,26,26,.07)}
+.star-row{font-size:1.9rem;letter-spacing:4px;line-height:1.2}
+.star-count{margin:8px 0 0;color:var(--onyx-soft);font-size:1rem}
+.star-count b{font-size:1.2rem;color:var(--onyx)}
+
+/* grown-up cards, softened */
+.kidpage .card{border-width:3px;border-radius:22px;box-shadow:0 3px 0 rgba(26,26,26,.06)}
+.kidpage .qa-list li{border-width:3px;border-radius:20px;background:#fff}
+.kidpage .qa-list li::before{border-radius:12px}
+.kidpage .faq details{border-bottom:2px dashed rgba(26,26,26,.14)}
+.kidpage .grownups{background:#fff;border:3px dashed rgba(26,26,26,.18);border-radius:24px;padding:24px}
+.kidpage .grownups h2{margin-top:0}
+
+@media (max-width:640px){
+  .kidpage section{padding:32px 0}
+  .kidpage h1.display{font-size:1.62rem}
+  .kidpage .lead{font-size:.95rem}
+  .kidpage #quiz{border-width:3px;border-radius:24px;margin-top:12px}
+  .kidpage .q-text{font-size:1.18rem}
+  .kidpage .opt{font-size:1rem;padding:13px 14px;border-radius:16px}
+  .kidpage .opt .key{width:27px;height:27px;border-radius:9px;font-size:.85rem}
+  .kidpage .q-emoji{font-size:1.6rem}
+  .kidpage .q-bar{height:12px}
+  .packs{grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:9px;margin-top:10px}
+  .pack{padding:12px 8px;border-width:2px;border-radius:18px}
+  .pack .pe{font-size:1.7rem}
+  .pack .pn{font-size:.85rem}
+  .ages{gap:8px}
+  .age{font-size:.86rem;padding:9px 13px;border-width:2px;border-radius:15px}
+  .age .ae{font-size:1.1rem}
+  .stars{padding:17px;border-radius:20px;border-width:2px}
+  .star-row{font-size:1.45rem;letter-spacing:2px}
+  .star-count{font-size:.92rem}
+  .kidpage .grownups{padding:18px;border-radius:20px}
+}
