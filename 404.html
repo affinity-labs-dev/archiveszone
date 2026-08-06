@@ -51,6 +51,10 @@
     <script src="/js/fv.js"></script>
     <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
 
+    <!-- PostHog — stub + init + super properties in js/ph.js. Must stay BELOW
+         t.js: it registers the tracker session id as the join key back to
+         ad_events. Passive observer — nothing here waits on it. -->
+    <script src="/js/ph.js"></script>
     <!-- TikTok enhanced events: SPA pageviews, downloads, registration — pixel + server-side CAPI (deduped by event_id) -->
     <script>
     (function () {
