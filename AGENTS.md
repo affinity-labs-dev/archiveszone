@@ -16,17 +16,41 @@ diff it before building on top.
 
 ## Checks
 
-Two scripts, no dependencies and no build step. CI (`.github/workflows/ci.yml`) runs
-both on every pull request **and on every push to `main`** — the second is what catches
-a bot pushing over the top of merged work. Run them before you push:
+Two scripts, no dependencies and no build step. Run them before you push:
 
 ```bash
 python3 tools/sync-nav-footer.py     # shared chrome across 18 copies; exits 1 on drift
 python3 tools/check-tracking.py      # tracking tags present and correctly ordered
 ```
 
-CI is a smoke alarm, not a lock: a workflow cannot stop a direct push to `main`, only
-go red after one. Branch protection is what actually prevents it.
+`.github/workflows/ci.yml` runs both on every pull request. `.github/workflows/pages.yml`
+runs them again on every push to `main` as a **gate on the deploy** — they must pass
+before anything reaches `archiveszone.app`. A push that reverts the shared chrome or the
+tracking tags now fails before publishing rather than after, which is what makes the
+2026-08-06 revert un-repeatable in production.
+
+That gate is not a substitute for branch protection. A bad commit still lands on `main`;
+it just doesn't ship.
+
+## How the site deploys
+
+`pages.yml` publishes the site, and **Settings → Pages → Source must be "GitHub
+Actions"** for it to work. The repo root is uploaded as-is — no build step.
+
+It replaces the `pages build and deployment` workflow GitHub generates for the "Deploy
+from a branch" source. That one cannot be edited and hard-codes a 10-minute deploy
+timeout. On 2026-08-06 the Pages backend exceeded it twice in a row on a 13MB,
+194-file site that had published in 2m09s the same morning, and each run cancelled its
+own in-flight deployment on the way out — leaving production silently serving the
+previous commit while `main` had moved on. `pages.yml` sets `timeout: 1800000` (30
+minutes) so a slow deployment finishes instead of being killed.
+
+If a deploy ever fails, **production is stale, not broken** — the previous commit keeps
+serving. Check what is actually live rather than assuming a merge shipped:
+
+```bash
+curl -s https://archiveszone.app/ | grep -o "__VITE_REACT_SSG_HASH__ = '[a-z0-9]*'"
+```
 
 ## Before you ship a funnel change — read the release checklist
 

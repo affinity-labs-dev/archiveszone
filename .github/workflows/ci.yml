@@ -1,14 +1,11 @@
 name: CI
 
-# Pull requests are the obvious half. Pushes to main are the important half:
-# this repo has historically received `Deploy <sha>` commits from a bot pushing
-# a full static build straight to main, which on 2026-08-06 reverted three PRs
-# without anyone noticing. A workflow that only ran on pull_request would not
-# have seen it. This one goes red within a minute of a bad push.
+# Pull requests only. Pushes to main run the same two checks in pages.yml, where
+# they gate the deploy itself — a bad push there fails before it can reach
+# archiveszone.app, which is strictly stronger than failing after. Duplicating
+# the push trigger here would just run everything twice.
 on:
   pull_request:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

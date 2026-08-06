@@ -1,0 +1,73 @@
+name: Deploy to GitHub Pages
+
+# Replaces the `pages build and deployment` workflow GitHub generates for the
+# "Deploy from a branch" source. That one cannot be edited, and its deploy step
+# hard-codes a 10-minute timeout: on 2026-08-06 the Pages backend took longer
+# than that twice in a row (the same 13MB / 194-file site had published in 2m09s
+# three hours earlier), and each run cancelled its own in-flight deployment on
+# the way out. This workflow does the same job with a timeout long enough to
+# ride out a slow backend instead of killing the deployment.
+#
+# REQUIRES Settings -> Pages -> Source set to "GitHub Actions". With the source
+# still on "Deploy from a branch" the deploy step fails fast, because Pages will
+# not accept an Actions-built artifact for a branch-sourced site.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a deployment already in flight — a half-published site is worse
+# than a late one. Queued runs wait their turn.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # Production gate. This is deliberately a dependency of deploy rather than a
+  # parallel job: a push that reverts the shared chrome or the tracking tags
+  # fails here and never reaches archiveszone.app. The Deploy bot's 2026-08-06
+  # push, which reverted three merged PRs, would have been stopped here.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shared navbar and footer are in sync
+        run: python3 tools/sync-nav-footer.py
+      - name: Tracking tags present and correctly ordered
+        run: python3 tools/check-tracking.py
+
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - name: Package the site
+        # The repo root IS the site — no build step, by design (AGENTS.md).
+        # .git is excluded by the action itself.
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          # 30 minutes, against the action's 600000ms (10 min) default. This is
+          # the whole reason this file exists. Raise it further rather than
+          # letting a slow deployment be cancelled — a cancelled deploy leaves
+          # production silently serving the previous commit.
+          timeout: 1800000
+          # Tolerate transient status-polling errors instead of failing the run.
+          error_count: 10
