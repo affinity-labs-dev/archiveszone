@@ -41,10 +41,8 @@
   <!-- Funnel version stamp (raw.fv) — must stay ABOVE t.js; bump in js/fv.js -->
   <script src="/js/fv.js"></script>
   <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
-  <!-- PostHog — stub + init + super properties in js/ph.js. Must stay BELOW
-       t.js: it registers the tracker session id as the join key back to
-       ad_events. Passive observer — nothing here waits on it. -->
-  <script src="/js/ph.js"></script>
+  <!-- TODO(PostHog): paste the project's current snippet here (phc_ key, host https://eu.i.posthog.com, with defaults). fire() already forwards to posthog.capture when present. -->
+
   <style>
     /* ===== Archives design system tokens (Figma: Archives_Raw_File / Design system) ===== */
     :root{

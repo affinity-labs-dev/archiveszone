@@ -12,6 +12,31 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
+  <!-- MUST stay first: runs before any analytics tag loads.
+       This URL carries two things that must never leave our origin: `redeem`,
+       a RevenueCat redemption link that is a BEARER CREDENTIAL (whoever holds
+       it can attach the subscription to their own account), and `em`, the
+       buyer's email in base64. GA, Meta and TikTok all auto-capture the full
+       page location, so without this they receive both on every success-page
+       load. Capture the values into memory, then strip them from the address
+       bar so every downstream tag, referrer header and CDN log sees a clean
+       URL. Everything below reads ARC_Q, never location.search. -->
+  <script>
+  window.ARC_Q=(function(){
+    var o={};
+    try{
+      var u=new URL(location.href), p=u.searchParams;
+      p.forEach(function(v,k){o[k]=v;});
+      var secret=['redeem','em'], hit=false;
+      secret.forEach(function(k){ if(p.has(k)){ p.delete(k); hit=true; } });
+      if(hit){
+        var qs=p.toString();
+        history.replaceState(null,'',u.pathname+(qs?'?'+qs:'')+u.hash);
+      }
+    }catch(e){}
+    return o;
+  })();
+  </script>
   <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-X3WFXSL1DG"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-X3WFXSL1DG');</script>
@@ -24,10 +49,6 @@
   <script src="/js/fv.js"></script>
   <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
 
-  <!-- PostHog — stub + init + super properties in js/ph.js. Must stay BELOW
-       t.js: it registers the tracker session id as the join key back to
-       ad_events. Passive observer — nothing here waits on it. -->
-  <script src="/js/ph.js"></script>
   <style>
     :root{--snow:#FAFAFA;--onyx:#1A1A1A;--blue:#1E3C88;--blue-2:#A2C5FF;--gold:#FFD965;--green:#5B860C;--green-1:#284200;
       --r-btn:26.5px;--r-card:20px;--ui:'Onest',system-ui,-apple-system,sans-serif;--display:'Bounded','Onest',sans-serif;}
@@ -47,6 +68,16 @@
     .qr{margin:20px auto 6px;width:160px;height:160px;border:2px solid var(--onyx);border-radius:16px;padding:8px;background:#fff;display:none}
     .qr.show{display:block}.qr img{width:100%;height:100%;display:block}
     .qr-note{font-size:13px;color:#8a8a8a;display:none}.qr-note.show{display:block}
+    /* Same-email callout. A web purchase is booked under an anonymous id and
+       only reaches the buyer's app account if the emails match (or they open
+       the redemption link). 27% of web buyers currently sign up under an
+       address we cannot match, and each one is a paying customer who gets shown
+       the paywall. Naming their address here is the cheapest way to raise that
+       match rate — no extra step, no conversion risk. */
+    .same-email{display:none;margin:18px 0 0;padding:14px 16px;background:#FFF6E8;border:2px solid #F0D9B5;border-radius:12px;text-align:left}
+    .same-email.show{display:block}
+    .same-email p{margin:0;font-size:14px;color:#4a4a4a;line-height:1.5}
+    .same-email strong{color:#1a1a1a;word-break:break-all}
     .divider{display:flex;align-items:center;gap:10px;color:#9a9a9a;font-size:12px;font-weight:700;margin:22px 0 14px;text-transform:uppercase;letter-spacing:.5px}
     .divider::before,.divider::after{content:'';flex:1;height:2px;background:#e3e3e3}
     .badges{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
@@ -67,6 +98,10 @@
     <div class="qr" id="qr"><img id="qrImg" alt="Scan to open Archives on your phone" /></div>
     <p class="qr-note" id="qrNote">Scan with your phone camera to unlock Archives.</p>
 
+    <div class="same-email" id="sameEmail">
+      <p>When you create your Archives account, use <strong id="buyerEmail"></strong> so your subscription carries over automatically.</p>
+    </div>
+
     <div class="divider">or get the app</div>
     <div class="badges">
       <a href="https://apps.apple.com/app/id6751173663" target="_blank" rel="noopener"><img src="/images/onboarding/badge-appstore.svg" alt="Download on the App Store" /></a>
@@ -76,11 +111,41 @@
     <div class="footer">Archives by Affinity Labs Ltd</div>
   </div>
 
+<!-- Local QR generator (qrcode-generator, MIT, vendored). Never a CDN: the QR
+     encodes a bearer redemption link, so it must be built on-origin. -->
+<script src="/js/qrcode.min.js"></script>
 <script>
 (function(){
   'use strict';
-  var params=new URLSearchParams(location.search);
-  var redeem=params.get('redeem');
+  /* ARC_Q is captured in <head> before the analytics tags load; the address bar
+     no longer holds `redeem` or `em`, so location.search must NOT be read. */
+  var params=new URLSearchParams(window.ARC_Q||{});
+
+  /* A redemption link is only ever followed if it really is one. `redeem`
+     arrives as a query parameter, and it used to be assigned straight to
+     location.href — including automatically after 600ms on mobile. That made
+     /unlocked.html?redeem=<anything>&status=success an open redirect wearing
+     our branding: it rendered the "You're in" success page, fired real
+     Purchase events at the ad platforms, and pointed the button, the QR code
+     and the auto-redirect at an attacker's URL. Anything not on this allowlist
+     is discarded and the page falls back to the app's own scheme. */
+  function safeRedeem(v){
+    if(!v) return '';
+    try{
+      if(/^rc-[a-z0-9]+:\/\//i.test(v)) return v;          // RevenueCat app scheme
+      var u=new URL(v, location.origin);
+      if(u.protocol!=='https:') return '';
+      var h=u.hostname.toLowerCase();
+      if(h==='revenuecat.com'||h.endsWith('.revenuecat.com')) return u.href;
+      if(h==='archiveszone.app'||h.endsWith('.archiveszone.app')) return u.href;
+      return '';
+    }catch(e){ return ''; }
+  }
+  var rawRedeem=params.get('redeem');
+  var redeem=safeRedeem(rawRedeem);
+  if(rawRedeem&&!redeem){
+    try{window.atrack&&window.atrack('redeem_rejected',null,{page:'/unlocked.html'});}catch(e){}
+  }
   var STORE_IOS='https://apps.apple.com/app/id6751173663';
   var STORE_AND='https://play.google.com/store/apps/details?id=ai.affinitylabs.archivesexpo';
   var ua=navigator.userAgent||'';
@@ -136,17 +201,35 @@
            a storage-blocked browser (where the guard above can't persist) fires
            a fresh conversion on every reload of this URL and inflates revenue. */
         var _p={plan:plan}; if(eid)_p.eid=eid; if(buyerEmail)_p.email=buyerEmail;
+        /* The redemption link is the only thing that joins this web purchase
+           to the buyer's app account, and it exists nowhere but this page's
+           URL. Persist it so an unredeemed purchase can be recovered instead
+           of being orphaned (46 customers were, and 39 of them were shown the
+           paywall after paying). */
+        if(redeem)_p.redeem_url=redeem;
         window.atrack('conversion',(typeof val==='number'&&isFinite(val))?val:undefined,_p);
         try{localStorage.setItem(_ck,'1');}catch(_e){}
       }
     }catch(e){}
   }
 
-  /* QR for the redemption link (handy when paying on desktop) */
+  /* QR for the redemption link (handy when paying on desktop).
+     Generated LOCALLY. This used to call api.qrserver.com with the redemption
+     link in the query string, which handed a bearer credential — the one thing
+     that can attach this subscription to an account — to an unaffiliated third
+     party, where it sat in their access logs. Now nothing leaves the origin. */
   if(redeem&&!isIOS&&!isAndroid){
-    var qr=document.getElementById('qr'),img=document.getElementById('qrImg');
-    img.onload=function(){qr.classList.add('show');document.getElementById('qrNote').classList.add('show');};
-    img.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data='+encodeURIComponent(redeem);
+    try{
+      var qr=document.getElementById('qr'),img=document.getElementById('qrImg');
+      var t=qrcode(0,'M'); t.addData(redeem); t.make();
+      img.src=t.createDataURL(5,0);
+      qr.classList.add('show');
+      document.getElementById('qrNote').classList.add('show');
+    }catch(e){
+      /* No QR is far better than leaking the link; the button and the
+         same-email note still carry the buyer through. */
+      try{window.atrack&&window.atrack('qr_failed',null,{page:'/unlocked.html'});}catch(_e){}
+    }
   }
 
   function openApp(){
@@ -170,6 +253,26 @@
       try{window.atrack&&window.atrack('store_click',null,{store:store,page:'/unlocked.html'});}catch(_){}
     });
   });
+
+  /* Same-email callout. Shown only when we actually know the buyer's address
+     (em= from checkout.js, or the quiz state as a fallback) — a prompt that
+     said "use the same email" without naming it would be noise. Independent of
+     the tracking block above so an ad-blocker cannot suppress it. */
+  try{
+    /* ONLY the checkout-confirmed address (em=, set by checkout.js from the
+       address that actually paid). The quiz-state fallback used elsewhere on
+       this page is deliberately NOT used here: when the quiz email differs
+       from the payment email it would name the wrong address, telling the
+       buyer to sign up with an email that cannot match their purchase and
+       manufacturing the exact mismatch this callout exists to prevent. If we
+       do not know the paying address for certain, we say nothing. */
+    var _bem='';
+    try{ var _e2=params.get('em')||''; if(_e2) _bem=decodeURIComponent(escape(atob(_e2))); }catch(_e){}
+    if(isSuccess && _bem && _bem.indexOf('@')>0){
+      document.getElementById('buyerEmail').textContent=_bem;
+      document.getElementById('sameEmail').classList.add('show');
+    }
+  }catch(e){}
 
   if(isIOS||isAndroid){ setTimeout(openApp,600); }
   else { document.getElementById('stepNote').textContent=redeem?'Scan the code below on your phone to unlock Archives.':'Get Archives on your phone below.'; }
