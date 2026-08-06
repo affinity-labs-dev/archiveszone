@@ -8,6 +8,26 @@ Historically this repo received `Deploy <sha>` commits from a separate React sou
 repo. That is no longer the workflow; this repo is now the source of truth. If you find
 yourself looking for `src/`, there isn't one.
 
+**That bot has not always respected this.** On 2026-08-06 it pushed two `Deploy` commits
+straight to `main` and reverted three merged PRs — PostHog, the home-page `fv` stamp,
+this file, `tools/`, and every crawlable internal link — without anyone noticing for
+days. If you see a `Deploy <sha>` commit on `main`, treat it as a probable revert and
+diff it before building on top.
+
+## Checks
+
+Two scripts, no dependencies and no build step. CI (`.github/workflows/ci.yml`) runs
+both on every pull request **and on every push to `main`** — the second is what catches
+a bot pushing over the top of merged work. Run them before you push:
+
+```bash
+python3 tools/sync-nav-footer.py     # shared chrome across 18 copies; exits 1 on drift
+python3 tools/check-tracking.py      # tracking tags present and correctly ordered
+```
+
+CI is a smoke alarm, not a lock: a workflow cannot stop a direct push to `main`, only
+go red after one. Branch protection is what actually prevents it.
+
 ## Before you ship a funnel change — read the release checklist
 
 If you are touching the funnel (`start.html`, `paywall.html`, `plan.html`,
