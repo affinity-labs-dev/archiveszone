@@ -8,6 +8,34 @@ Historically this repo received `Deploy <sha>` commits from a separate React sou
 repo. That is no longer the workflow; this repo is now the source of truth. If you find
 yourself looking for `src/`, there isn't one.
 
+## Before you ship a funnel change — read the release checklist
+
+If you are touching the funnel (`start.html`, `paywall.html`, `plan.html`,
+`unlocked.html`, `index.html`/`404.html`) or anything that fires tracking events,
+follow **`docs/FUNNEL_RELEASE.md` in the `archives-analytics-dashboard` repo**
+before deploying, and run its post-deploy checks afterwards.
+
+It is there and not here because the funnel lives in **two** repos that are synced
+by hand — this one (canonical, `archiveszone.app`) and `archives-web2app-test`
+(the Vercel ads mirror that takes 100% of paid Meta traffic). A checklist copied
+into both would drift exactly the way the funnels already do.
+
+The short version, because these fail silently and are expensive to notice late:
+
+- **Adding, removing, reordering or renaming a screen means bumping `js/fv.js`
+  in BOTH repos** (bare label here, `-test` suffix on the mirror), and bumping
+  `SV` in `start.html`. Skip the `fv` bump and the dashboard merges two different
+  funnels into one cohort — it has already happened once, and the mixed window
+  stays mixed forever.
+- **A screen's `key` is its permanent identity in analytics.** Never reuse one for
+  a different question; retire it and mint a new one.
+- **Any page that fires events needs `js/fv.js` loaded as a plain sync script
+  ABOVE `t.js`.** `t.js` reads `window.__fv` at send time, so the wrong order
+  emits unstamped events. `index.html` and `404.html` went a month without it.
+- **Running an A/B test?** The mechanism and the traps (which metrics can
+  actually move, why `landing` will not be per-arm, how long to run) are in the
+  same document.
+
 ## Routing
 
 GitHub Pages serves `/foo` from `foo.html`, so every internal link is extensionless

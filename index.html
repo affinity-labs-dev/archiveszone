@@ -41,12 +41,13 @@
     <!-- Archives first-party ad funnel tracker (ads -> Supabase dashboard). Sync and BEFORE
          the enhanced-events script below so window.atrack exists when pv_home fires on load. -->
     <!-- Funnel version stamp (raw.fv) — must stay ABOVE t.js; bump in js/fv.js.
-         This page was the ONE tracking page in either repo that loaded t.js
-         without it, so every pv_home and landing it fired arrived unstamped and
-         showed up in the dashboard's "Funnel versions" table as an
-         "(unversioned)" cohort that never went away (77 pv_home + 40 landing in
-         a typical 24h). Quiz pages were always stamped, so the effect was
-         confined to the home page — but it made that column unreadable. -->
+         This page and its 404.html mirror were the only tracking pages in either
+         funnel repo that loaded t.js without it, so every pv_home and landing
+         they fired arrived unstamped and showed up in the dashboard's "Funnel
+         versions" table as an "(unversioned)" cohort that never went away
+         (77 pv_home + 40 landing in a typical 24h). The quiz pages were always
+         stamped, so the effect was confined to the home page — but it made that
+         column unreadable. Mirror any change here into 404.html (see AGENTS.md). -->
     <script src="/js/fv.js"></script>
     <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
 
