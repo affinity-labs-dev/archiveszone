@@ -1,12 +1,25 @@
 name: Deploy to GitHub Pages
 
 # Replaces the `pages build and deployment` workflow GitHub generates for the
-# "Deploy from a branch" source. That one cannot be edited, and its deploy step
-# hard-codes a 10-minute timeout: on 2026-08-06 the Pages backend took longer
-# than that twice in a row (the same 13MB / 194-file site had published in 2m09s
-# three hours earlier), and each run cancelled its own in-flight deployment on
-# the way out. This workflow does the same job with a timeout long enough to
-# ride out a slow backend instead of killing the deployment.
+# "Deploy from a branch" source.
+#
+# Since 2026-08-06 the Pages backend has needed more than 10 minutes to publish
+# this site, having done it in 2m09s that morning. `actions/deploy-pages` gives
+# up at 10 minutes and CANNOT be told to wait longer — its `timeout` input is
+# capped, and a larger value is clamped with:
+#
+#   Warning: timeout value is greater than the allowed maximum
+#   - timeout set to the maximum of 600000 milliseconds.
+#
+# So the action's verdict is not evidence about the site, in either direction.
+# It failed at 11:40 and production did not update; it failed at 14:28 and
+# production updated three minutes later, because the "cancel" it issues does
+# not stop an in-flight deployment. Trusting it means either missing a real
+# failure or crying wolf on every success.
+#
+# This workflow therefore lets the deploy step give up (continue-on-error) and
+# decides the outcome by asking the origin what it is actually serving. See
+# tools/verify-live.py.
 #
 # REQUIRES Settings -> Pages -> Source set to "GitHub Actions". With the source
 # still on "Deploy from a branch" the deploy step fails fast, because Pages will
@@ -62,12 +75,20 @@ jobs:
 
       - name: Deploy
         id: deployment
+        # NOT the source of truth for whether this worked — see the header. Its
+        # 10-minute give-up is expected on this site right now, and Pages
+        # usually finishes a few minutes later regardless. The verify step
+        # below decides. Do not "fix" this by raising `timeout`: the action
+        # clamps anything above 600000ms.
+        continue-on-error: true
         uses: actions/deploy-pages@v4
         with:
-          # 30 minutes, against the action's 600000ms (10 min) default. This is
-          # the whole reason this file exists. Raise it further rather than
-          # letting a slow deployment be cancelled — a cancelled deploy leaves
-          # production silently serving the previous commit.
-          timeout: 1800000
-          # Tolerate transient status-polling errors instead of failing the run.
+          # Tolerate transient status-polling errors instead of failing early.
           error_count: 10
+
+      - name: Verify the site is actually serving this commit
+        # The real gate. Polls the origin (cache-busted) until what it serves
+        # matches this checkout, and fails the job if it never does. This is
+        # what turns a green tick into a claim about production rather than a
+        # claim about an action's patience.
+        run: python3 tools/verify-live.py --timeout 1500

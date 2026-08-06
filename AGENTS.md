@@ -37,20 +37,34 @@ it just doesn't ship.
 `pages.yml` publishes the site, and **Settings → Pages → Source must be "GitHub
 Actions"** for it to work. The repo root is uploaded as-is — no build step.
 
-It replaces the `pages build and deployment` workflow GitHub generates for the "Deploy
-from a branch" source. That one cannot be edited and hard-codes a 10-minute deploy
-timeout. On 2026-08-06 the Pages backend exceeded it twice in a row on a 13MB,
-194-file site that had published in 2m09s the same morning, and each run cancelled its
-own in-flight deployment on the way out — leaving production silently serving the
-previous commit while `main` had moved on. `pages.yml` sets `timeout: 1800000` (30
-minutes) so a slow deployment finishes instead of being killed.
+### The deploy step is expected to fail. Ignore it; read the verify step.
 
-If a deploy ever fails, **production is stale, not broken** — the previous commit keeps
-serving. Check what is actually live rather than assuming a merge shipped:
+Since 2026-08-06 the Pages backend has needed more than 10 minutes to publish this site
+— it managed 2m09s that morning, and has not since. `actions/deploy-pages` gives up at
+10 minutes and **cannot be told to wait longer**: its `timeout` input is capped, and a
+larger value is clamped with `timeout value is greater than the allowed maximum`. Do not
+try to raise it; that was tried and does not work.
+
+Worse, the action's verdict carries no information about the site either way. On
+2026-08-06 it failed at 11:40 and production did not update; it failed again at 14:28
+and production updated three minutes later, because the "cancel" it issues on timeout
+does not stop an in-flight deployment.
+
+So `pages.yml` marks that step `continue-on-error` and decides the run by asking the
+origin what it is actually serving:
 
 ```bash
-curl -s https://archiveszone.app/ | grep -o "__VITE_REACT_SSG_HASH__ = '[a-z0-9]*'"
+python3 tools/verify-live.py           # poll until live (25 min), or fail
+python3 tools/verify-live.py --once    # single check
 ```
+
+It compares the bytes production serves against the files in your checkout, cache-busted
+so the CDN cannot answer for the previous deploy. A green run therefore means *the site
+matches this commit*, not *the action was patient enough*.
+
+If it fails, **production is stale, not broken** — the previous commit keeps serving.
+Never assume a merge shipped; that assumption is how the 11:40 failure went unnoticed
+for hours.
 
 ## Before you ship a funnel change — read the release checklist
 
