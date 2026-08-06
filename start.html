@@ -41,8 +41,13 @@
   <!-- Funnel version stamp (raw.fv) — must stay ABOVE t.js; bump in js/fv.js -->
   <script src="/js/fv.js"></script>
   <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
-  <!-- TODO(PostHog): paste the project's current snippet here (phc_ key, host https://eu.i.posthog.com, with defaults). fire() already forwards to posthog.capture when present. -->
-
+  <!-- A/B arm — js/arm.js. Between t.js (needs the session id) and
+       js/ph.js (registers the arm for PostHog). -->
+  <script src="/js/arm.js"></script>
+  <!-- PostHog — stub + init + super properties in js/ph.js. Must stay BELOW
+       t.js: it registers the tracker session id as the join key back to
+       ad_events. Passive observer — nothing here waits on it. -->
+  <script src="/js/ph.js"></script>
   <style>
     /* ===== Archives design system tokens (Figma: Archives_Raw_File / Design system) ===== */
     :root{
@@ -709,6 +714,15 @@
     {type:'roadmap',key:'plan_preview',phase:'build',act:4},
     {type:'results',key:'results',phase:'reveal',act:4}
   ];
+  /* A/B 0806-increase-initial-question-pass-rate -- arm 'skip-hook' drops
+     the hook screen, so the quiz opens straight on the journey pick.
+     STEPS is FILTERED rather than starting that arm at idx 1, so every index,
+     the progress bar's view math and prev() stay correct and Back can never
+     reach a screen the arm should not show. The arms therefore have different
+     screen INDEXES -- fine, web_funnel v21 groups screens by KEY. state.hook is
+     written by that screen and read nowhere else. */
+  if (window.__arm === 'skip-hook') STEPS = STEPS.filter(function (s) { return s.key !== 'hook'; });
+
   /* view math: likert batteries render one statement per view */
   var VIEWS=STEPS.map(function(s){return s.type==='likert'?s.items.length:1});
   var VIEW_START=[],TOTAL_VIEWS=0;
@@ -785,7 +799,9 @@
   // email survive (paywall reads them) — but a saved _idx from any older STEPS
   // shape can't resume mid-quiz askew, so the cursor resets on version
   // mismatch. Bump this whenever STEPS order changes. Never nest answers.
-  var SV=5;
+  /* 6: the A/B above changes STEPS for one arm, so a cursor saved under the
+     old shape must not resume mid-quiz askew. */
+  var SV=6;
   if(state._v!==SV){
     state._v=SV;state._idx=0;state._sub=0;
     // Rewound sessions re-answer everything; clear the soft-exit drivers so

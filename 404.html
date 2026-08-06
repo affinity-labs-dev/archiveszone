@@ -40,8 +40,18 @@
 
     <!-- Archives first-party ad funnel tracker (ads -> Supabase dashboard). Sync and BEFORE
          the enhanced-events script below so window.atrack exists when pv_home fires on load. -->
+    <!-- Funnel version stamp (raw.fv) — must stay ABOVE t.js; bump in js/fv.js.
+         Mirror any change in index.html into 404.html. -->
+    <script src="/js/fv.js"></script>
     <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
 
+    <!-- A/B arm — js/arm.js. Between t.js (needs the session id) and
+         js/ph.js (registers the arm for PostHog). -->
+    <script src="/js/arm.js"></script>
+    <!-- PostHog — stub + init + super properties in js/ph.js. Must stay BELOW
+         t.js: it registers the tracker session id as the join key back to
+         ad_events. Passive observer — nothing here waits on it. -->
+    <script src="/js/ph.js"></script>
     <!-- TikTok enhanced events: SPA pageviews, downloads, registration — pixel + server-side CAPI (deduped by event_id) -->
     <script>
     (function () {
