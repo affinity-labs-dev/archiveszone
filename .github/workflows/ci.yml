@@ -1,0 +1,37 @@
+name: CI
+
+# Pull requests only. Pushes to main run the same two checks in pages.yml, where
+# they gate the deploy itself — a bad push there fails before it can reach
+# archiveszone.app, which is strictly stronger than failing after. Duplicating
+# the push trigger here would just run everything twice.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Both scripts are dependency-free and use the runner's preinstalled
+      # python3, so there is nothing to install and nothing to build. This repo
+      # is deployed static output; there is no build step by design.
+
+      - name: Shared navbar and footer are in sync
+        # 18 copies of the chrome (17 pages + the React chunk) with nothing
+        # keeping them in sync. Also catches a react-router Link pointing at a
+        # page that is not a route, which renders the SPA 404 for real users
+        # while looking completely fine in the HTML.
+        run: python3 tools/sync-nav-footer.py
+
+      - name: Tracking tags present and correctly ordered
+        # index/404 mirror, and fv.js -> t.js -> ph.js on every funnel page.
+        run: python3 tools/check-tracking.py
