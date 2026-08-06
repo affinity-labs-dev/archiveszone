@@ -50,8 +50,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Shared navbar and footer are in sync
-        run: python3 tools/sync-nav-footer.py
+      - name: Standalone pages are linked from every page
+        run: python3 tools/check-links.py
       - name: Tracking tags present and correctly ordered
         run: python3 tools/check-tracking.py
 

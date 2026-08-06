@@ -25,12 +25,8 @@ jobs:
       # python3, so there is nothing to install and nothing to build. This repo
       # is deployed static output; there is no build step by design.
 
-      - name: Shared navbar and footer are in sync
-        # 18 copies of the chrome (17 pages + the React chunk) with nothing
-        # keeping them in sync. Also catches a react-router Link pointing at a
-        # page that is not a route, which renders the SPA 404 for real users
-        # while looking completely fine in the HTML.
-        run: python3 tools/sync-nav-footer.py
+      - name: Standalone pages are linked from every page
+        run: python3 tools/check-links.py
 
       - name: Tracking tags present and correctly ordered
         # index/404 mirror, and fv.js -> t.js -> ph.js on every funnel page.

@@ -7859,7 +7859,7 @@
     "/assets/google-play-badge-new-BkUP0Br0.png"
   ],
   "src/assets/archives-logo.png": [
-    "/assets/LifetimeOffer-BO1-dh7G.js",
+    "/assets/LifetimeOffer-CR52YTfz.js",
     "/assets/archives-logo-CckcUwM8.png"
   ],
   "src/assets/google-play-badge-new.png": [
@@ -7868,120 +7868,120 @@
     "/assets/google-play-badge-new-BkUP0Br0.png"
   ],
   "src/assets/listen-on-apple-podcasts.png": [
-    "/assets/Podcast-BNOQ84H3.js",
+    "/assets/Podcast-BSblRee2.js",
     "/assets/listen-on-apple-podcasts-aIyOQzv3.png",
     "/assets/listen-on-spotify-DoqES0vE.webp",
     "/assets/watch-on-youtube-CExveApR.webp"
   ],
   "src/assets/listen-on-spotify.webp": [
-    "/assets/Podcast-BNOQ84H3.js",
+    "/assets/Podcast-BSblRee2.js",
     "/assets/listen-on-apple-podcasts-aIyOQzv3.png",
     "/assets/listen-on-spotify-DoqES0vE.webp",
     "/assets/watch-on-youtube-CExveApR.webp"
   ],
   "src/assets/podcast-thumbnail.png": [
-    "/assets/DepthSurvey-Djjxmqr9.js",
+    "/assets/DepthSurvey-DcaMg8xv.js",
     "/assets/podcast-thumbnail-DPGdVBXD.png"
   ],
   "src/assets/watch-on-youtube.webp": [
-    "/assets/Podcast-BNOQ84H3.js",
+    "/assets/Podcast-BSblRee2.js",
     "/assets/listen-on-apple-podcasts-aIyOQzv3.png",
     "/assets/listen-on-spotify-DoqES0vE.webp",
     "/assets/watch-on-youtube-CExveApR.webp"
   ],
   "src/components/CountdownTimer.tsx": [
-    "/assets/LifetimeOffer-BO1-dh7G.js",
+    "/assets/LifetimeOffer-CR52YTfz.js",
     "/assets/archives-logo-CckcUwM8.png"
   ],
   "src/components/CountrySelect.tsx": [
-    "/assets/Survey-CcS66z1-.js"
+    "/assets/Survey-DYpkuVWT.js"
   ],
   "src/components/CurriculumCard.tsx": [
     "/assets/CurriculumCard-CX-wLd7J.js"
   ],
   "src/components/FeatureGrid.tsx": [
-    "/assets/FeatureGrid-Djr5fprM.js"
+    "/assets/FeatureGrid-CURODzzJ.js"
   ],
   "src/components/PageHero.tsx": [
-    "/assets/FeatureGrid-Djr5fprM.js"
+    "/assets/FeatureGrid-CURODzzJ.js"
   ],
   "src/components/PartnershipSection.tsx": [
-    "/assets/Index-CuerslIk.js"
+    "/assets/Index-DgDf_SaY.js"
   ],
   "src/components/PersonaCard.tsx": [
-    "/assets/PersonaCard-BAeXqaW3.js"
+    "/assets/PersonaCard-BLS0DHF9.js"
   ],
   "src/components/PersonaPath.tsx": [
-    "/assets/VerticalLanding-CjH0IiOJ.js"
+    "/assets/VerticalLanding-Bu3ueMoo.js"
   ],
   "src/components/Section.tsx": [
-    "/assets/Section-CU7fS1xv.js"
+    "/assets/Section-UA4d2fm1.js"
   ],
   "src/components/Seo.tsx": [
     "/assets/Seo-BqWGEtAJ.js"
   ],
   "src/components/SiteFooter.tsx": [
-    "/assets/SiteFooter-BUtO2PCw.js"
+    "/assets/SiteFooter-CoBd_eps.js"
   ],
   "src/components/SiteHeader.tsx": [
-    "/assets/SiteFooter-BUtO2PCw.js"
+    "/assets/SiteFooter-CoBd_eps.js"
   ],
   "src/components/StoreBadges.tsx": [
     "/assets/StoreBadges-KIcfbN-4.js"
   ],
   "src/components/VerticalLanding.tsx": [
-    "/assets/VerticalLanding-CjH0IiOJ.js"
+    "/assets/VerticalLanding-Bu3ueMoo.js"
   ],
   "src/components/ui/accordion.tsx": [
-    "/assets/LifetimeOffer-BO1-dh7G.js",
+    "/assets/LifetimeOffer-CR52YTfz.js",
     "/assets/archives-logo-CckcUwM8.png"
   ],
   "src/components/ui/aspect-ratio.tsx": [
-    "/assets/Podcast-BNOQ84H3.js",
+    "/assets/Podcast-BSblRee2.js",
     "/assets/listen-on-apple-podcasts-aIyOQzv3.png",
     "/assets/listen-on-spotify-DoqES0vE.webp",
     "/assets/watch-on-youtube-CExveApR.webp"
   ],
   "src/components/ui/badge.tsx": [
-    "/assets/DepthSurvey-Djjxmqr9.js",
+    "/assets/DepthSurvey-DcaMg8xv.js",
     "/assets/podcast-thumbnail-DPGdVBXD.png"
   ],
   "src/components/ui/button.tsx": [
-    "/assets/button-9DwbkuRT.js"
+    "/assets/button-DlC0OUXy.js"
   ],
   "src/components/ui/card.tsx": [
-    "/assets/card-C7EXlbU0.js"
+    "/assets/card-tJwx6EE2.js"
   ],
   "src/components/ui/checkbox.tsx": [
-    "/assets/Survey-CcS66z1-.js"
+    "/assets/Survey-DYpkuVWT.js"
   ],
   "src/components/ui/command.tsx": [
-    "/assets/Survey-CcS66z1-.js"
+    "/assets/Survey-DYpkuVWT.js"
   ],
   "src/components/ui/dialog.tsx": [
-    "/assets/Survey-CcS66z1-.js"
+    "/assets/Survey-DYpkuVWT.js"
   ],
   "src/components/ui/input.tsx": [
-    "/assets/input-r5JYXdB_.js"
+    "/assets/input-CBwPIy7z.js"
   ],
   "src/components/ui/label.tsx": [
-    "/assets/select-BEldV_Xn.js"
+    "/assets/select-BI4373ee.js"
   ],
   "src/components/ui/popover.tsx": [
-    "/assets/Survey-CcS66z1-.js"
+    "/assets/Survey-DYpkuVWT.js"
   ],
   "src/components/ui/select.tsx": [
-    "/assets/select-BEldV_Xn.js"
+    "/assets/select-BI4373ee.js"
   ],
   "src/components/ui/sheet.tsx": [
-    "/assets/SiteFooter-BUtO2PCw.js"
+    "/assets/SiteFooter-CoBd_eps.js"
   ],
   "src/components/ui/sonner.tsx": [],
   "src/components/ui/tabs.tsx": [
-    "/assets/SurveyDashboard-DBp_Room.js"
+    "/assets/SurveyDashboard-g-TCmSVM.js"
   ],
   "src/components/ui/textarea.tsx": [
-    "/assets/select-BEldV_Xn.js"
+    "/assets/select-BI4373ee.js"
   ],
   "src/components/ui/toast.tsx": [],
   "src/components/ui/toaster.tsx": [],
@@ -8000,71 +8000,71 @@
     "/assets/Book-C4M3MmCJ.js"
   ],
   "src/pages/DepthSurvey.tsx": [
-    "/assets/DepthSurvey-Djjxmqr9.js",
+    "/assets/DepthSurvey-DcaMg8xv.js",
     "/assets/podcast-thumbnail-DPGdVBXD.png"
   ],
   "src/pages/DepthSurveyDashboard.tsx": [
-    "/assets/DepthSurveyDashboard-CN3LFmtz.js"
+    "/assets/DepthSurveyDashboard-C9hYg-Sp.js"
   ],
   "src/pages/EmailConfirmed.tsx": [
-    "/assets/EmailConfirmed-CT6DjXFR.js"
+    "/assets/EmailConfirmed-DhY32GZP.js"
   ],
   "src/pages/FamilyAndKids.tsx": [
-    "/assets/FamilyAndKids-jyzttrSX.js"
+    "/assets/FamilyAndKids-Dzi-mQw4.js"
   ],
   "src/pages/FunAndCuriosity.tsx": [
-    "/assets/FunAndCuriosity-C8eBeOqR.js"
+    "/assets/FunAndCuriosity-DiRlsHu1.js"
   ],
   "src/pages/HalalResearch.tsx": [
-    "/assets/HalalResearch-BuJovv5P.js"
+    "/assets/HalalResearch-CkLzJbOX.js"
   ],
   "src/pages/IlmStudios.tsx": [
-    "/assets/IlmStudios-DQPbu5v6.js"
+    "/assets/IlmStudios-D_5Wh7YB.js"
   ],
   "src/pages/Index.tsx": [
-    "/assets/Index-CuerslIk.js"
+    "/assets/Index-DgDf_SaY.js"
   ],
   "src/pages/IslamicAI.tsx": [
-    "/assets/IslamicAI-Ba0Ed3QY.js"
+    "/assets/IslamicAI-DJ3cSDKM.js"
   ],
   "src/pages/LifetimeOffer.tsx": [
-    "/assets/LifetimeOffer-BO1-dh7G.js",
+    "/assets/LifetimeOffer-CR52YTfz.js",
     "/assets/archives-logo-CckcUwM8.png"
   ],
   "src/pages/LifetimeWelcome.tsx": [
     "/assets/LifetimeWelcome-DVgr7Q9l.js"
   ],
   "src/pages/Mosques.tsx": [
-    "/assets/Mosques-CisGET-3.js"
+    "/assets/Mosques-BVCQxaU3.js"
   ],
   "src/pages/NotFound.tsx": [
     "/assets/NotFound-BLYh5SkB.js"
   ],
   "src/pages/Podcast.tsx": [
-    "/assets/Podcast-BNOQ84H3.js",
+    "/assets/Podcast-BSblRee2.js",
     "/assets/listen-on-apple-podcasts-aIyOQzv3.png",
     "/assets/listen-on-spotify-DoqES0vE.webp",
     "/assets/watch-on-youtube-CExveApR.webp"
   ],
   "src/pages/Privacy.tsx": [
-    "/assets/Privacy-DeWXhTgU.js"
+    "/assets/Privacy-BHTE15ne.js"
   ],
   "src/pages/ReconnectWithHistory.tsx": [
-    "/assets/ReconnectWithHistory-edn_U1Ut.js"
+    "/assets/ReconnectWithHistory-CYyLVeVZ.js"
   ],
   "src/pages/Schools.tsx": [
-    "/assets/Schools-D5ZzKUV0.js"
+    "/assets/Schools-C2wjTZGW.js"
   ],
   "src/pages/Support.tsx": [
-    "/assets/Support-BmG2gzeh.js"
+    "/assets/Support-CTkeVQ91.js"
   ],
   "src/pages/Survey.tsx": [
-    "/assets/Survey-CcS66z1-.js"
+    "/assets/Survey-DYpkuVWT.js"
   ],
   "src/pages/SurveyDashboard.tsx": [
-    "/assets/SurveyDashboard-DBp_Room.js"
+    "/assets/SurveyDashboard-g-TCmSVM.js"
   ],
   "src/pages/Terms.tsx": [
-    "/assets/Terms-C0b3gFVZ.js"
+    "/assets/Terms-DHMH_wBB.js"
   ]
 }

@@ -1,18 +1,33 @@
 # Working in this repo
 
-`archiveszone.app` is served directly from this repository by GitHub Pages. **There is
-no build step and no source checkout here** — these files *are* the deployed site. You
-edit built output, including minified JavaScript, and it goes live on push.
+`archiveszone.app` is served from this repository by GitHub Pages, but **do not edit it
+here.**
 
-Historically this repo received `Deploy <sha>` commits from a separate React source
-repo. That is no longer the workflow; this repo is now the source of truth. If you find
-yourself looking for `src/`, there isn't one.
+## This repo is generated output. The source is `affinity-labs-dev/archives`.
 
-**That bot has not always respected this.** On 2026-08-06 it pushed two `Deploy` commits
-straight to `main` and reverted three merged PRs — PostHog, the home-page `fv` stamp,
-this file, `tools/`, and every crawlable internal link — without anyone noticing for
-days. If you see a `Deploy <sha>` commit on `main`, treat it as a probable revert and
-diff it before building on top.
+Every file on this branch — including this one, `tools/` and `.github/workflows/` — is
+produced by that repo's build and published by `peaceiris/actions-gh-pages`, which
+**replaces the branch**. Anything committed only here is deleted by the next deploy.
+
+That is not a hypothetical. On 2026-08-06 two `Deploy <sha>` commits reverted three
+merged PRs — PostHog, the home-page `fv` stamp, this file, `tools/`, and every crawlable
+internal link — and nobody noticed for hours. An earlier version of this file claimed
+this repo was the source of truth. It never was; the bot simply won, silently.
+
+So: **make the change in `affinity-labs-dev/archives` and let it deploy.** A fix applied
+here looks correct, passes review, goes live, and then vanishes without a trace.
+
+| what you want to change | where it lives in the source repo |
+| --- | --- |
+| React pages, shared navbar/footer | `src/` (`SiteHeader.tsx`, `SiteFooter.tsx`) |
+| `index.html` / `404.html` head, tracking tags | root `index.html` |
+| Quiz and lessons pages | `public/*.html` |
+| `start`, `paywall`, `plan`, `unlocked` | `01 Web Funnel/public/` |
+| `js/fv.js`, `js/ph.js`, `js/checkout.js` | `01 Web Funnel/public/js/` |
+| this file, `tools/`, `.github/workflows/` | `deploy-extras/` |
+
+The rest of this document describes the deployed tree — useful for reading it, debugging
+it, and understanding why it is shaped the way it is. Just don't commit to it.
 
 ## Checks
 
