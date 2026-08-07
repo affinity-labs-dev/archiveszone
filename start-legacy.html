@@ -43,6 +43,9 @@
        start.html) once the ramp hits 100 and the comparison is decided. -->
   <script>window.__fv='0722-quizv3-legacy';</script>
   <script src="https://track.archiveszone.app/t.js" data-endpoint="https://track.archiveszone.app/api/e"></script>
+  <!-- A/B arm — js/arm.js. Between t.js (needs the session id) and
+       js/ph.js (registers the arm for PostHog). Inert while TEST = null. -->
+  <script src="/js/arm.js"></script>
   <!-- PostHog — stub + init + super properties in js/ph.js. Must stay BELOW
        t.js: it registers the tracker session id as the join key back to
        ad_events. Passive observer — nothing here waits on it. -->
