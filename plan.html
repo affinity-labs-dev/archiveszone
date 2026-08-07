@@ -499,7 +499,18 @@
 
   document.getElementById('checkoutBtn').addEventListener('click', async function(){
     var p=planById(selected);
-    fire('begin_checkout',pr({plan:selected}),'InitiateCheckout',{content_name:'plan_'+selected});
+    /* Meta requires value+currency on InitiateCheckout, or the event cannot feed
+       value-based bidding and will not reconcile against Purchase. The price is
+       known here -- pkgChargeValue is the same helper purchase() reports with,
+       so the two events always agree on the amount (intro price when there is
+       one, base price otherwise).
+       `!= null` and isFinite, never `||`: a $0 trial must send value 0. Omitted
+       entirely when offerings have not loaded, because a wrong number is worse
+       than a missing one. */
+    var _icv = p.pkgObj ? AC.pkgChargeValue(p.pkgObj) : null;
+    var _icfb = {content_name:'plan_'+selected};
+    if (_icv && _icv.value != null && isFinite(_icv.value)) { _icfb.value = _icv.value; _icfb.currency = _icv.currency || 'USD'; }
+    fire('begin_checkout',pr({plan:selected}),'InitiateCheckout',_icfb);
     var errEl=document.getElementById('checkoutErr'); errEl.classList.remove('show'); errEl.textContent='';
     if(!AC.rcConfigured()){AC.goStore('/plan.html');return;}
     if(location.protocol==='file:'){errEl.innerHTML='Checkout runs on the live site, not a local file. <a href="#" id="storeLink">Get the app instead</a>.';errEl.classList.add('show');wireStore();return;}

@@ -283,7 +283,10 @@
     // drip engine suppresses paying customers by this field.
     var em = ''; try { em = opts.email ? btoa(unescape(encodeURIComponent(opts.email))) : ''; } catch (e) { }
     var dest = 'unlocked.html?status=success&plan=' + encodeURIComponent(opts.planId)
-      + '&v=' + encodeURIComponent(v.value || '') + '&cur=' + encodeURIComponent(v.currency || 'USD') + '&eid=' + encodeURIComponent(eid)
+      // `v.value || ''` wrote an EMPTY STRING for a $0 trial, which unlocked.html
+      // then could not parse back into a number. 0 is a real price; only a
+      // missing or non-finite value should be blank.
+      + '&v=' + encodeURIComponent(v.value != null && isFinite(v.value) ? v.value : '') + '&cur=' + encodeURIComponent(v.currency || 'USD') + '&eid=' + encodeURIComponent(eid)
       + (isTrial ? '&trial=1' : '')
       + (em ? '&em=' + encodeURIComponent(em) : '')
       + (redeem ? '&redeem=' + encodeURIComponent(redeem) : '');
