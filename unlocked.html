@@ -186,7 +186,12 @@
   var isSuccess=params.get('status')==='success'||params.get('purchase')==='1'||!!redeem;
   if(isSuccess){
     var plan=params.get('plan')||'unknown';
-    var val=parseFloat(params.get('v'))||undefined;       // numeric price passed from the paywall
+    /* `parseFloat(x)||undefined` dropped a legitimate 0: a $0 trial reached Meta
+       with no value key at all, and Purchase requires one. Keep 0, discard only
+       genuinely absent or unparseable values (drip links carry no ?v=). */
+    var _vRaw=params.get('v');
+    var _vNum=(_vRaw===null||_vRaw==='')?NaN:parseFloat(_vRaw);
+    var val=isFinite(_vNum)?_vNum:undefined;              // numeric price passed from the paywall
     var cur=params.get('cur')||'USD';
     var eid=params.get('eid')||undefined;                 // shared with the paywall's CAPI CompletePayment
     try{if(typeof gtag==='function')gtag('event','purchase',{transaction_id:params.get('tx')||undefined,currency:cur,value:val,items:[{item_id:plan,item_name:'Archives '+plan}]});}catch(e){}
