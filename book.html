@@ -113,11 +113,40 @@
         if (location.pathname !== '/') return;
         try { window.atrack && window.atrack('pv_home', null, { page: '/' }); } catch (err) {}
       }
+
+      /* Podcast events. One helper, two sinks: t.js writes the durable row to
+         ad_events (same Postgres the dashboard reads, so a podcast click can be
+         joined to signups and revenue in one query), PostHog gets the same event
+         for funnels and session replay. PostHog runs autocapture:false, so
+         nothing is recorded there unless it is named explicitly here. */
+      function ptrack(name, props) {
+        try { window.atrack && window.atrack(name, null, props); } catch (err) {}
+        try { window.posthog && window.posthog.capture(name, props); } catch (err) {}
+      }
+      /* Which channel delivered this visit. t.js already persists source/aid from
+         the first-party params; these are read again here so the event itself
+         carries them and a single row is self-describing. */
+      function podcastRefProps() {
+        var q = new URLSearchParams(location.search);
+        return {
+          page: location.pathname,
+          ref_source: q.get('source') || null,
+          utm_source: q.get('utm_source') || null,
+          utm_campaign: q.get('utm_campaign') || null,
+          utm_content: q.get('utm_content') || null
+        };
+      }
+      function pvPodcast() {
+        if (location.pathname.indexOf('/podcast') !== 0) return;
+        ptrack('podcast_page_view', podcastRefProps());
+      }
+
       function trackPage() {
         if (window.ttq) ttq.page();
         if (window.fbq) fbq('track', 'PageView');
         fire('ViewContent', viewProps());
         pvHome();
+        pvPodcast();
       }
       var lastPath = location.pathname;
       function onNavigate() { if (location.pathname === lastPath) return; lastPath = location.pathname; setTimeout(trackPage, 60); }
@@ -126,6 +155,22 @@
       window.addEventListener('popstate', onNavigate);
       fire('ViewContent', viewProps()); // initial load (pixel already sent Pageview)
       pvHome();
+      pvPodcast();
+
+      // 2a) Podcast journey: into /podcast, then out to a platform or the app.
+      // Keyed off data-podcast-* attributes rather than href sniffing, because
+      // these hrefs point at track.archiveszone.app redirects whose shape will
+      // change; the intent of the link should not depend on its current URL.
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!a) return;
+        var platform = a.getAttribute('data-podcast-platform');
+        if (platform) { ptrack('podcast_platform_click', { platform: platform, page: location.pathname }); return; }
+        var cta = a.getAttribute('data-podcast-cta');
+        if (cta) { ptrack('podcast_app_cta_click', { placement: cta, page: location.pathname }); return; }
+        var nav = a.getAttribute('data-podcast-nav');
+        if (nav) { ptrack('podcast_nav_click', { placement: nav, from_page: location.pathname }); }
+      }, true);
 
       // 2) Store-download clicks -> Download (covers every CTA, all pages)
       document.addEventListener('click', function (e) {
@@ -262,15 +307,15 @@
     <meta name="twitter:description" content="Turn learning into adventure with bite-sized Islamic history quests, XP tracking, and interactive timelines spanning from the Prophet's era to the Ottoman Empire.">
     <meta name="twitter:image" content="/lovable-uploads/41cb4ead-d67e-478a-93ed-b1cd8d59f006.png">
 
-    <script type="module" async="" crossorigin="" src="/assets/app-DATjebCb.js"></script>
+    <script type="module" async="" crossorigin="" src="/assets/app-BDUD8yec.js"></script>
     <link rel="modulepreload" crossorigin="" href="/assets/vendor-CpI_Kv3J.js">
-    <link rel="stylesheet" crossorigin="" href="/assets/app-BYLfzDs9.css">
+    <link rel="stylesheet" crossorigin="" href="/assets/app-CiE_YyFE.css">
   </head>
   <body>
     <!-- Meta Pixel noscript fallback -->
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2673422029698646&amp;ev=PageView&amp;noscript=1"></noscript>
     <div id="root" data-server-rendered="true"><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events:none"><ol tabindex="-1" class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol></div><div class="min-h-screen flex items-center justify-center bg-background"><p class="text-muted-foreground">Redirecting to booking page...</p></div><script>window.__staticRouterHydrationData = JSON.parse("{\"loaderData\":{\"0\":null},\"actionData\":null,\"errors\":null}");</script></div>
-<script>window.__VITE_REACT_SSG_HASH__ = '2mnxxlvg35'</script>
+<script>window.__VITE_REACT_SSG_HASH__ = 'a6io26mctq'</script>
   
 
 </body></html>
